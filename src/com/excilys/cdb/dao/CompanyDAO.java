@@ -13,53 +13,39 @@ import com.excilys.cdb.persistence.DatabaseConnection;
 
 public class CompanyDAO {
 	public static List<Company> listCompanies() {
-		Connection conn = null;
-		PreparedStatement stmt = null;
-		ResultSet rs = null;
 		ArrayList<Company> companies = new ArrayList<>();
-		try {
-			conn = DatabaseConnection.INSTANCE.getConnection();
-			stmt = conn.prepareStatement("SELECT * FROM company");
-			rs = stmt.executeQuery();
+		try (Connection conn = DatabaseConnection.INSTANCE.getConnection();
+				PreparedStatement stmt = conn.prepareStatement("SELECT * FROM company");
+				ResultSet rs = stmt.executeQuery();) {
 			while (rs.next()) {
 				companies.add(CompanyMapper.createCompany(rs));
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
-		} finally {
-			DatabaseConnection.INSTANCE.closeConnection(conn, rs, stmt);
 		}
 		return companies;
 	}
 
 	public static int getPageAmount(int pageSize) {
-		Connection conn = null;
-		PreparedStatement stmt = null;
-		ResultSet rs = null;
 		int pages = 0, count;
-		try {
-			conn = DatabaseConnection.INSTANCE.getConnection();
-			stmt = conn.prepareStatement("SELECT count(id) as count FROM company");
-			rs = stmt.executeQuery();
+		try (Connection conn = DatabaseConnection.INSTANCE.getConnection();
+				PreparedStatement stmt = conn.prepareStatement("SELECT count(id) as count FROM company");
+				ResultSet rs = stmt.executeQuery();) {
 			rs.next();
 			count = rs.getInt("count");
 			pages = count / pageSize;
 			pages += count % pageSize != 0 ? 1 : 0;
 		} catch (SQLException e) {
 			e.printStackTrace();
-		} finally {
-			DatabaseConnection.INSTANCE.closeConnection(conn, rs, stmt);
 		}
 		return pages;
 	}
 
 	public static List<Company> listCompaniesByPage(int pageNumber, int pageSize) throws PageOutOfBoundsException {
-		Connection conn = null;
 		PreparedStatement stmt = null;
 		ResultSet rs = null;
 		ArrayList<Company> companies = new ArrayList<>();
-		try {
-			conn = DatabaseConnection.INSTANCE.getConnection();
+		try (Connection conn = DatabaseConnection.INSTANCE.getConnection();) {
 			stmt = conn.prepareStatement("SELECT * FROM company LIMIT ? OFFSET ?");
 			stmt.setInt(1, pageSize);
 			stmt.setInt(2, pageSize * (pageNumber - 1));
@@ -73,7 +59,7 @@ public class CompanyDAO {
 		} catch (SQLException e) {
 			e.printStackTrace();
 		} finally {
-			DatabaseConnection.INSTANCE.closeConnection(conn, rs, stmt);
+			DatabaseConnection.INSTANCE.closeConnection(rs, stmt);
 		}
 		return companies;
 	}

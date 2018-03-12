@@ -41,11 +41,8 @@ public enum DatabaseConnection {
 		return conn;
 	}
 	
-	public void closeConnection(Connection conn, ResultSet rs, Statement stmt) {
+	public void closeConnection(ResultSet rs, Statement stmt) {
 		try {
-			if(conn != null) {
-				conn.close();
-			}
 			if(rs != null) {
 				rs.close();
 			}
