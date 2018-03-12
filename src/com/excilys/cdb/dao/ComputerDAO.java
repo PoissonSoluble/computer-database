@@ -7,29 +7,29 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.excilys.cdb.mapper.CompanyMapper;
-import com.excilys.cdb.model.Company;
+import com.excilys.cdb.mapper.ComputerMapper;
+import com.excilys.cdb.model.Computer;
 import com.excilys.cdb.persistence.DatabaseConnection;
 
-public class CompanyDAO {
-	public static List<Company> listCompanies() {
+public class ComputerDAO {
+	public static List<Computer> listComputers() {
 		Connection conn = null;
 		PreparedStatement stmt = null;
 		ResultSet rs = null;
-		ArrayList<Company> companies = new ArrayList<>();
+		ArrayList<Computer> computers = new ArrayList<>();
 		try {
 			conn = DatabaseConnection.INSTANCE.getConnection();
-			stmt = conn.prepareStatement("SELECT * FROM company");
+			stmt = conn.prepareStatement("SELECT * FROM computer");
 			rs = stmt.executeQuery();
 			while (rs.next()) {
-				companies.add(CompanyMapper.createCompany(rs));
+				computers.add(ComputerMapper.createComputer(rs));
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
 		} finally {
 			DatabaseConnection.INSTANCE.closeConnection(conn, rs, stmt);
 		}
-		return companies;
+		return computers;
 	}
 
 	public static int getPageAmount(int pageSize) {
@@ -39,7 +39,7 @@ public class CompanyDAO {
 		int pages = 0, count;
 		try {
 			conn = DatabaseConnection.INSTANCE.getConnection();
-			stmt = conn.prepareStatement("SELECT count(id) as count FROM company");
+			stmt = conn.prepareStatement("SELECT count(id) as count FROM computer");
 			rs = stmt.executeQuery();
 			rs.next();
 			count = rs.getInt("count");
@@ -52,22 +52,22 @@ public class CompanyDAO {
 		}
 		return pages;
 	}
-
-	public static List<Company> listCompaniesByPage(int pageNumber, int pageSize) throws PageOutOfBoundsException {
+	
+	public static List<Computer> listComputersByPage(int pageNumber, int pageSize) throws PageOutOfBoundsException {
 		Connection conn = null;
 		PreparedStatement stmt = null;
 		ResultSet rs = null;
-		ArrayList<Company> companies = new ArrayList<>();
+		ArrayList<Computer> computers = new ArrayList<>();
 		try {
 			conn = DatabaseConnection.INSTANCE.getConnection();
-			stmt = conn.prepareStatement("SELECT * FROM company LIMIT ? OFFSET ?");
+			stmt = conn.prepareStatement("SELECT * FROM computer LIMIT ? OFFSET ?");
 			stmt.setInt(1, pageSize);
 			stmt.setInt(2, pageSize * (pageNumber - 1));
 			rs = stmt.executeQuery();
 			while (rs.next()) {
-				companies.add(CompanyMapper.createCompany(rs));
+				computers.add(ComputerMapper.createComputer(rs));
 			}
-			if (companies.isEmpty()) {
+			if (computers.isEmpty()) {
 				throw new PageOutOfBoundsException();
 			}
 		} catch (SQLException e) {
@@ -75,6 +75,9 @@ public class CompanyDAO {
 		} finally {
 			DatabaseConnection.INSTANCE.closeConnection(conn, rs, stmt);
 		}
-		return companies;
+		return computers;
+	}
+
+	public static void main(String[] args) {
 	}
 }

@@ -56,4 +56,15 @@ public enum DatabaseConnection {
 			e.printStackTrace();
 		}
 	}
+	
+	
+	public void closeConnection(Connection conn) {
+		try {
+			if(conn != null) {
+				conn.close();
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
 }

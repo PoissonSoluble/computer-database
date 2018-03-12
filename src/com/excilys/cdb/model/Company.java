@@ -22,5 +22,10 @@ public class Company {
 	public void setName(String pName) {
 		name = pName;
 	}
+	
+	@Override
+	public String toString() {
+		return new StringBuilder(id.toString()).append(":").append(name).toString();
+	}
 
 }

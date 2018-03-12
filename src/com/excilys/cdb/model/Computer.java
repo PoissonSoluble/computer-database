@@ -7,7 +7,7 @@ public class Computer {
 	private String name;
 	private LocalDate introduced;
 	private LocalDate discontinued;
-	private Company company;
+	private Long company;
 
 	public Computer() {
 	}
@@ -44,12 +44,17 @@ public class Computer {
 		discontinued = pDiscontinued;
 	}
 
-	public Company getCompany() {
+	public long getCompany() {
 		return company;
 	}
 
-	public void setCompany(Company pCompany) {
+	public void setCompany(long pCompany) {
 		company = pCompany;
+	}
+	
+	@Override
+	public String toString() {
+		return new StringBuilder(id.toString()).append(":").append(name).toString();
 	}
 
 }
