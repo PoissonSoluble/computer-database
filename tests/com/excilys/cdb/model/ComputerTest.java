@@ -2,7 +2,7 @@ package com.excilys.cdb.model;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-import java.util.GregorianCalendar;
+import java.time.LocalDate;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -18,8 +18,8 @@ class ComputerTest {
 		computer = new Computer();
 		computer.setId((long) 1);
 		computer.setName("Test");
-		computer.setIntroduced(new GregorianCalendar(1995,7,21).getTime());
-		computer.setDiscontinued(new GregorianCalendar(2018,5,3).getTime());
+		computer.setIntroduced(LocalDate.of(1995,7,21));
+		computer.setDiscontinued(LocalDate.of(2018,5,3));
 
 		company = new Company();
 
@@ -33,8 +33,8 @@ class ComputerTest {
 	public void testCreation() {
 		assertEquals(computer.getId(), 1);
 		assertEquals(computer.getName(), "Test");
-		assertEquals(computer.getIntroduced(), new GregorianCalendar(1995,7,21).getTime());
-		assertEquals(computer.getDiscontinued(), new GregorianCalendar(2018,5,3).getTime());
+		assertEquals(computer.getIntroduced(), LocalDate.of(1995,7,21));
+		assertEquals(computer.getDiscontinued(), LocalDate.of(2018,5,3));
 		assertEquals(computer.getCompany(), company);
 
 	}
