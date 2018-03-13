@@ -6,9 +6,11 @@ import java.sql.SQLException;
 
 import com.excilys.cdb.model.Computer;
 
-public class ComputerMapper {
-
-	public static Computer createComputer(ResultSet rs) {
+public enum ComputerMapper {
+	
+	INSTANCE;
+	
+	public Computer createComputer(ResultSet rs) {
 		Computer computer = new Computer();
 		try {
 			computer.setId(rs.getLong("id"));
