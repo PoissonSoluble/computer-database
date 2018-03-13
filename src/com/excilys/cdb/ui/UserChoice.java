@@ -15,4 +15,12 @@ enum UserChoice {
 	private UserChoice(String ... pValidChoices) {
 		validChoices = Arrays.asList(pValidChoices);
 	}
+	
+	public boolean accept(String choice) {
+		if(validChoices.contains(choice)) {
+			return true;
+		}
+		return false;
+	}
+	
 }
