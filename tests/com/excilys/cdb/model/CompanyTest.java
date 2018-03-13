@@ -12,19 +12,15 @@ class CompanyTest {
 	@BeforeEach
 	public void setUp() {
 		company = new Company();
-		
-		company.setId(1);
+		company.setId(new Long(1));
 		company.setName("Test");
 	}
 	
 	@Test
 	public void testCreation() {
-		assertNotEquals(company, null, "Error while initiating Company class");
-		
-		
-		assertEquals(company.getId(),1);
+		assertNotNull(company);
+		assertEquals(company.getId(),new Long(1));
 		assertEquals(company.getName(), "Test");
-		
 	}
 
 }

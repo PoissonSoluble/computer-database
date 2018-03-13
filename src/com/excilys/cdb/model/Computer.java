@@ -12,11 +12,11 @@ public class Computer {
 	public Computer() {
 	}
 
-	public long getId() {
+	public Long getId() {
 		return id;
 	}
 
-	public void setId(long pId) {
+	public void setId(Long pId) {
 		id = pId;
 	}
 
@@ -44,11 +44,11 @@ public class Computer {
 		discontinued = pDiscontinued;
 	}
 
-	public long getCompany() {
+	public Long getCompany() {
 		return company;
 	}
 
-	public void setCompany(long pCompany) {
+	public void setCompany(Long pCompany) {
 		company = pCompany;
 	}
 	

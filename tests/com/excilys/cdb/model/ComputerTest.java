@@ -15,20 +15,20 @@ class ComputerTest {
 	@BeforeEach
 	public void setUp() {
 		computer = new Computer();
-		computer.setId((long) 1);
+		computer.setId(new Long(1));
 		computer.setName("Test");
 		computer.setIntroduced(LocalDate.of(1995,7,21));
 		computer.setDiscontinued(LocalDate.of(2018,5,3));
-		computer.setCompany((long) 1);
+		computer.setCompany(new Long(1));
 	}
 
 	@Test
 	public void testCreation() {
-		assertEquals(computer.getId(), 1);
+		assertEquals(computer.getId(), new Long(1));
 		assertEquals(computer.getName(), "Test");
 		assertEquals(computer.getIntroduced(), LocalDate.of(1995,7,21));
 		assertEquals(computer.getDiscontinued(), LocalDate.of(2018,5,3));
-		assertEquals(computer.getCompany(), 1);
+		assertEquals(computer.getCompany(), new Long(1));
 
 	}
 

@@ -42,11 +42,10 @@ public class CompanyDAO {
 	}
 
 	public static List<Company> listCompaniesByPage(int pageNumber, int pageSize) throws PageOutOfBoundsException {
-		PreparedStatement stmt = null;
 		ResultSet rs = null;
 		ArrayList<Company> companies = new ArrayList<>();
-		try (Connection conn = DatabaseConnection.INSTANCE.getConnection();) {
-			stmt = conn.prepareStatement("SELECT * FROM company LIMIT ? OFFSET ?");
+		try (Connection conn = DatabaseConnection.INSTANCE.getConnection();
+				PreparedStatement stmt = conn.prepareStatement("SELECT * FROM company LIMIT ? OFFSET ?");) {
 			stmt.setInt(1, pageSize);
 			stmt.setInt(2, pageSize * (pageNumber - 1));
 			rs = stmt.executeQuery();
@@ -59,7 +58,7 @@ public class CompanyDAO {
 		} catch (SQLException e) {
 			e.printStackTrace();
 		} finally {
-			DatabaseConnection.INSTANCE.closeConnection(rs, stmt);
+			DatabaseConnection.INSTANCE.closeResultSet(rs);
 		}
 		return companies;
 	}

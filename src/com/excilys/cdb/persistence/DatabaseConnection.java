@@ -6,22 +6,11 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.Properties;
 
 
 public enum DatabaseConnection {
 	INSTANCE;
-	
-	private String getUrl(Properties prop) {
-		StringBuilder sb = new StringBuilder("jdbc:mysql://");
-		sb.append(prop.getProperty("dbserver"));
-		sb.append(":");
-		sb.append(prop.getProperty("dbport"));
-		sb.append("/");
-		sb.append(prop.getProperty("dbname"));
-		return sb.toString();
-	}
 
 	public Connection getConnection() {
 		Connection conn = null;
@@ -41,13 +30,10 @@ public enum DatabaseConnection {
 		return conn;
 	}
 	
-	public void closeConnection(ResultSet rs, Statement stmt) {
+	public void closeResultSet(ResultSet rs) {
 		try {
 			if(rs != null) {
 				rs.close();
-			}
-			if(stmt != null) {
-				stmt.close();
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -64,4 +50,16 @@ public enum DatabaseConnection {
 			e.printStackTrace();
 		}
 	}
+	
+	private String getUrl(Properties prop) {
+		StringBuilder sb = new StringBuilder("jdbc:mysql://");
+		sb.append(prop.getProperty("dbserver"));
+		sb.append(":");
+		sb.append(prop.getProperty("dbport"));
+		sb.append("/");
+		sb.append(prop.getProperty("dbname"));
+		sb.append("?useSSL=false");
+		return sb.toString();
+	}
+
 }
