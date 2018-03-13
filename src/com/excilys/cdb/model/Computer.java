@@ -7,7 +7,7 @@ public class Computer {
 	private String name;
 	private LocalDate introduced;
 	private LocalDate discontinued;
-	private Long company;
+	private Company company;
 
 	public Computer() {
 	}
@@ -44,11 +44,11 @@ public class Computer {
 		discontinued = pDiscontinued;
 	}
 
-	public Long getCompany() {
+	public Company getCompany() {
 		return company;
 	}
 
-	public void setCompany(Long pCompany) {
+	public void setCompany(Company pCompany) {
 		company = pCompany;
 	}
 	

@@ -3,6 +3,7 @@ package com.excilys.cdb.validation;
 import java.time.LocalDate;
 
 import com.excilys.cdb.dao.CompanyDAO;
+import com.excilys.cdb.model.Company;
 import com.excilys.cdb.model.Computer;
 import com.excilys.cdb.validation.exceptions.InvalidDatesException;
 import com.excilys.cdb.validation.exceptions.NotExistingCompanyException;
@@ -20,20 +21,20 @@ public enum ComputerValidator {
 		validateCompany(computer.getCompany());
 	}
 	
-	public void validateName(String name) throws NullNameException{
+	private void validateName(String name) throws NullNameException{
 		if(name == null) {
 			throw new NullNameException();
 		}
 	}
 	
-	public void validateDates(LocalDate introduced, LocalDate discontinued) throws InvalidDatesException {
+	private void validateDates(LocalDate introduced, LocalDate discontinued) throws InvalidDatesException {
 		if(introduced != null && discontinued != null && introduced.isAfter(discontinued)) {
 			throw new InvalidDatesException();
 		}
 	}
 	
-	public void validateCompany(Long companyId) throws NotExistingCompanyException {
-		if(companyDAO.getCompany(companyId) == null) {
+	private void validateCompany(Company company) throws NotExistingCompanyException {
+		if(companyDAO.getCompany(company.getId()) == null) {
 			throw new NotExistingCompanyException();
 		}
 	}

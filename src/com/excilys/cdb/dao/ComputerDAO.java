@@ -20,10 +20,7 @@ public enum ComputerDAO {
 	private DatabaseConnection dbConn = DatabaseConnection.INSTANCE;
 	private ComputerMapper mapper = ComputerMapper.INSTANCE;
 
-	public void createComputer(Computer computer) throws SQLException {
-		if (computer.getName() == null) {
-			throw new SQLException("Name cannot be null.");
-		}
+	public void createComputer(Computer computer) {
 		try (Connection conn = dbConn.getConnection();
 				PreparedStatement stmt = conn.prepareStatement(
 						"INSERT INTO computer (name, introduced, discontinued, company_id) VALUES(?,?,?,?)");) {
@@ -60,7 +57,8 @@ public enum ComputerDAO {
 	public List<Computer> listComputers() {
 		ArrayList<Computer> computers = new ArrayList<>();
 		try (Connection conn = dbConn.getConnection();
-				PreparedStatement stmt = conn.prepareStatement("SELECT * FROM computer");
+				PreparedStatement stmt = conn.prepareStatement(
+						"SELECT cu.id as computer_id, cu.name as computer_name, introduced, discontinued, company_id, ca.name as company_name FROM computer cu LEFT JOIN company ca ON company_id = ca.id");
 				ResultSet rs = stmt.executeQuery();) {
 			retrieveComputersFromQuery(computers, rs);
 		} catch (SQLException e) {
@@ -85,10 +83,7 @@ public enum ComputerDAO {
 		return computers;
 	}
 
-	public void updateComputer(Computer computer) throws SQLException {
-		if (computer.getName() == null || computer.getId() == null) {
-			throw new SQLException("Name and id cannot be null.");
-		}
+	public void updateComputer(Computer computer) {
 		try (Connection conn = dbConn.getConnection();
 				PreparedStatement stmt = conn.prepareStatement(
 						"UPDATE computer SET name = ?, introduced = ?, discontinued = ?, company_id = ? WHERE id = ?");) {
@@ -133,13 +128,13 @@ public enum ComputerDAO {
 		addDateToStatement(2, computer.getIntroduced(), stmt);
 		addDateToStatement(3, computer.getDiscontinued(), stmt);
 		if (computer.getCompany() != null)
-			stmt.setLong(4, computer.getCompany());
+			stmt.setLong(4, computer.getCompany().getId());
 		else {
 			stmt.setNull(4, java.sql.Types.BIGINT);
 		}
 	}
 
-	private void addDateToStatement(int parameterIndex,LocalDate date, PreparedStatement stmt) throws SQLException {
+	private void addDateToStatement(int parameterIndex, LocalDate date, PreparedStatement stmt) throws SQLException {
 		if (date != null) {
 			stmt.setDate(parameterIndex, Date.valueOf(date));
 		} else {

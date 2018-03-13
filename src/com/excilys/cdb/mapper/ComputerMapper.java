@@ -4,6 +4,7 @@ import java.sql.Date;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+import com.excilys.cdb.model.Company;
 import com.excilys.cdb.model.Computer;
 
 public enum ComputerMapper {
@@ -25,8 +26,9 @@ public enum ComputerMapper {
 			if (discontinued != null) {
 				computer.setDiscontinued(discontinued.toLocalDate());
 			}
-			
-			computer.setCompany(rs.getLong("company_id"));
+			Company company = new Company();
+			company.setId(rs.getLong("company_id"));
+			computer.setCompany(company);
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
