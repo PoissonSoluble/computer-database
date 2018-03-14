@@ -46,10 +46,10 @@ public enum ComputerDAO {
 		ResultSet rs = null;
 		try (Connection conn = dbConn.getConnection();
 				PreparedStatement stmt = conn
-						.prepareStatement("SELECT * FROM computer LEFT JOIN company USING(ca_id) WHERE cu.id = ?");) {
+						.prepareStatement("SELECT * FROM computer LEFT JOIN company USING(ca_id) WHERE cu_id = ?");) {
 			stmt.setLong(1, id);
 			rs = stmt.executeQuery();
-			retrieveComputerFromQuery(computer, rs);
+			computer = retrieveComputerFromQuery(rs);
 		} catch (SQLException e) {
 			e.printStackTrace();
 		} finally {
@@ -58,7 +58,7 @@ public enum ComputerDAO {
 		return computer;
 	}
 
-	public int getPageAmount(int pageSize) {
+	public int getComputerListPageTotalAmount(int pageSize) {
 		int pages = 0;
 		try (Connection conn = dbConn.getConnection();
 				PreparedStatement stmt = conn.prepareStatement("SELECT count(cu_id) as count FROM computer");
@@ -87,8 +87,8 @@ public enum ComputerDAO {
 		ResultSet rs = null;
 		ArrayList<Computer> computers = new ArrayList<>();
 		try (Connection conn = dbConn.getConnection();
-				PreparedStatement stmt = conn
-						.prepareStatement("SELECT * FROM computer LEFT JOIN company USING(ca_id) LIMIT ? OFFSET ?");) {
+				PreparedStatement stmt = conn.prepareStatement(
+						"SELECT * FROM computer LEFT JOIN company USING(ca_id) ORDER BY cu_id LIMIT ? OFFSET ?");) {
 			retrieveParametersForComputerPage(pageNumber, pageSize, stmt);
 			rs = stmt.executeQuery();
 			retrievePageContentFromQueryResult(rs, computers);
@@ -128,9 +128,11 @@ public enum ComputerDAO {
 		return pages;
 	}
 
-	private void retrieveComputerFromQuery(Computer computer, ResultSet rs) throws SQLException {
-		rs.next();
-		computer = mapper.createComputer(rs);
+	private Computer retrieveComputerFromQuery(ResultSet rs) throws SQLException {
+		if(rs.next()) {
+			return mapper.createComputer(rs);
+		}
+		return null;
 	}
 
 	private void retrieveComputersFromQuery(ArrayList<Computer> computers, ResultSet rs) throws SQLException {
@@ -157,7 +159,7 @@ public enum ComputerDAO {
 		stmt.setString(1, computer.getName());
 		addDateToStatement(2, computer.getIntroduced(), stmt);
 		addDateToStatement(3, computer.getDiscontinued(), stmt);
-		if (computer.getCompany() != null)
+		if (computer.getCompany() != null && computer.getCompany().getId() != null)
 			stmt.setLong(4, computer.getCompany().getId());
 		else {
 			stmt.setNull(4, java.sql.Types.BIGINT);

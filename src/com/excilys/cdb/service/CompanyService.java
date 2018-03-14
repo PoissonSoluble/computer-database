@@ -19,7 +19,7 @@ public enum CompanyService {
 		}
 	}
 	
-	public int getPageAmount(int pageSize) {
-		return dao.getPageAmount(pageSize);
+	public int getCompanyListPageTotalAmount(int pageSize) {
+		return dao.getCompanyListPageTotalAmount(pageSize);
 	}
 }

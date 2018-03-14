@@ -38,7 +38,7 @@ public enum CompanyDAO {
 		return company;
 	}
 
-	public int getPageAmount(int pageSize) {
+	public int getCompanyListPageTotalAmount(int pageSize) {
 		int pages = 0;
 		try (Connection conn = dbConn.getConnection();
 				PreparedStatement stmt = conn.prepareStatement("SELECT count(ca_id) as count FROM company");
@@ -69,7 +69,8 @@ public enum CompanyDAO {
 		ResultSet rs = null;
 		ArrayList<Company> companies = new ArrayList<>();
 		try (Connection conn = dbConn.getConnection();
-				PreparedStatement stmt = conn.prepareStatement("SELECT * FROM company LIMIT ? OFFSET ?");) {
+				PreparedStatement stmt = conn
+						.prepareStatement("SELECT * FROM company ORDER BY ca_id LIMIT ? OFFSET ?");) {
 			retrieveParametersForComputerPage(pageNumber, pageSize, stmt);
 			rs = stmt.executeQuery();
 			retrievePageContentFromQueryResult(rs, companies);
@@ -90,9 +91,11 @@ public enum CompanyDAO {
 	}
 
 	private Company retrieveCompanyFromQuery(ResultSet rs) throws SQLException {
-		rs.next();
-		Company company = mapper.createCompany(rs);
-		return company;
+		if(rs.next()) {
+			Company company = mapper.createCompany(rs);
+			return company;
+		}
+		return null;
 	}
 
 	private void retrievePageContentFromQueryResult(ResultSet rs, ArrayList<Company> companies)

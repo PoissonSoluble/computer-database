@@ -54,7 +54,12 @@ public class Computer {
 	
 	@Override
 	public String toString() {
-		return new StringBuilder(id.toString()).append(":").append(name).append("(").append(company).append(")").toString();
+		StringBuilder sb = new StringBuilder(id.toString());
+		sb.append(" - ").append(name);
+		if(company.getId() != 0) {
+			sb.append(" (").append(company).append(")");
+		}
+		return sb.toString();
 	}
 
 }

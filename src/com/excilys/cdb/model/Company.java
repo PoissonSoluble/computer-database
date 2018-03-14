@@ -25,7 +25,7 @@ public class Company {
 	
 	@Override
 	public String toString() {
-		return new StringBuilder(id.toString()).append(":").append(name).toString();
+		return new StringBuilder(id.toString()).append(" - ").append(name).toString();
 	}
 
 }

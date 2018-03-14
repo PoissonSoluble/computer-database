@@ -16,6 +16,25 @@ public enum ComputerService {
 	private ComputerDAO dao = ComputerDAO.INSTANCE;
 	private ComputerValidator validator = ComputerValidator.INSTANCE;
 
+	public void createComputer(String name, LocalDate introduced, LocalDate discontinued, Long company)
+			throws ValidationException {
+		Computer computer = initComputer(name, introduced, discontinued, company);
+		createComputer(computer);
+	}
+
+	public void createComputer(Computer computer) throws ValidationException {
+		validator.validateComputer(computer);
+		dao.createComputer(computer);
+	}
+
+	public void deleteComputer(Long id) {
+		dao.deleteComputer(id);
+	}
+
+	public Computer detailComputer(Long id) {
+		return dao.getComputer(id);
+	}
+
 	public List<Computer> getComputerPage(int page, int pageSize) {
 		try {
 			return dao.listComputersByPage(page, pageSize);
@@ -23,32 +42,20 @@ public enum ComputerService {
 			return null;
 		}
 	}
-	
-	public int getPageAmount(int pageSize) {
-		return dao.getPageAmount(pageSize);
+
+	public int getComputerListPageTotalAmount(int pageSize) {
+		return dao.getComputerListPageTotalAmount(pageSize);
 	}
 
-
-	public void createComputer(String name, LocalDate introduced, LocalDate discontinued, Long company)
-			throws ValidationException {
-		Computer computer = initComputer(name, introduced, discontinued, company);
+	public void updateComputer(Computer computer) throws ValidationException {
 		validator.validateComputer(computer);
-		dao.createComputer(computer);
+		dao.updateComputer(computer);
 	}
 
 	public void updateComputer(String name, LocalDate introduced, LocalDate discontinued, Long company)
 			throws ValidationException {
 		Computer computer = initComputer(name, introduced, discontinued, company);
-		validator.validateComputer(computer);
-		dao.updateComputer(computer);
-	}
-
-	public void deleteComputer(Long id){
-		dao.deleteComputer(id);
-	}
-	
-	public Computer detailComputer(Long id) {
-		return dao.getComputer(id);
+		updateComputer(computer);
 	}
 
 	private Computer initComputer(String name, LocalDate introduced, LocalDate discontinued, Long companyId) {

@@ -28,13 +28,13 @@ public enum ComputerValidator {
 	}
 	
 	private void validateDates(LocalDate introduced, LocalDate discontinued) throws InvalidDatesException {
-		if(introduced != null && discontinued != null && introduced.isAfter(discontinued)) {
+		if(discontinued != null && introduced != null && introduced.isAfter(discontinued)) {
 			throw new InvalidDatesException();
 		}
 	}
 	
 	private void validateCompany(Company company) throws NotExistingCompanyException {
-		if(companyDAO.getCompany(company.getId()) == null) {
+		if(company.getId() != null && companyDAO.getCompany(company.getId()) == null) {
 			throw new NotExistingCompanyException();
 		}
 	}

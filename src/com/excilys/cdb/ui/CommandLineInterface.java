@@ -1,36 +1,48 @@
 package com.excilys.cdb.ui;
 
+import java.util.NoSuchElementException;
 import java.util.Scanner;
+import java.util.stream.Stream;
 
 public class CommandLineInterface {
+
+	private static Scanner sc;
 	
 	public String getMenu() {
-		
 		StringBuilder sb = new StringBuilder("===== COMPUTER DATABASE =====\n");
 		sb.append("--------- MAIN MENU ---------\n");
-		sb.append("1/ List computers\n");
-		sb.append("2/ List companies\n");
-		sb.append("3/ Detail computer\n");
-		sb.append("4/ Create computer\n");
-		sb.append("5/ Update computer\n");
-		sb.append("6/ Remove computer\n\n");
-
+		Stream.of(UserChoice.values()).forEach(value -> sb.append(value.getTitle()).append("\n"));
+		sb.append("\nChoose your action: ");
 		return sb.toString();
 	}
-	
-	public String getUserInput() {
-		Scanner sc = new Scanner(System.in);
-		String input = sc.nextLine();
-		sc.close();
-		return input;
+
+	public static String getUserInput() {
+		return sc.nextLine();
 	}
 	
-	public void handleUserChoice(String choice) {
-		
+	public boolean handleChoice(String userInput) {
+		try {
+			UserChoice choice = Stream.of(UserChoice.values()).filter(v -> v.accept(userInput)).findFirst().get();
+			return choice.handleChoice();
+		} catch (NoSuchElementException e) {
+			System.err.println("This choice is not valid.\n");
+			return true;
+		}
 	}
-	
+
+	public void start() {
+		CommandLineInterface.sc = new Scanner(System.in);
+		while (true) {
+			System.out.print(getMenu());
+			if(!handleChoice(getUserInput())) {
+				break;
+			}
+		}
+		System.out.println("Goodbye !");
+		CommandLineInterface.sc.close();
+	}
+
 	public static void main(String[] args) {
-		CommandLineInterface cli = new CommandLineInterface();
-		System.out.println(cli.getMenu());
+		new CommandLineInterface().start();
 	}
 }
