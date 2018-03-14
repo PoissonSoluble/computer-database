@@ -10,22 +10,23 @@ import com.excilys.cdb.ui.CommandLineInterface;
 public class ComputerItemizer implements CLIActionHandler {
 
 	private ComputerService service = ComputerService.INSTANCE;
+	private CLIComputerAPI cliApi = CLIComputerAPI.INSTANCE;
 
 	@Override
 	public void handle() {
 		try {
-			Long id = askComputerID();
+			Long id = cliApi.askComputerID();
 			Computer computer = service.detailComputer(id);
 			printComputer(computer);
 			CommandLineInterface.getUserInput();
 		} catch (NumberFormatException e) {
-			System.err.println("This is not a proper ID format. (an integer)");
+			System.out.println("This is not a proper ID format. (an integer)");
 		}
 	}
 
 	private void printComputer(Computer computer) {
 		if (computer == null) {
-			System.err.println("This computer does not exist.");
+			System.out.println("This computer does not exist.");
 		} else {
 			System.out.println(constructDetailString(computer));
 		}
@@ -40,7 +41,7 @@ public class ComputerItemizer implements CLIActionHandler {
 		sb.append(getFormatedDate(computer.getDiscontinued()));
 		sb.append("Company: ");
 		sb.append(getFormatedCompany(computer.getCompany()));
-		sb.append("(Press ENTER to continue)");
+		sb.append("(Press ENTER to continue)\n");
 		return sb.toString();
 	}
 
@@ -49,7 +50,7 @@ public class ComputerItemizer implements CLIActionHandler {
 		if(date == null) {
 			sb.append("Not specified.").append("\n");
 		}else {
-			sb.append(date.getMonthValue()).append(" ");
+			sb.append(date.getDayOfMonth()).append(" ");
 			sb.append(date.getMonth()).append(" ");
 			sb.append(date.getYear()).append("\n");
 		}
@@ -64,11 +65,5 @@ public class ComputerItemizer implements CLIActionHandler {
 			sb.append(company.getName()).append(" (#").append(company.getId()).append(")").append("\n");
 		}
 		return sb;
-	}
-
-	private Long askComputerID() throws NumberFormatException {
-		System.out.print("Enter the computer ID: ");
-		String stringId = CommandLineInterface.getUserInput();
-		return Long.parseLong(stringId);
 	}
 }

@@ -51,6 +51,13 @@ public enum ComputerService {
 		validator.validateComputer(computer);
 		dao.updateComputer(computer);
 	}
+	
+	public boolean exists(Long id) {
+		if(dao.getComputer(id) != null) {
+			return true;
+		}
+		return false;
+	}
 
 	public void updateComputer(String name, LocalDate introduced, LocalDate discontinued, Long company)
 			throws ValidationException {
