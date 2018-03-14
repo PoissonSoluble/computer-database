@@ -23,6 +23,11 @@ public enum ComputerService {
 			return null;
 		}
 	}
+	
+	public int getPageAmount(int pageSize) {
+		return dao.getPageAmount(pageSize);
+	}
+
 
 	public void createComputer(String name, LocalDate introduced, LocalDate discontinued, Long company)
 			throws ValidationException {
@@ -40,6 +45,10 @@ public enum ComputerService {
 
 	public void deleteComputer(Long id){
 		dao.deleteComputer(id);
+	}
+	
+	public Computer detailComputer(Long id) {
+		return dao.getComputer(id);
 	}
 
 	private Computer initComputer(String name, LocalDate introduced, LocalDate discontinued, Long companyId) {

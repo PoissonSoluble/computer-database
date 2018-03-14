@@ -12,36 +12,36 @@ import com.excilys.cdb.model.Company;
 import com.excilys.cdb.persistence.DatabaseConnection;
 
 public enum CompanyDAO {
-	
+
 	INSTANCE;
-	
+
 	private DatabaseConnection dbConn = DatabaseConnection.INSTANCE;
 	private CompanyMapper mapper = CompanyMapper.INSTANCE;
-	
+
 	public Company getCompany(Company company) {
 		return getCompany(company.getId());
 	}
-	
+
 	public Company getCompany(Long id) {
 		ResultSet rs = null;
 		Company company = null;
 		try (Connection conn = dbConn.getConnection();
-				PreparedStatement stmt = conn.prepareStatement("SELECT * FROM company WHERE id = ?");) {
+				PreparedStatement stmt = conn.prepareStatement("SELECT * FROM company WHERE ca_id = ?");) {
 			stmt.setLong(1, id);
 			rs = stmt.executeQuery();
 			company = retrieveCompanyFromQuery(rs);
 		} catch (SQLException e) {
 			e.printStackTrace();
-		}finally {
+		} finally {
 			dbConn.closeResultSet(rs);
 		}
 		return company;
 	}
-	
+
 	public int getPageAmount(int pageSize) {
 		int pages = 0;
 		try (Connection conn = dbConn.getConnection();
-				PreparedStatement stmt = conn.prepareStatement("SELECT count(id) as count FROM company");
+				PreparedStatement stmt = conn.prepareStatement("SELECT count(ca_id) as count FROM company");
 				ResultSet rs = stmt.executeQuery();) {
 			rs.next();
 			pages = computePageAmountFromQuery(pageSize, rs);
