@@ -14,8 +14,8 @@ public enum ComputerMapper {
 	public Computer createComputer(ResultSet rs) {
 		Computer computer = new Computer();
 		try {
-			computer.setId(rs.getLong("id"));
-			computer.setName(rs.getString("name"));
+			computer.setId(rs.getLong("computer_id"));
+			computer.setName(rs.getString("computer_name"));
 
 			Date introduced = rs.getDate("introduced");
 			if (introduced != null) {
@@ -28,6 +28,7 @@ public enum ComputerMapper {
 			}
 			Company company = new Company();
 			company.setId(rs.getLong("company_id"));
+			company.setName(rs.getString("company_name"));
 			computer.setCompany(company);
 		} catch (SQLException e) {
 			e.printStackTrace();

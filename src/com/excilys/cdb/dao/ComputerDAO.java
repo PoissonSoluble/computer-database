@@ -41,6 +41,23 @@ public enum ComputerDAO {
 		}
 	}
 
+	public Computer getComputer(long id) {
+		Computer computer = null;
+		ResultSet rs = null;
+		try (Connection conn = dbConn.getConnection();
+				PreparedStatement stmt = conn.prepareStatement(
+						"SELECT cu.id as computer_id, cu.name as computer_name, introduced, discontinued, company_id, ca.name as company_name FROM computer cu LEFT JOIN company ca ON company_id = ca.id WHERE cu.id = ?");) {
+			stmt.setLong(1, id);
+			rs = stmt.executeQuery();
+			retrieveComputerFromQuery(computer, rs);
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			dbConn.closeResultSet(rs);
+		}
+		return computer;
+	}
+
 	public int getPageAmount(int pageSize) {
 		int pages = 0;
 		try (Connection conn = dbConn.getConnection();
@@ -71,7 +88,8 @@ public enum ComputerDAO {
 		ResultSet rs = null;
 		ArrayList<Computer> computers = new ArrayList<>();
 		try (Connection conn = dbConn.getConnection();
-				PreparedStatement stmt = conn.prepareStatement("SELECT * FROM computer LIMIT ? OFFSET ?");) {
+				PreparedStatement stmt = conn.prepareStatement(
+						"SELECT cu.id as computer_id, cu.name as computer_name, introduced, discontinued, company_id, ca.name as company_name FROM computer cu LEFT JOIN company ca ON company_id = ca.id LIMIT ? OFFSET ?");) {
 			retrieveParametersForComputerPage(pageNumber, pageSize, stmt);
 			rs = stmt.executeQuery();
 			retrievePageContentFromQueryResult(rs, computers);
@@ -107,6 +125,11 @@ public enum ComputerDAO {
 		while (rs.next()) {
 			computers.add(mapper.createComputer(rs));
 		}
+	}
+
+	private void retrieveComputerFromQuery(Computer computer, ResultSet rs) throws SQLException {
+		rs.next();
+		computer = mapper.createComputer(rs);
 	}
 
 	private void retrievePageContentFromQueryResult(ResultSet rs, ArrayList<Computer> computers)
