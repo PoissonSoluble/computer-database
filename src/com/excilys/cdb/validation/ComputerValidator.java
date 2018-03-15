@@ -34,7 +34,7 @@ public enum ComputerValidator {
 	}
 	
 	private void validateCompany(Company company) throws NotExistingCompanyException {
-		if(company.getId() != null && companyDAO.getCompany(company.getId()) == null) {
+		if(company != null && company.getId() != null && companyDAO.getCompany(company.getId()) == null) {
 			throw new NotExistingCompanyException();
 		}
 	}

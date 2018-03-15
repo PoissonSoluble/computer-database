@@ -1,6 +1,9 @@
 package com.excilys.cdb.dao;
 
 import java.sql.Connection;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -17,6 +20,7 @@ public enum CompanyDAO {
 
 	private DatabaseConnection dbConn = DatabaseConnection.INSTANCE;
 	private CompanyMapper mapper = CompanyMapper.INSTANCE;
+	private Logger logger = LoggerFactory.getLogger(CompanyDAO.class);
 
 	public Company getCompany(Company company) {
 		return getCompany(company.getId());
@@ -31,7 +35,7 @@ public enum CompanyDAO {
 			rs = stmt.executeQuery();
 			company = retrieveCompanyFromQuery(rs);
 		} catch (SQLException e) {
-			e.printStackTrace();
+			logger.debug(new StringBuilder("getCompany(): ").append(e.getMessage()).toString());
 		} finally {
 			dbConn.closeResultSet(rs);
 		}
@@ -46,7 +50,7 @@ public enum CompanyDAO {
 			rs.next();
 			pages = computePageAmountFromQuery(pageSize, rs);
 		} catch (SQLException e) {
-			e.printStackTrace();
+			logger.debug(new StringBuilder("getCompanyListPageTotalAmount(int): ").append(e.getMessage()).toString());
 		}
 		return pages;
 	}
@@ -60,7 +64,7 @@ public enum CompanyDAO {
 				companies.add(mapper.createCompany(rs));
 			}
 		} catch (SQLException e) {
-			e.printStackTrace();
+			logger.debug(new StringBuilder("listCompanies(): ").append(e.getMessage()).toString());
 		}
 		return companies;
 	}
@@ -75,7 +79,7 @@ public enum CompanyDAO {
 			rs = stmt.executeQuery();
 			retrievePageContentFromQueryResult(rs, companies);
 		} catch (SQLException e) {
-			e.printStackTrace();
+			logger.debug(new StringBuilder("listCompaniesByPage(): ").append(e.getMessage()).toString());
 		} finally {
 			dbConn.closeResultSet(rs);
 		}
@@ -91,7 +95,7 @@ public enum CompanyDAO {
 	}
 
 	private Company retrieveCompanyFromQuery(ResultSet rs) throws SQLException {
-		if(rs.next()) {
+		if (rs.next()) {
 			Company company = mapper.createCompany(rs);
 			return company;
 		}

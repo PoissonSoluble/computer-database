@@ -5,9 +5,13 @@ import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.excilys.cdb.mapper.ComputerMapper;
 import com.excilys.cdb.model.Computer;
@@ -19,15 +23,18 @@ public enum ComputerDAO {
 
 	private DatabaseConnection dbConn = DatabaseConnection.INSTANCE;
 	private ComputerMapper mapper = ComputerMapper.INSTANCE;
+	private Logger logger = LoggerFactory.getLogger(ComputerDAO.class);
 
 	public void createComputer(Computer computer) {
 		try (Connection conn = dbConn.getConnection();
 				PreparedStatement stmt = conn.prepareStatement(
-						"INSERT INTO computer (cu_name, cu_introduced, cu_discontinued, ca_id) VALUES(?,?,?,?)");) {
+						"INSERT INTO computer (cu_name, cu_introduced, cu_discontinued, ca_id) VALUES(?,?,?,?)",
+						Statement.RETURN_GENERATED_KEYS);) {
 			setParameters(computer, stmt);
 			stmt.executeUpdate();
+			retrieveComputerIDFromUpdate(computer, stmt);
 		} catch (SQLException e) {
-			e.printStackTrace();
+			logger.debug(new StringBuilder("createComputer(): ").append(e.getMessage()).toString());
 		}
 	}
 
@@ -37,7 +44,7 @@ public enum ComputerDAO {
 			stmt.setLong(1, id);
 			stmt.executeUpdate();
 		} catch (SQLException e) {
-			e.printStackTrace();
+			logger.debug(new StringBuilder("deleteComputer(): ").append(e.getMessage()).toString());
 		}
 	}
 
@@ -51,7 +58,7 @@ public enum ComputerDAO {
 			rs = stmt.executeQuery();
 			computer = retrieveComputerFromQuery(rs);
 		} catch (SQLException e) {
-			e.printStackTrace();
+			logger.debug(new StringBuilder("getComputer(Long): ").append(e.getMessage()).toString());
 		} finally {
 			dbConn.closeResultSet(rs);
 		}
@@ -66,7 +73,7 @@ public enum ComputerDAO {
 			rs.next();
 			pages = computePageAmountFromQuery(pageSize, rs);
 		} catch (SQLException e) {
-			e.printStackTrace();
+			logger.debug(new StringBuilder("getComputerListPageTotalAmount(int): ").append(e.getMessage()).toString());
 		}
 		return pages;
 	}
@@ -78,7 +85,7 @@ public enum ComputerDAO {
 				ResultSet rs = stmt.executeQuery();) {
 			retrieveComputersFromQuery(computers, rs);
 		} catch (SQLException e) {
-			e.printStackTrace();
+			logger.debug(new StringBuilder("listComputers(): ").append(e.getMessage()).toString());
 		}
 		return computers;
 	}
@@ -93,7 +100,7 @@ public enum ComputerDAO {
 			rs = stmt.executeQuery();
 			retrievePageContentFromQueryResult(rs, computers);
 		} catch (SQLException e) {
-			e.printStackTrace();
+			logger.debug(new StringBuilder("listComputersByPage(int,int): ").append(e.getMessage()).toString());
 		} finally {
 			dbConn.closeResultSet(rs);
 		}
@@ -103,12 +110,14 @@ public enum ComputerDAO {
 	public void updateComputer(Computer computer) {
 		try (Connection conn = dbConn.getConnection();
 				PreparedStatement stmt = conn.prepareStatement(
-						"UPDATE computer SET cu_name = ?, cu_introduced = ?, cu_discontinued = ?, ca_id = ? WHERE cu_id = ?");) {
+						"UPDATE computer SET cu_name = ?, cu_introduced = ?, cu_discontinued = ?, ca_id = ? WHERE cu_id = ?",
+						Statement.RETURN_GENERATED_KEYS);) {
 			setParameters(computer, stmt);
 			stmt.setLong(5, computer.getId());
 			stmt.executeUpdate();
+			retrieveComputerIDFromUpdate(computer, stmt);
 		} catch (SQLException e) {
-			e.printStackTrace();
+			logger.debug(new StringBuilder("updateComputer(Computer): ").append(e.getMessage()).toString());
 		}
 	}
 
@@ -129,10 +138,20 @@ public enum ComputerDAO {
 	}
 
 	private Computer retrieveComputerFromQuery(ResultSet rs) throws SQLException {
-		if(rs.next()) {
+		if (rs.next()) {
 			return mapper.createComputer(rs);
 		}
 		return null;
+	}
+
+	private void retrieveComputerIDFromUpdate(Computer computer, PreparedStatement stmt) throws SQLException {
+		try (ResultSet generatedKeys = stmt.getGeneratedKeys()) {
+			if (generatedKeys.next()) {
+				computer.setId(generatedKeys.getLong(1));
+			} else {
+				throw new SQLException("Creating user failed, no ID obtained.");
+			}
+		}
 	}
 
 	private void retrieveComputersFromQuery(ArrayList<Computer> computers, ResultSet rs) throws SQLException {

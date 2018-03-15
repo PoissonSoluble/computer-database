@@ -3,6 +3,9 @@ package com.excilys.cdb.service;
 import java.time.LocalDate;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.excilys.cdb.dao.ComputerDAO;
 import com.excilys.cdb.dao.PageOutOfBoundsException;
 import com.excilys.cdb.model.Company;
@@ -15,6 +18,13 @@ public enum ComputerService {
 
 	private ComputerDAO dao = ComputerDAO.INSTANCE;
 	private ComputerValidator validator = ComputerValidator.INSTANCE;
+	private Logger logger = LoggerFactory.getLogger(ComputerService.class);
+
+	public void createComputer(Computer computer) throws ValidationException {
+		validator.validateComputer(computer);
+		dao.createComputer(computer);
+		logger.info(new StringBuilder("Computer creation : ").append(computer).toString());
+	}
 
 	public void createComputer(String name, LocalDate introduced, LocalDate discontinued, Long company)
 			throws ValidationException {
@@ -22,17 +32,24 @@ public enum ComputerService {
 		createComputer(computer);
 	}
 
-	public void createComputer(Computer computer) throws ValidationException {
-		validator.validateComputer(computer);
-		dao.createComputer(computer);
-	}
-
 	public void deleteComputer(Long id) {
 		dao.deleteComputer(id);
+		logger.info(new StringBuilder("Computer removal : ").append(id).toString());
 	}
 
 	public Computer detailComputer(Long id) {
 		return dao.getComputer(id);
+	}
+
+	public boolean exists(Long id) {
+		if(dao.getComputer(id) != null) {
+			return true;
+		}
+		return false;
+	}
+
+	public int getComputerListPageTotalAmount(int pageSize) {
+		return dao.getComputerListPageTotalAmount(pageSize);
 	}
 
 	public List<Computer> getComputerPage(int page, int pageSize) {
@@ -42,21 +59,11 @@ public enum ComputerService {
 			return null;
 		}
 	}
-
-	public int getComputerListPageTotalAmount(int pageSize) {
-		return dao.getComputerListPageTotalAmount(pageSize);
-	}
-
+	
 	public void updateComputer(Computer computer) throws ValidationException {
 		validator.validateComputer(computer);
 		dao.updateComputer(computer);
-	}
-	
-	public boolean exists(Long id) {
-		if(dao.getComputer(id) != null) {
-			return true;
-		}
-		return false;
+		logger.info(new StringBuilder("Computer update : ").append(computer).toString());
 	}
 
 	public void updateComputer(String name, LocalDate introduced, LocalDate discontinued, Long company)
