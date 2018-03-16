@@ -9,6 +9,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import com.excilys.cdb.mapper.CompanyMapper;
 import com.excilys.cdb.model.Company;
@@ -27,11 +28,11 @@ public enum CompanyDAO {
 	private final String SELECT_COUNT = "SELECT count(ca_id) as count FROM company";
 	private final String SELECT_A_PAGE = "SELECT ca_id, ca_name FROM company ORDER BY ca_id LIMIT ? OFFSET ?";
 
-	public Company getCompany(Company company) {
+	public Optional<Company> getCompany(Company company) {
 		return getCompany(company.getId());
 	}
 
-	public Company getCompany(Long id) {
+	public Optional<Company> getCompany(Long id) {
 		Company company = null;
 		try (Connection conn = dbConn.getConnection();
 				PreparedStatement stmt = conn.prepareStatement(SELECT_FROM_ID);) {
@@ -40,7 +41,7 @@ public enum CompanyDAO {
 		} catch (SQLException e) {
 			logger.debug(new StringBuilder("getCompany(): ").append(e.getMessage()).toString());
 		}
-		return company;
+		return Optional.ofNullable(company);
 	}
 
 	public int getCompanyListPageTotalAmount(int pageSize) {

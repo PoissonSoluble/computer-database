@@ -2,45 +2,46 @@ package com.excilys.cdb.ui.actionhandlers;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
+import java.util.Optional;
 
 import com.excilys.cdb.model.Company;
 import com.excilys.cdb.model.Computer;
 import com.excilys.cdb.ui.CommandLineInterface;
 
-public enum CLIComputerAPI{
+public enum CLIComputerAPI {
 	INSTANCE;
-	
+
 	public Long askComputerID() throws NumberFormatException {
 		System.out.print("Enter the computer ID: ");
 		String stringId = CommandLineInterface.getUserInput();
 		return Long.parseLong(stringId);
 	}
-	
+
 	public Computer askParametersForComputer() {
 		Computer computer = new Computer();
-		if(!readName(computer) || !readDates(computer) || !readCompany(computer)) {
+		if (!readName(computer) || !readDates(computer) || !readCompany(computer)) {
 			return null;
 		}
 		return computer;
 	}
 
-	private Long askCompany() throws NumberFormatException {
+	private Optional<Long> askCompany() throws NumberFormatException {
 		System.out.println("Enter a company ID (ENTER to ignore): ");
 		String input = CommandLineInterface.getUserInput();
 		if (input.equals("")) {
-			return null;
+			return Optional.empty();
 		} else {
-			return Long.parseLong(input);
+			return Optional.of(Long.parseLong(input));
 		}
 	}
-	
-	private LocalDate askDate() throws DateTimeParseException {
+
+	private Optional<LocalDate> askDate() throws DateTimeParseException {
 		System.out.print("Enter a date (format 'yyyy-mm-dd', ENTER to ignore): ");
 		String input = CommandLineInterface.getUserInput();
 		if (input.equals("")) {
-			return null;
+			return Optional.empty();
 		} else {
-			return LocalDate.parse(input);
+			return Optional.of(LocalDate.parse(input));
 		}
 	}
 
@@ -53,11 +54,14 @@ public enum CLIComputerAPI{
 			return input;
 		}
 	}
-	
+
 	private boolean readCompany(Computer computer) {
 		try {
-			computer.setCompany(new Company.Builder(askCompany()).build());
-		}catch (NumberFormatException e) {
+			Optional<Long> company = askCompany();
+			if (company.isPresent()) {
+				computer.setCompany(new Company.Builder(askCompany().get()).build());
+			}
+		} catch (NumberFormatException e) {
 			System.out.println("Wrong company ID format. (need an integer)");
 			return false;
 		}
@@ -76,9 +80,12 @@ public enum CLIComputerAPI{
 	}
 
 	private void readDiscontinued(Computer computer) {
-		if(computer.getIntroduced() != null) {
+		if (computer.getIntroduced().isPresent()) {
 			System.out.print("Discontinued date. ");
-			computer.setDiscontinued(askDate());
+			Optional<LocalDate> discontinued = askDate();
+			if (discontinued.isPresent()) {
+				computer.setDiscontinued(askDate().get());
+			}
 		}
 	}
 
@@ -89,7 +96,7 @@ public enum CLIComputerAPI{
 
 	private boolean readName(Computer computer) {
 		computer.setName(askName());
-		if(computer.getName() == null) {
+		if (computer.getName() == null) {
 			System.out.println("The name cannot be null.");
 			return false;
 		}

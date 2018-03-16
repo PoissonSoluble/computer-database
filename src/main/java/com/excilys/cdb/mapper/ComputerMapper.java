@@ -22,7 +22,9 @@ public enum ComputerMapper {
 		if (discontinued != null) {
 			computerBuilder.withDiscontinued(discontinued.toLocalDate());
 		}
-		computerBuilder.withCompany(companyMapper.createCompany(companyId, companyName));
+		if(companyId != null) {
+			computerBuilder.withCompany(companyMapper.createCompany(companyId, companyName));
+		}
 		return computerBuilder.build();
 	}
 }

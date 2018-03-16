@@ -1,6 +1,7 @@
 package com.excilys.cdb.model;
 
 import java.time.LocalDate;
+import java.util.Optional;
 
 public class Computer {
 	private Long id;
@@ -69,8 +70,8 @@ public class Computer {
 		return id;
 	}
 
-	public LocalDate getIntroduced() {
-		return introduced;
+	public Optional<LocalDate> getIntroduced() {
+		return Optional.ofNullable(introduced);
 	}
 
 	public String getName() {
