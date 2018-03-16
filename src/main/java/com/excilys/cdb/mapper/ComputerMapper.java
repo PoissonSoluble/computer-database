@@ -14,25 +14,25 @@ public enum ComputerMapper {
 	private CompanyMapper companyMapper = CompanyMapper.INSTANCE;
 	
 	public Computer createComputer(ResultSet rs) {
-		Computer computer = new Computer();
+		Computer.Builder computerBuilder = new Computer.Builder();
 		try {
-			computer.setId(rs.getLong("cu_id"));
-			computer.setName(rs.getString("cu_name"));
+			computerBuilder.withId(rs.getLong("cu_id"));
+			computerBuilder.withName(rs.getString("cu_name"));
 
 			Date introduced = rs.getDate("cu_introduced");
 			if (introduced != null) {
-				computer.setIntroduced(introduced.toLocalDate());
+				computerBuilder.withIntroduced(introduced.toLocalDate());
 			}
 			
 			Date discontinued = rs.getDate("cu_discontinued");
 			if (discontinued != null) {
-				computer.setDiscontinued(discontinued.toLocalDate());
+				computerBuilder.withDiscontinued(discontinued.toLocalDate());
 			}
 			Company company = companyMapper.createCompany(rs);
-			computer.setCompany(company);
+			computerBuilder.withCompany(company);
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
-		return computer;
+		return computerBuilder.build();
 	}
 }

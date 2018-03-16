@@ -4,16 +4,22 @@ import java.time.LocalDate;
 
 public class Computer {
 	private Long id;
-
 	private String name;
-
 	private LocalDate introduced;
 	private LocalDate discontinued;
 	private Company company;
-	
+
 	public Computer() {
 	}
 	
+	public Computer(Builder builder) {
+		id = builder.id;
+		name = builder.name;
+		introduced = builder.introduced;
+		discontinued = builder.discontinued;
+		company = builder.company;
+	}
+
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
@@ -102,18 +108,65 @@ public class Computer {
 	public void setName(String pName) {
 		name = pName;
 	}
-	
+
 	@Override
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
-		if(id != null) {
+		if (id != null) {
 			sb.append(id.toString());
 		}
 		sb.append(" - ").append(name);
-		if(company != null && company.getId() != null && company.getId() != 0) {
+		if (company != null && company.getId() != null && company.getId() != 0) {
 			sb.append(" (").append(company).append(")");
 		}
 		return sb.toString();
 	}
 
+	public static class Builder {
+		private Long id;
+		private String name;
+		private LocalDate introduced;
+		private LocalDate discontinued;
+		private Company company;
+
+		public Builder() {
+		}
+
+		public Builder(Long pId) {
+			id = pId;
+		}
+
+		public Builder(String pName) {
+			name = pName;
+		}
+
+		public Builder withId(Long pId) {
+			id = pId;
+			return this;
+		}
+
+		public Builder withName(String pName) {
+			name = pName;
+			return this;
+		}
+
+		public Builder withIntroduced(LocalDate pIntroduced) {
+			introduced = pIntroduced;
+			return this;
+		}
+
+		public Builder withDiscontinued(LocalDate pDiscontinued) {
+			discontinued = pDiscontinued;
+			return this;
+		}
+
+		public Builder withCompany(Company pCompany) {
+			company = pCompany;
+			return this;
+		}
+
+		public Computer build() {
+			return new Computer(this);
+		}
+	}
 }

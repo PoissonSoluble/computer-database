@@ -6,6 +6,11 @@ public class Company {
 
 	public Company() {
 	}
+	
+	public Company(Builder builder) {
+		id = builder.id;
+		name = builder.name;
+	}
 
 	public Long getId() {
 		return id;
@@ -59,5 +64,34 @@ public class Company {
 		return true;
 	}
 
+	public static class Builder{
+		private Long id;
+		private String name;
+		
+		public Builder() {
+		}
 
+		public Builder(Long pId) {
+			id = pId;
+		}
+
+		public Builder(String pName) {
+			name = pName;
+		}
+		
+		public Builder withId(Long pId) {
+			id = pId;
+			return this;
+		}
+
+		public Builder withName(String pName) {
+			name = pName;
+			return this;
+		}
+		
+		public Company build() {
+			return new Company(this);
+		}
+		
+	}
 }

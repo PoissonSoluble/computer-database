@@ -42,7 +42,7 @@ public enum ComputerService {
 	}
 
 	public boolean exists(Long id) {
-		if(dao.getComputer(id) != null) {
+		if (dao.getComputer(id) != null) {
 			return true;
 		}
 		return false;
@@ -59,7 +59,7 @@ public enum ComputerService {
 			return null;
 		}
 	}
-	
+
 	public void updateComputer(Computer computer) throws ValidationException {
 		validator.validateComputer(computer);
 		dao.updateComputer(computer);
@@ -73,13 +73,7 @@ public enum ComputerService {
 	}
 
 	private Computer initComputer(String name, LocalDate introduced, LocalDate discontinued, Long companyId) {
-		Computer computer = new Computer();
-		Company company = new Company();
-		computer.setName(name);
-		computer.setIntroduced(introduced);
-		computer.setDiscontinued(discontinued);
-		company.setId(companyId);
-		computer.setCompany(company);
-		return computer;
+		return new Computer.Builder(name).withIntroduced(introduced).withDiscontinued(discontinued)
+				.withCompany(new Company.Builder(companyId).build()).build();
 	}
 }

@@ -48,9 +48,7 @@ public enum CLIComputerAPI{
 
 	private boolean readCompany(Computer computer) {
 		try {
-			Company company = new Company();
-			company.setId(askCompany());
-			computer.setCompany(company);
+			computer.setCompany(new Company.Builder(askCompany()).build());
 		}catch (NumberFormatException e) {
 			System.out.println("Wrong company ID format. (need an integer)");
 			return false;

@@ -10,14 +10,14 @@ public enum CompanyMapper {
 	INSTANCE;
 	
 	public Company createCompany(ResultSet rs) {
-		Company company = new Company();
+		Company.Builder companyBuilder = new Company.Builder();
 		try {
-			company.setId(rs.getLong("ca_id"));
-			company.setName(rs.getString("ca_name"));
+			companyBuilder.withId(rs.getLong("ca_id"));
+			companyBuilder.withName(rs.getString("ca_name"));
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
-		return company;
+		return companyBuilder.build();
 	}
 	
 }
