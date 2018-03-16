@@ -22,6 +22,11 @@ public enum CompanyDAO {
 	private CompanyMapper mapper = CompanyMapper.INSTANCE;
 	private Logger logger = LoggerFactory.getLogger(CompanyDAO.class);
 
+	private final String SELECT_ALL = "SELECT * FROM company";
+	private final String SELECT_FROM_ID = "SELECT * FROM company WHERE ca_id = ?";
+	private final String SELECT_COUNT = "SELECT count(ca_id) as count FROM company";
+	private final String SELECT_A_PAGE = "SELECT * FROM company ORDER BY ca_id LIMIT ? OFFSET ?";
+
 	public Company getCompany(Company company) {
 		return getCompany(company.getId());
 	}
@@ -30,7 +35,7 @@ public enum CompanyDAO {
 		ResultSet rs = null;
 		Company company = null;
 		try (Connection conn = dbConn.getConnection();
-				PreparedStatement stmt = conn.prepareStatement("SELECT * FROM company WHERE ca_id = ?");) {
+				PreparedStatement stmt = conn.prepareStatement(SELECT_FROM_ID);) {
 			stmt.setLong(1, id);
 			rs = stmt.executeQuery();
 			company = retrieveCompanyFromQuery(rs);
@@ -45,7 +50,7 @@ public enum CompanyDAO {
 	public int getCompanyListPageTotalAmount(int pageSize) {
 		int pages = 0;
 		try (Connection conn = dbConn.getConnection();
-				PreparedStatement stmt = conn.prepareStatement("SELECT count(ca_id) as count FROM company");
+				PreparedStatement stmt = conn.prepareStatement(SELECT_COUNT);
 				ResultSet rs = stmt.executeQuery();) {
 			rs.next();
 			pages = computePageAmountFromQuery(pageSize, rs);
@@ -58,7 +63,7 @@ public enum CompanyDAO {
 	public List<Company> listCompanies() {
 		ArrayList<Company> companies = new ArrayList<>();
 		try (Connection conn = dbConn.getConnection();
-				PreparedStatement stmt = conn.prepareStatement("SELECT * FROM company");
+				PreparedStatement stmt = conn.prepareStatement(SELECT_ALL);
 				ResultSet rs = stmt.executeQuery();) {
 			while (rs.next()) {
 				companies.add(mapper.createCompany(rs));
@@ -72,9 +77,7 @@ public enum CompanyDAO {
 	public List<Company> listCompaniesByPage(int pageNumber, int pageSize) throws PageOutOfBoundsException {
 		ResultSet rs = null;
 		ArrayList<Company> companies = new ArrayList<>();
-		try (Connection conn = dbConn.getConnection();
-				PreparedStatement stmt = conn
-						.prepareStatement("SELECT * FROM company ORDER BY ca_id LIMIT ? OFFSET ?");) {
+		try (Connection conn = dbConn.getConnection(); PreparedStatement stmt = conn.prepareStatement(SELECT_A_PAGE);) {
 			retrieveParametersForComputerPage(pageNumber, pageSize, stmt);
 			rs = stmt.executeQuery();
 			retrievePageContentFromQueryResult(rs, companies);

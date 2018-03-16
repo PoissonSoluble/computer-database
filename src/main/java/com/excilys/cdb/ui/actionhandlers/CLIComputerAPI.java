@@ -16,6 +16,14 @@ public enum CLIComputerAPI{
 		return Long.parseLong(stringId);
 	}
 	
+	public Computer askParametersForComputer() {
+		Computer computer = new Computer();
+		if(!readName(computer) || !readDates(computer) || !readCompany(computer)) {
+			return null;
+		}
+		return computer;
+	}
+
 	private Long askCompany() throws NumberFormatException {
 		System.out.println("Enter a company ID (ENTER to ignore): ");
 		String input = CommandLineInterface.getUserInput();
@@ -25,7 +33,7 @@ public enum CLIComputerAPI{
 			return Long.parseLong(input);
 		}
 	}
-
+	
 	private LocalDate askDate() throws DateTimeParseException {
 		System.out.print("Enter a date (format 'yyyy-mm-dd', ENTER to ignore): ");
 		String input = CommandLineInterface.getUserInput();
@@ -35,7 +43,7 @@ public enum CLIComputerAPI{
 			return LocalDate.parse(input);
 		}
 	}
-	
+
 	private String askName() {
 		System.out.print("\nEnter a name: ");
 		String input = CommandLineInterface.getUserInput();
@@ -45,7 +53,7 @@ public enum CLIComputerAPI{
 			return input;
 		}
 	}
-
+	
 	private boolean readCompany(Computer computer) {
 		try {
 			computer.setCompany(new Company.Builder(askCompany()).build());
@@ -55,7 +63,7 @@ public enum CLIComputerAPI{
 		}
 		return true;
 	}
-	
+
 	private boolean readDates(Computer computer) {
 		try {
 			readIntroduced(computer);
@@ -86,14 +94,6 @@ public enum CLIComputerAPI{
 			return false;
 		}
 		return true;
-	}
-
-	protected Computer askParametersForComputer() {
-		Computer computer = new Computer();
-		if(!readName(computer) || !readDates(computer) || !readCompany(computer)) {
-			return null;
-		}
-		return computer;
 	}
 
 }

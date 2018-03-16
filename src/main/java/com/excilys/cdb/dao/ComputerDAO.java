@@ -25,11 +25,17 @@ public enum ComputerDAO {
 	private ComputerMapper mapper = ComputerMapper.INSTANCE;
 	private Logger logger = LoggerFactory.getLogger(ComputerDAO.class);
 
+	private final String SELECT_ALL = "SELECT * FROM computer LEFT JOIN company USING(ca_id)";
+	private final String SELECT_FROM_ID = "SELECT * FROM computer LEFT JOIN company USING(ca_id) WHERE cu_id = ?";
+	private final String SELECT_PAGE = "SELECT * FROM computer LEFT JOIN company USING(ca_id) ORDER BY cu_id LIMIT ? OFFSET ?";
+	private final String SELECT_COUNT = "SELECT count(cu_id) as count FROM computer";
+	private final String INSERT = "INSERT INTO computer (cu_name, cu_introduced, cu_discontinued, ca_id) VALUES(?,?,?,?)";
+	private final String DELETE = "DELETE FROM computer WHERE cu_id = ?";
+	private final String UPDATE = "UPDATE computer SET cu_name = ?, cu_introduced = ?, cu_discontinued = ?, ca_id = ? WHERE cu_id = ?";
+
 	public void createComputer(Computer computer) {
 		try (Connection conn = dbConn.getConnection();
-				PreparedStatement stmt = conn.prepareStatement(
-						"INSERT INTO computer (cu_name, cu_introduced, cu_discontinued, ca_id) VALUES(?,?,?,?)",
-						Statement.RETURN_GENERATED_KEYS);) {
+				PreparedStatement stmt = conn.prepareStatement(INSERT, Statement.RETURN_GENERATED_KEYS);) {
 			setParameters(computer, stmt);
 			stmt.executeUpdate();
 			retrieveComputerIDFromUpdate(computer, stmt);
@@ -39,8 +45,7 @@ public enum ComputerDAO {
 	}
 
 	public void deleteComputer(long id) {
-		try (Connection conn = dbConn.getConnection();
-				PreparedStatement stmt = conn.prepareStatement("DELETE FROM computer WHERE cu_id = ?");) {
+		try (Connection conn = dbConn.getConnection(); PreparedStatement stmt = conn.prepareStatement(DELETE);) {
 			stmt.setLong(1, id);
 			stmt.executeUpdate();
 		} catch (SQLException e) {
@@ -52,8 +57,7 @@ public enum ComputerDAO {
 		Computer computer = null;
 		ResultSet rs = null;
 		try (Connection conn = dbConn.getConnection();
-				PreparedStatement stmt = conn
-						.prepareStatement("SELECT * FROM computer LEFT JOIN company USING(ca_id) WHERE cu_id = ?");) {
+				PreparedStatement stmt = conn.prepareStatement(SELECT_FROM_ID);) {
 			stmt.setLong(1, id);
 			rs = stmt.executeQuery();
 			computer = retrieveComputerFromQuery(rs);
@@ -68,7 +72,7 @@ public enum ComputerDAO {
 	public int getComputerListPageTotalAmount(int pageSize) {
 		int pages = 0;
 		try (Connection conn = dbConn.getConnection();
-				PreparedStatement stmt = conn.prepareStatement("SELECT count(cu_id) as count FROM computer");
+				PreparedStatement stmt = conn.prepareStatement(SELECT_COUNT);
 				ResultSet rs = stmt.executeQuery();) {
 			rs.next();
 			pages = computePageAmountFromQuery(pageSize, rs);
@@ -81,7 +85,7 @@ public enum ComputerDAO {
 	public List<Computer> listComputers() {
 		ArrayList<Computer> computers = new ArrayList<>();
 		try (Connection conn = dbConn.getConnection();
-				PreparedStatement stmt = conn.prepareStatement("SELECT * FROM computer LEFT JOIN company USING(ca_id)");
+				PreparedStatement stmt = conn.prepareStatement(SELECT_ALL);
 				ResultSet rs = stmt.executeQuery();) {
 			retrieveComputersFromQuery(computers, rs);
 		} catch (SQLException e) {
@@ -93,9 +97,7 @@ public enum ComputerDAO {
 	public List<Computer> listComputersByPage(int pageNumber, int pageSize) throws PageOutOfBoundsException {
 		ResultSet rs = null;
 		ArrayList<Computer> computers = new ArrayList<>();
-		try (Connection conn = dbConn.getConnection();
-				PreparedStatement stmt = conn.prepareStatement(
-						"SELECT * FROM computer LEFT JOIN company USING(ca_id) ORDER BY cu_id LIMIT ? OFFSET ?");) {
+		try (Connection conn = dbConn.getConnection(); PreparedStatement stmt = conn.prepareStatement(SELECT_PAGE);) {
 			retrieveParametersForComputerPage(pageNumber, pageSize, stmt);
 			rs = stmt.executeQuery();
 			retrievePageContentFromQueryResult(rs, computers);
@@ -109,9 +111,7 @@ public enum ComputerDAO {
 
 	public void updateComputer(Computer computer) {
 		try (Connection conn = dbConn.getConnection();
-				PreparedStatement stmt = conn.prepareStatement(
-						"UPDATE computer SET cu_name = ?, cu_introduced = ?, cu_discontinued = ?, ca_id = ? WHERE cu_id = ?",
-						Statement.RETURN_GENERATED_KEYS);) {
+				PreparedStatement stmt = conn.prepareStatement(UPDATE, Statement.RETURN_GENERATED_KEYS);) {
 			setParameters(computer, stmt);
 			stmt.setLong(5, computer.getId());
 			stmt.executeUpdate();
