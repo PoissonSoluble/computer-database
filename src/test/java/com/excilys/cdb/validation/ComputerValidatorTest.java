@@ -1,25 +1,23 @@
 package com.excilys.cdb.validation;
 
+import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
-import static org.junit.jupiter.api.Assertions.*;
 
-import org.junit.Rule;
-import org.junit.jupiter.api.Test;
-import org.junit.rules.ExpectedException;
+import org.junit.Test;
 
 import com.excilys.cdb.model.Computer;
 import com.excilys.cdb.validation.exceptions.NullNameException;
 import com.excilys.cdb.validation.exceptions.ValidationException;
 
-class ComputerValidatorTest {
+public class ComputerValidatorTest {
 
 	private ComputerValidator validator = ComputerValidator.INSTANCE;
 
-	@Rule
-	public ExpectedException thrown = ExpectedException.none();
+	public ComputerValidatorTest() {
+	}
 	
 	@Test
-	void testNameValidation() {
+	public void testNameValidation() {
 		Computer computer = new Computer();
 		computer.setName("Test Name");
 		try {
@@ -29,30 +27,30 @@ class ComputerValidatorTest {
 		}
 		assertTrue(true);
 	}
-	
+
 	@Test
-	void testNameInvalidation() {
+	public void testNameInvalidation() {
 		Computer computer = new Computer();
 		try {
 			validator.validateComputer(computer);
-		} catch(NullNameException e){
+		} catch (NullNameException e) {
 			assertTrue(true);
 			return;
-		} catch(ValidationException e) {
+		} catch (ValidationException e) {
 			fail("The exception should be a NullNameException.");
 		}
 		fail("The computer should not be validated with a null name.");
 	}
-	
+
 	@Test
-	void testTODO() {
+	public void testTODO() {
 		Computer computer = new Computer();
 		try {
 			validator.validateComputer(computer);
-		} catch(NullNameException e){
+		} catch (NullNameException e) {
 			assertTrue(true);
 			return;
-		} catch(ValidationException e) {
+		} catch (ValidationException e) {
 			fail("The exception should be a NullNameException.");
 		}
 		fail("The computer should not be validated with a null name.");

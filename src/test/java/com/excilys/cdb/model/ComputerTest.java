@@ -1,18 +1,23 @@
 package com.excilys.cdb.model;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.Assert.assertEquals;
 
 import java.time.LocalDate;
 
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import org.junit.Before;
+import org.junit.Test;
+
+import com.excilys.cdb.model.Company;
+import com.excilys.cdb.model.Computer;
 
 
-class ComputerTest {
+public class ComputerTest {
 
 	private Computer computer;
 
-	@BeforeEach
+	public ComputerTest() {}
+	
+	@Before
 	public void setUp() {
 		Company company = new Company();
 		computer = new Computer();
