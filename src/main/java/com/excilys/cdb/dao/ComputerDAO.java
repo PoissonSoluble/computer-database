@@ -25,9 +25,9 @@ public enum ComputerDAO {
 	private ComputerMapper mapper = ComputerMapper.INSTANCE;
 	private Logger logger = LoggerFactory.getLogger(ComputerDAO.class);
 
-	private final String SELECT_ALL = "SELECT * FROM computer LEFT JOIN company USING(ca_id)";
-	private final String SELECT_FROM_ID = "SELECT * FROM computer LEFT JOIN company USING(ca_id) WHERE cu_id = ?";
-	private final String SELECT_PAGE = "SELECT * FROM computer LEFT JOIN company USING(ca_id) ORDER BY cu_id LIMIT ? OFFSET ?";
+	private final String SELECT_ALL = "SELECT cu_id, cu_name, cu_introduced, cu_discontinued, ca_id, ca_name FROM computer LEFT JOIN company USING(ca_id)";
+	private final String SELECT_FROM_ID = "SELECT cu_id, cu_name, cu_introduced, cu_discontinued, ca_id, ca_name FROM computer LEFT JOIN company USING(ca_id) WHERE cu_id = ?";
+	private final String SELECT_PAGE = "SELECT cu_id, cu_name, cu_introduced, cu_discontinued, ca_id, ca_name FROM computer LEFT JOIN company USING(ca_id) ORDER BY cu_id LIMIT ? OFFSET ?";
 	private final String SELECT_COUNT = "SELECT count(cu_id) as count FROM computer";
 	private final String INSERT = "INSERT INTO computer (cu_name, cu_introduced, cu_discontinued, ca_id) VALUES(?,?,?,?)";
 	private final String DELETE = "DELETE FROM computer WHERE cu_id = ?";
@@ -134,7 +134,8 @@ public enum ComputerDAO {
 	private Computer retrieveComputerFromQuery(PreparedStatement stmt) throws SQLException {
 		try (ResultSet rs = stmt.executeQuery();) {
 			if (rs.next()) {
-				return mapper.createComputer(rs);
+				return mapper.createComputer(rs.getLong(1), rs.getString(2), rs.getDate(3), rs.getDate(4),
+						rs.getLong(5), rs.getString(6));
 			}
 		}
 		return null;
@@ -152,7 +153,8 @@ public enum ComputerDAO {
 
 	private void retrieveComputersFromQuery(ArrayList<Computer> computers, ResultSet rs) throws SQLException {
 		while (rs.next()) {
-			computers.add(mapper.createComputer(rs));
+			computers.add(mapper.createComputer(rs.getLong(1), rs.getString(2), rs.getDate(3), rs.getDate(4),
+					rs.getLong(5), rs.getString(6)));
 		}
 	}
 

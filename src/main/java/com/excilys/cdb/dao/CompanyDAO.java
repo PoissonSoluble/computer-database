@@ -22,10 +22,10 @@ public enum CompanyDAO {
 	private CompanyMapper mapper = CompanyMapper.INSTANCE;
 	private Logger logger = LoggerFactory.getLogger(CompanyDAO.class);
 
-	private final String SELECT_ALL = "SELECT * FROM company";
-	private final String SELECT_FROM_ID = "SELECT * FROM company WHERE ca_id = ?";
+	private final String SELECT_ALL = "SELECT ca_id, ca_name FROM company";
+	private final String SELECT_FROM_ID = "SELECT ca_id, ca_name FROM company WHERE ca_id = ?";
 	private final String SELECT_COUNT = "SELECT count(ca_id) as count FROM company";
-	private final String SELECT_A_PAGE = "SELECT * FROM company ORDER BY ca_id LIMIT ? OFFSET ?";
+	private final String SELECT_A_PAGE = "SELECT ca_id, ca_name FROM company ORDER BY ca_id LIMIT ? OFFSET ?";
 
 	public Company getCompany(Company company) {
 		return getCompany(company.getId());
@@ -61,8 +61,9 @@ public enum CompanyDAO {
 		try (Connection conn = dbConn.getConnection();
 				PreparedStatement stmt = conn.prepareStatement(SELECT_ALL);
 				ResultSet rs = stmt.executeQuery();) {
+			
 			while (rs.next()) {
-				companies.add(mapper.createCompany(rs));
+				companies.add(mapper.createCompany(rs.getLong(1)));
 			}
 		} catch (SQLException e) {
 			logger.debug(new StringBuilder("listCompanies(): ").append(e.getMessage()).toString());
@@ -92,7 +93,7 @@ public enum CompanyDAO {
 	private Company retrieveCompanyFromQuery(PreparedStatement stmt) throws SQLException {
 		try (ResultSet rs = stmt.executeQuery();) {
 			if (rs.next()) {
-				Company company = mapper.createCompany(rs);
+				Company company = mapper.createCompany(rs.getLong(1), rs.getString(2));
 				return company;
 			}
 		}
@@ -103,7 +104,7 @@ public enum CompanyDAO {
 			throws SQLException, PageOutOfBoundsException {
 		try (ResultSet rs = stmt.executeQuery();) {
 			while (rs.next()) {
-				companies.add(mapper.createCompany(rs));
+				companies.add(mapper.createCompany(rs.getLong(1), rs.getString(2)));
 			}
 			if (companies.isEmpty()) {
 				throw new PageOutOfBoundsException();
