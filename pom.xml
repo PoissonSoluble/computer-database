@@ -20,6 +20,7 @@
     <slf4j.version>1.8.0-beta1</slf4j.version>
     <!-- runtime -->
     <mysql.version>5.1.6</mysql.version>
+    <mysql-jdbc.version>8.0.8-dmr</mysql-jdbc.version>
     <mojo.version>1.2.1</mojo.version>
   </properties>
   <dependencies>
@@ -37,7 +38,7 @@
     <dependency>
       <groupId>mysql</groupId>
       <artifactId>mysql-connector-java</artifactId>
-      <version>${mysql.version}</version>
+      <version>${mysql-jdbc.version}</version>
     </dependency>
     <dependency>
       <groupId>junit</groupId>

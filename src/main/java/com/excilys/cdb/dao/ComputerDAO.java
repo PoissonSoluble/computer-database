@@ -55,16 +55,14 @@ public enum ComputerDAO {
 
 	public Computer getComputer(Long id) {
 		Computer computer = null;
-		ResultSet rs = null;
 		try (Connection conn = dbConn.getConnection();
 				PreparedStatement stmt = conn.prepareStatement(SELECT_FROM_ID);) {
 			stmt.setLong(1, id);
-			rs = stmt.executeQuery();
-			computer = retrieveComputerFromQuery(rs);
+			try (ResultSet rs = stmt.executeQuery();) {
+				computer = retrieveComputerFromQuery(stmt);
+			}
 		} catch (SQLException e) {
 			logger.debug(new StringBuilder("getComputer(Long): ").append(e.getMessage()).toString());
-		} finally {
-			dbConn.closeResultSet(rs);
 		}
 		return computer;
 	}
@@ -95,16 +93,12 @@ public enum ComputerDAO {
 	}
 
 	public List<Computer> listComputersByPage(int pageNumber, int pageSize) throws PageOutOfBoundsException {
-		ResultSet rs = null;
 		ArrayList<Computer> computers = new ArrayList<>();
 		try (Connection conn = dbConn.getConnection(); PreparedStatement stmt = conn.prepareStatement(SELECT_PAGE);) {
 			retrieveParametersForComputerPage(pageNumber, pageSize, stmt);
-			rs = stmt.executeQuery();
-			retrievePageContentFromQueryResult(rs, computers);
+			retrievePageContentFromQueryResult(stmt, computers);
 		} catch (SQLException e) {
 			logger.debug(new StringBuilder("listComputersByPage(int,int): ").append(e.getMessage()).toString());
-		} finally {
-			dbConn.closeResultSet(rs);
 		}
 		return computers;
 	}
@@ -137,9 +131,11 @@ public enum ComputerDAO {
 		return pages;
 	}
 
-	private Computer retrieveComputerFromQuery(ResultSet rs) throws SQLException {
-		if (rs.next()) {
-			return mapper.createComputer(rs);
+	private Computer retrieveComputerFromQuery(PreparedStatement stmt) throws SQLException {
+		try (ResultSet rs = stmt.executeQuery();) {
+			if (rs.next()) {
+				return mapper.createComputer(rs);
+			}
 		}
 		return null;
 	}
@@ -160,11 +156,13 @@ public enum ComputerDAO {
 		}
 	}
 
-	private void retrievePageContentFromQueryResult(ResultSet rs, ArrayList<Computer> computers)
+	private void retrievePageContentFromQueryResult(PreparedStatement stmt, ArrayList<Computer> computers)
 			throws SQLException, PageOutOfBoundsException {
-		retrieveComputersFromQuery(computers, rs);
-		if (computers.isEmpty()) {
-			throw new PageOutOfBoundsException();
+		try (ResultSet rs = stmt.executeQuery();) {
+			retrieveComputersFromQuery(computers, rs);
+			if (computers.isEmpty()) {
+				throw new PageOutOfBoundsException();
+			}
 		}
 	}
 

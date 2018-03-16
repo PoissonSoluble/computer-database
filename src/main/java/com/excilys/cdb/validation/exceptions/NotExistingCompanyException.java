@@ -1,5 +1,4 @@
 package com.excilys.cdb.validation.exceptions;
 
-public class NotExistingCompanyException extends ValidationException{
-
-}
+@SuppressWarnings("serial")
+public class NotExistingCompanyException extends ValidationException{}

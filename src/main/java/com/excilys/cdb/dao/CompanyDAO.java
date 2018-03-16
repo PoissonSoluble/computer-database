@@ -32,17 +32,13 @@ public enum CompanyDAO {
 	}
 
 	public Company getCompany(Long id) {
-		ResultSet rs = null;
 		Company company = null;
 		try (Connection conn = dbConn.getConnection();
 				PreparedStatement stmt = conn.prepareStatement(SELECT_FROM_ID);) {
 			stmt.setLong(1, id);
-			rs = stmt.executeQuery();
-			company = retrieveCompanyFromQuery(rs);
+			company = retrieveCompanyFromQuery(stmt);
 		} catch (SQLException e) {
 			logger.debug(new StringBuilder("getCompany(): ").append(e.getMessage()).toString());
-		} finally {
-			dbConn.closeResultSet(rs);
 		}
 		return company;
 	}
@@ -75,16 +71,12 @@ public enum CompanyDAO {
 	}
 
 	public List<Company> listCompaniesByPage(int pageNumber, int pageSize) throws PageOutOfBoundsException {
-		ResultSet rs = null;
 		ArrayList<Company> companies = new ArrayList<>();
 		try (Connection conn = dbConn.getConnection(); PreparedStatement stmt = conn.prepareStatement(SELECT_A_PAGE);) {
 			retrieveParametersForComputerPage(pageNumber, pageSize, stmt);
-			rs = stmt.executeQuery();
-			retrievePageContentFromQueryResult(rs, companies);
+			retrievePageContentFromQueryResult(stmt, companies);
 		} catch (SQLException e) {
 			logger.debug(new StringBuilder("listCompaniesByPage(): ").append(e.getMessage()).toString());
-		} finally {
-			dbConn.closeResultSet(rs);
 		}
 		return companies;
 	}
@@ -97,21 +89,25 @@ public enum CompanyDAO {
 		return pages;
 	}
 
-	private Company retrieveCompanyFromQuery(ResultSet rs) throws SQLException {
-		if (rs.next()) {
-			Company company = mapper.createCompany(rs);
-			return company;
+	private Company retrieveCompanyFromQuery(PreparedStatement stmt) throws SQLException {
+		try (ResultSet rs = stmt.executeQuery();) {
+			if (rs.next()) {
+				Company company = mapper.createCompany(rs);
+				return company;
+			}
 		}
 		return null;
 	}
 
-	private void retrievePageContentFromQueryResult(ResultSet rs, ArrayList<Company> companies)
+	private void retrievePageContentFromQueryResult(PreparedStatement stmt, ArrayList<Company> companies)
 			throws SQLException, PageOutOfBoundsException {
-		while (rs.next()) {
-			companies.add(mapper.createCompany(rs));
-		}
-		if (companies.isEmpty()) {
-			throw new PageOutOfBoundsException();
+		try (ResultSet rs = stmt.executeQuery();) {
+			while (rs.next()) {
+				companies.add(mapper.createCompany(rs));
+			}
+			if (companies.isEmpty()) {
+				throw new PageOutOfBoundsException();
+			}
 		}
 	}
 

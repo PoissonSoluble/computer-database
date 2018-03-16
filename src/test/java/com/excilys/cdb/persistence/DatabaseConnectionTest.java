@@ -4,6 +4,7 @@ package com.excilys.cdb.persistence;
 import static org.junit.Assert.assertNotNull;
 
 import java.sql.Connection;
+import java.sql.SQLException;
 
 import org.junit.After;
 import org.junit.Before;
@@ -31,7 +32,11 @@ public class DatabaseConnectionTest {
 
 	@After
 	public void unSetUp(){
-		DatabaseConnection.INSTANCE.closeConnection(conn);
+		try {
+			if(conn != null) {
+				conn.close();
+			}
+		} catch (SQLException e) {};
 	}
 
 }
