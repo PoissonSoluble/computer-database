@@ -134,7 +134,7 @@ public enum ComputerDAO {
 
 	private Computer retrieveComputerFromQuery(PreparedStatement stmt) throws SQLException {
 		try (ResultSet rs = stmt.executeQuery();) {
-			if (rs.next()) {
+			if (rs.first()) {
 				return mapper.createComputer(rs.getLong(1), rs.getString(2), rs.getDate(3), rs.getDate(4),
 						rs.getLong(5), rs.getString(6));
 			}

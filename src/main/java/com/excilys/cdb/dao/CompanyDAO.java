@@ -93,7 +93,7 @@ public enum CompanyDAO {
 
 	private Company retrieveCompanyFromQuery(PreparedStatement stmt) throws SQLException {
 		try (ResultSet rs = stmt.executeQuery();) {
-			if (rs.next()) {
+			if (rs.first()) {
 				Company company = mapper.createCompany(rs.getLong(1), rs.getString(2));
 				return company;
 			}
