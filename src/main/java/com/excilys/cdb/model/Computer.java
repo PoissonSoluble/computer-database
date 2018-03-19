@@ -12,7 +12,7 @@ public class Computer {
 
 	public Computer() {
 	}
-	
+
 	public Computer(Builder builder) {
 		id = builder.id;
 		name = builder.name;
@@ -30,52 +30,52 @@ public class Computer {
 		if (getClass() != obj.getClass())
 			return false;
 		Computer other = (Computer) obj;
-		if (company == null) {
-			if (other.company != null)
+		if (Optional.ofNullable(company).isPresent()) {
+			if (Optional.ofNullable(other.company).isPresent())
 				return false;
 		} else if (!company.equals(other.company))
 			return false;
-		if (discontinued == null) {
-			if (other.discontinued != null)
+		if (!Optional.ofNullable(discontinued).isPresent()) {
+			if (Optional.ofNullable(other.discontinued).isPresent())
 				return false;
 		} else if (!discontinued.equals(other.discontinued))
 			return false;
-		if (id == null) {
-			if (other.id != null)
+		if (!Optional.ofNullable(id).isPresent()) {
+			if (Optional.ofNullable(other.id).isPresent())
 				return false;
 		} else if (!id.equals(other.id))
 			return false;
-		if (introduced == null) {
-			if (other.introduced != null)
+		if (!Optional.ofNullable(introduced).isPresent()) {
+			if (Optional.ofNullable(other.introduced).isPresent())
 				return false;
 		} else if (!introduced.equals(other.introduced))
 			return false;
-		if (name == null) {
-			if (other.name != null)
+		if (!Optional.ofNullable(name).isPresent()) {
+			if (Optional.ofNullable(other.name).isPresent())
 				return false;
 		} else if (!name.equals(other.name))
 			return false;
 		return true;
 	}
 
-	public Company getCompany() {
-		return company;
+	public Optional<Company> getCompany() {
+		return Optional.ofNullable(company);
 	}
 
-	public LocalDate getDiscontinued() {
-		return discontinued;
+	public Optional<LocalDate> getDiscontinued() {
+		return Optional.ofNullable(discontinued);
 	}
 
-	public Long getId() {
-		return id;
+	public Optional<Long> getId() {
+		return Optional.ofNullable(id);
 	}
 
 	public Optional<LocalDate> getIntroduced() {
 		return Optional.ofNullable(introduced);
 	}
 
-	public String getName() {
-		return name;
+	public Optional<String> getName() {
+		return Optional.ofNullable(name);
 	}
 
 	@Override
@@ -113,11 +113,13 @@ public class Computer {
 	@Override
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
-		if (id != null) {
+		if (Optional.ofNullable(id).isPresent()) {
 			sb.append(id.toString());
 		}
-		sb.append(" - ").append(name);
-		if (company != null && company.getId() != null && company.getId() != 0) {
+		if (Optional.ofNullable(name).isPresent()) {
+			sb.append(" - ").append(name);
+		}
+		if (Optional.ofNullable(company).isPresent()) {
 			sb.append(" (").append(company).append(")");
 		}
 		return sb.toString();

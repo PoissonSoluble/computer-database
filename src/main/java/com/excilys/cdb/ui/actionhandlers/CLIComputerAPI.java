@@ -84,14 +84,17 @@ public enum CLIComputerAPI {
 			System.out.print("Discontinued date. ");
 			Optional<LocalDate> discontinued = askDate();
 			if (discontinued.isPresent()) {
-				computer.setDiscontinued(askDate().get());
+				computer.setDiscontinued(discontinued.get());
 			}
 		}
 	}
 
 	private void readIntroduced(Computer computer) {
 		System.out.print("Introduced date. ");
-		computer.setIntroduced(askDate());
+		Optional<LocalDate> introduced = askDate();
+		if(introduced.isPresent()) {
+			computer.setIntroduced(introduced.get());
+		}
 	}
 
 	private boolean readName(Computer computer) {

@@ -1,12 +1,12 @@
 package com.excilys.cdb.model;
 
+
 public class Company {
 	private Long id;
 	private String name;
 
-	public Company() {
-	}
-	
+	public Company() {}
+
 	public Company(Builder builder) {
 		id = builder.id;
 		name = builder.name;
@@ -27,7 +27,7 @@ public class Company {
 	public void setName(String pName) {
 		name = pName;
 	}
-	
+
 	@Override
 	public String toString() {
 		return new StringBuilder(id.toString()).append(" - ").append(name).toString();
@@ -64,12 +64,11 @@ public class Company {
 		return true;
 	}
 
-	public static class Builder{
+	public static class Builder {
 		private Long id;
 		private String name;
-		
-		public Builder() {
-		}
+
+		public Builder() {}
 
 		public Builder(Long pId) {
 			id = pId;
@@ -78,7 +77,7 @@ public class Company {
 		public Builder(String pName) {
 			name = pName;
 		}
-		
+
 		public Builder withId(Long pId) {
 			id = pId;
 			return this;
@@ -88,10 +87,10 @@ public class Company {
 			name = pName;
 			return this;
 		}
-		
+
 		public Company build() {
 			return new Company(this);
 		}
-		
+
 	}
 }

@@ -25,6 +25,7 @@ public class CommandLineInterface {
 			UserChoice choice = Stream.of(UserChoice.values()).filter(v -> v.accept(userInput)).findFirst().get();
 			return choice.handleChoice();
 		} catch (NoSuchElementException e) {
+			e.printStackTrace();
 			System.err.println("This choice is not valid.\n");
 			return true;
 		}

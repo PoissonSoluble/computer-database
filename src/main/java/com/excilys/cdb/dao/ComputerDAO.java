@@ -9,6 +9,7 @@ import java.sql.Statement;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -107,7 +108,7 @@ public enum ComputerDAO {
 		try (Connection conn = dbConn.getConnection();
 				PreparedStatement stmt = conn.prepareStatement(UPDATE, Statement.RETURN_GENERATED_KEYS);) {
 			setParameters(computer, stmt);
-			stmt.setLong(5, computer.getId());
+			stmt.setLong(5, computer.getId().get());
 			stmt.executeUpdate();
 			retrieveComputerIDFromUpdate(computer, stmt);
 		} catch (SQLException e) {
@@ -115,9 +116,9 @@ public enum ComputerDAO {
 		}
 	}
 
-	private void addDateToStatement(int parameterIndex, LocalDate date, PreparedStatement stmt) throws SQLException {
-		if (date != null) {
-			stmt.setDate(parameterIndex, Date.valueOf(date));
+	private void addDateToStatement(int parameterIndex, Optional<LocalDate> date, PreparedStatement stmt) throws SQLException {
+		if (date.isPresent()) {
+			stmt.setDate(parameterIndex, Date.valueOf(date.get()));
 		} else {
 			stmt.setNull(parameterIndex, java.sql.Types.DATE);
 		}
@@ -175,11 +176,11 @@ public enum ComputerDAO {
 	}
 
 	private void setParameters(Computer computer, PreparedStatement stmt) throws SQLException {
-		stmt.setString(1, computer.getName());
+		stmt.setString(1, computer.getName().get());
 		addDateToStatement(2, computer.getIntroduced(), stmt);
 		addDateToStatement(3, computer.getDiscontinued(), stmt);
-		if (computer.getCompany() != null && computer.getCompany().getId() != null)
-			stmt.setLong(4, computer.getCompany().getId());
+		if (computer.getCompany().isPresent())
+			stmt.setLong(4, computer.getCompany().get().getId());
 		else {
 			stmt.setNull(4, java.sql.Types.BIGINT);
 		}

@@ -1,6 +1,7 @@
 package com.excilys.cdb.ui.actionhandlers;
 
 import java.time.LocalDate;
+import java.util.Optional;
 
 import com.excilys.cdb.model.Company;
 import com.excilys.cdb.model.Computer;
@@ -33,8 +34,8 @@ public class ComputerItemizer implements CLIActionHandler {
 	}
 
 	private String constructDetailString(Computer computer) {
-		StringBuilder sb = new StringBuilder("\n== Details of computer#").append(computer.getId()).append(" ==\n");
-		sb.append("Name: ").append(computer.getName()).append("\n");
+		StringBuilder sb = new StringBuilder("\n== Details of computer#").append(computer.getId().get()).append(" ==\n");
+		sb.append("Name: ").append(computer.getName().get()).append("\n");
 		sb.append("Introduced date: ");
 		sb.append(getFormatedDate(computer.getIntroduced()));
 		sb.append("Discontinued date: ");
@@ -45,24 +46,25 @@ public class ComputerItemizer implements CLIActionHandler {
 		return sb.toString();
 	}
 
-	private StringBuilder getFormatedDate(LocalDate date) {
+	private StringBuilder getFormatedDate(Optional<LocalDate> date) {
 		StringBuilder sb = new StringBuilder();
-		if(date == null) {
+		if (!date.isPresent()) {
 			sb.append("Not specified.").append("\n");
-		}else {
-			sb.append(date.getDayOfMonth()).append(" ");
-			sb.append(date.getMonth()).append(" ");
-			sb.append(date.getYear()).append("\n");
+		} else {
+			sb.append(date.get().getDayOfMonth()).append(" ");
+			sb.append(date.get().getMonth()).append(" ");
+			sb.append(date.get().getYear()).append("\n");
 		}
 		return sb;
 	}
 
-	private StringBuilder getFormatedCompany(Company company) {
+	private StringBuilder getFormatedCompany(Optional<Company> company) {
 		StringBuilder sb = new StringBuilder();
-		if(company.getId() == 0) {
+		if (!company.isPresent()) {
 			sb.append("Not specified.").append("\n");
-		}else {
-			sb.append(company.getName()).append(" (#").append(company.getId()).append(")").append("\n");
+		} else {
+			sb.append(company.get().getName()).append(" (#").append(company.get().getId()).append(")")
+					.append("\n");
 		}
 		return sb;
 	}

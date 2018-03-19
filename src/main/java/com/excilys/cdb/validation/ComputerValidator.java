@@ -1,6 +1,7 @@
 package com.excilys.cdb.validation;
 
 import java.time.LocalDate;
+import java.util.Optional;
 
 import com.excilys.cdb.dao.CompanyDAO;
 import com.excilys.cdb.model.Company;
@@ -12,29 +13,30 @@ import com.excilys.cdb.validation.exceptions.ValidationException;
 
 public enum ComputerValidator {
 	INSTANCE;
-	
+
 	private CompanyDAO companyDAO = CompanyDAO.INSTANCE;
-	
+
 	public void validateComputer(Computer computer) throws ValidationException {
 		validateName(computer.getName());
 		validateDates(computer.getIntroduced(), computer.getDiscontinued());
 		validateCompany(computer.getCompany());
 	}
-	
-	private void validateName(String name) throws NullNameException{
-		if(name == null) {
+
+	private void validateName(Optional<String> name) throws NullNameException {
+		if (!name.isPresent()) {
 			throw new NullNameException();
 		}
 	}
-	
-	private void validateDates(LocalDate introduced, LocalDate discontinued) throws InvalidDatesException {
-		if(discontinued != null && introduced != null && introduced.isAfter(discontinued)) {
+
+	private void validateDates(Optional<LocalDate> introduced, Optional<LocalDate> discontinued)
+			throws InvalidDatesException {
+		if (discontinued.isPresent() && introduced.isPresent() && introduced.get().isAfter(discontinued.get())) {
 			throw new InvalidDatesException();
 		}
 	}
-	
-	private void validateCompany(Company company) throws NotExistingCompanyException {
-		if(company != null && company.getId() != null && companyDAO.getCompany(company.getId()).isPresent()) {
+
+	private void validateCompany(Optional<Company> company) throws NotExistingCompanyException {
+		if (company.isPresent()	&& companyDAO.getCompany(company.get().getId()).isPresent()) {
 			throw new NotExistingCompanyException();
 		}
 	}

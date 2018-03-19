@@ -10,9 +10,9 @@ public enum ComputerMapper {
 
 	private CompanyMapper companyMapper = CompanyMapper.INSTANCE;
 
-	public Computer createComputer(Long id, String name, Date introduced, Date discontinued, Long companyId,
+	public Computer createComputer(long id, String name, Date introduced, Date discontinued, long companyId,
 			String companyName) {
-		if (id == null && name == null) {
+		if (id == 0 && name == null) {
 			return null;
 		}
 		Computer.Builder computerBuilder = new Computer.Builder().withId(id).withName(name);
@@ -22,7 +22,7 @@ public enum ComputerMapper {
 		if (discontinued != null) {
 			computerBuilder.withDiscontinued(discontinued.toLocalDate());
 		}
-		if(companyId != null) {
+		if(companyId != 0) {
 			computerBuilder.withCompany(companyMapper.createCompany(companyId, companyName));
 		}
 		return computerBuilder.build();
