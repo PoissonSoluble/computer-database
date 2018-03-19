@@ -7,19 +7,19 @@ import com.excilys.cdb.dao.PageOutOfBoundsException;
 import com.excilys.cdb.model.Company;
 
 public enum CompanyService {
-	INSTANCE;
+    INSTANCE;
 
-	private CompanyDAO dao = CompanyDAO.INSTANCE;
-	
-	public List<Company> getCompanyPage(int page, int pageSize) {
-		try {
-			return dao.listCompaniesByPage(page, pageSize);
-		} catch (PageOutOfBoundsException e) {
-			return null;
-		}
-	}
-	
-	public int getCompanyListPageTotalAmount(int pageSize) {
-		return dao.getCompanyListPageTotalAmount(pageSize);
-	}
+    private CompanyDAO dao = CompanyDAO.INSTANCE;
+
+    public int getCompanyListPageTotalAmount(int pageSize) {
+        return dao.getCompanyListPageTotalAmount(pageSize);
+    }
+
+    public List<Company> getCompanyPage(int page, int pageSize) {
+        try {
+            return dao.listCompaniesByPage(page, pageSize);
+        } catch (PageOutOfBoundsException e) {
+            return null;
+        }
+    }
 }

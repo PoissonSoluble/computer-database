@@ -12,49 +12,49 @@ import com.excilys.cdb.validation.ComputerValidator;
 import com.excilys.cdb.validation.exceptions.ValidationException;
 
 public enum ComputerService {
-	INSTANCE;
+    INSTANCE;
 
-	private ComputerDAO dao = ComputerDAO.INSTANCE;
-	private ComputerValidator validator = ComputerValidator.INSTANCE;
-	private Logger logger = LoggerFactory.getLogger(ComputerService.class);
+    private ComputerDAO dao = ComputerDAO.INSTANCE;
+    private ComputerValidator validator = ComputerValidator.INSTANCE;
+    private Logger logger = LoggerFactory.getLogger(ComputerService.class);
 
-	public void createComputer(Computer computer) throws ValidationException {
-		validator.validateComputer(computer);
-		dao.createComputer(computer);
-		logger.info(new StringBuilder("Computer creation : ").append(computer).toString());
-	}
+    public void createComputer(Computer computer) throws ValidationException {
+        validator.validateComputer(computer);
+        dao.createComputer(computer);
+        logger.info(new StringBuilder("Computer creation : ").append(computer).toString());
+    }
 
-	public void deleteComputer(Long id) {
-		dao.deleteComputer(id);
-		logger.info(new StringBuilder("Computer removal : ").append(id).toString());
-	}
+    public void deleteComputer(Long id) {
+        dao.deleteComputer(id);
+        logger.info(new StringBuilder("Computer removal : ").append(id).toString());
+    }
 
-	public Computer detailComputer(Long id) {
-		return dao.getComputer(id);
-	}
+    public Computer detailComputer(Long id) {
+        return dao.getComputer(id);
+    }
 
-	public boolean exists(Long id) {
-		if (dao.getComputer(id) != null) {
-			return true;
-		}
-		return false;
-	}
+    public boolean exists(Long id) {
+        if (dao.getComputer(id) != null) {
+            return true;
+        }
+        return false;
+    }
 
-	public int getComputerListPageTotalAmount(int pageSize) {
-		return dao.getComputerListPageTotalAmount(pageSize);
-	}
+    public int getComputerListPageTotalAmount(int pageSize) {
+        return dao.getComputerListPageTotalAmount(pageSize);
+    }
 
-	public List<Computer> getComputerPage(int page, int pageSize) {
-		try {
-			return dao.listComputersByPage(page, pageSize);
-		} catch (PageOutOfBoundsException e) {
-			return null;
-		}
-	}
+    public List<Computer> getComputerPage(int page, int pageSize) {
+        try {
+            return dao.listComputersByPage(page, pageSize);
+        } catch (PageOutOfBoundsException e) {
+            return null;
+        }
+    }
 
-	public void updateComputer(Computer computer) throws ValidationException {
-		validator.validateComputer(computer);
-		dao.updateComputer(computer);
-		logger.info(new StringBuilder("Computer update : ").append(computer).toString());
-	}
+    public void updateComputer(Computer computer) throws ValidationException {
+        validator.validateComputer(computer);
+        dao.updateComputer(computer);
+        logger.info(new StringBuilder("Computer update : ").append(computer).toString());
+    }
 }
