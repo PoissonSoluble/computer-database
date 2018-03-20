@@ -1,6 +1,5 @@
 package com.excilys.cdb.persistence;
 
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -14,13 +13,16 @@ public enum DatabaseConnection {
         Connection conn = null;
         try {
             Properties prop = new Properties();
-            prop.load(new FileInputStream("config.properties"));
+            prop.load(getClass().getClassLoader().getResourceAsStream("config.properties"));
+            Class.forName("com.mysql.jdbc.Driver");
             conn = DriverManager.getConnection(getUrl(prop), prop.getProperty("dbid"), prop.getProperty("dbpassword"));
         } catch (IOException e) {
             e.printStackTrace();
         } catch (SQLException e) {
             e.printStackTrace();
-        }
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        } 
         return conn;
     }
 

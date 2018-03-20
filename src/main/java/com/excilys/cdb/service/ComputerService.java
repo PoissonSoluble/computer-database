@@ -1,5 +1,6 @@
 package com.excilys.cdb.service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -48,7 +49,7 @@ public enum ComputerService {
         try {
             return dao.listComputersByPage(page, pageSize);
         } catch (PageOutOfBoundsException e) {
-            return null;
+            return new ArrayList<>();
         }
     }
 

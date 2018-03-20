@@ -1,5 +1,6 @@
 package com.excilys.cdb.service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import com.excilys.cdb.dao.CompanyDAO;
@@ -19,7 +20,7 @@ public enum CompanyService {
         try {
             return dao.listCompaniesByPage(page, pageSize);
         } catch (PageOutOfBoundsException e) {
-            return null;
+            return new ArrayList<>();
         }
     }
 }
