@@ -26,7 +26,6 @@ public class ComputerLister implements CLIActionHandler {
             sb.append(computer).append("\n");
         });
         sb.append("Page ").append(page.getPageNumber()).append("/").append(page.getPageTotal()).append("\n");
-        sb.append("(Press ENTER for next page, Q + ENTER for exit)");
         return sb.toString();
     }
 

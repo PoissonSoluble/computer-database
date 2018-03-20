@@ -1,45 +1,54 @@
 package com.excilys.cdb.ui.actionhandlers;
 
-import com.excilys.cdb.service.CompanyService;
+import java.util.List;
+import java.util.stream.Stream;
+
+import com.excilys.cdb.model.Company;
+import com.excilys.cdb.pagination.CompanyPage;
+import com.excilys.cdb.pagination.Page;
 import com.excilys.cdb.ui.CommandLineInterface;
 
 public class CompanyLister implements CLIActionHandler {
 
-    private CompanyService service = CompanyService.INSTANCE;
     private final int PAGE_SIZE = 20;
+    private Page<Company> page;
 
     @Override
     public void handle() {
-        int page = 1;
-        int totalPages = service.getCompanyListPageTotalAmount(PAGE_SIZE);
-        printPages(page, totalPages);
+        page = new CompanyPage(1, PAGE_SIZE);    
+        printPages();
     }
 
-    private void appendCompanies(int page, StringBuilder sb) {
-        service.getCompanyPage(page, PAGE_SIZE).forEach(company -> {
-            sb.append(company).append("\n");
-        });
-    }
-
-    private String getPage(int page, int totalPages) {
+    private String getPage(List<Company> companies) {
         StringBuilder sb = new StringBuilder("======== COMPANIES ========\n");
         sb.append("======== ID - NAME ========\n");
-        appendCompanies(page, sb);
-        sb.append("Page ").append(page).append("/").append(totalPages).append("\n");
-        sb.append("(Press ENTER for next page, Q + ENTER for exit)");
+        companies.forEach(company -> {
+            sb.append(company).append("\n");
+        });
+        sb.append("Page ").append(page.getPageNumber()).append("/").append(page.getPageTotal()).append("\n");
         return sb.toString();
     }
 
-    private void printPages(int page, int totalPages) {
+    private void printPages() {
         while (true) {
-            System.out.println(getPage(page, totalPages));
-            String input = CommandLineInterface.getUserInput();
-            if (input.toLowerCase().equals("q") || (page == totalPages)) {
+            System.out.println(getPage(page.get()));
+            printPageMenu();
+            if(!handleChoice()) {
                 return;
-            } else {
-                page++;
-                continue;
             }
         }
+    }
+    
+    private boolean handleChoice() {
+        String input = CommandLineInterface.getUserInput().toLowerCase();
+        PageChoice choice = Stream.of(PageChoice.values()).filter(v -> v.accept(input)).findFirst().get();
+        return choice.handle(page);
+    }
+
+    private void printPageMenu() {
+        StringBuilder menu = new StringBuilder();
+        Stream.of(PageChoice.values()).forEach(value -> menu.append(value.getTitle()).append(", "));
+        menu.append("please pick one.");
+        System.out.println(menu);
     }
 }

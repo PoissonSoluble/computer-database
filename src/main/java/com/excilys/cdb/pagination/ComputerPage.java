@@ -5,7 +5,7 @@ import com.excilys.cdb.service.ComputerService;
 
 public class ComputerPage extends Page<Computer> {
 
-    private ComputerService service = ComputerService.INSTANCE;
+    private static ComputerService service = ComputerService.INSTANCE;
 
     public ComputerPage(int pPageNumber, int pPageSize) {
         super(pPageNumber, pPageSize);

@@ -5,7 +5,7 @@ import com.excilys.cdb.service.CompanyService;
 
 public class CompanyPage extends Page<Company>{
 
-    CompanyService service = CompanyService.INSTANCE;
+    private static CompanyService service = CompanyService.INSTANCE;
     
     public CompanyPage(int pPageNumber, int pPageSize) {
         super(pPageNumber, pPageSize);

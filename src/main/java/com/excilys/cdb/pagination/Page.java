@@ -32,7 +32,7 @@ public abstract class Page<T> {
     }
 
     public List<T> next(){
-        if(pageNumber + 1 < pageTotal) {
+        if(pageNumber < pageTotal) {
             pageNumber++;
         }
         refresh();
