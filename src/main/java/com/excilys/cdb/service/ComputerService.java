@@ -40,6 +40,10 @@ public enum ComputerService {
         }
         return false;
     }
+    
+    public int getComputerAmount() {
+        return dao.getComputerAmount();
+    }
 
     public int getComputerListPageTotalAmount(int pageSize) {
         return dao.getComputerListPageTotalAmount(pageSize);

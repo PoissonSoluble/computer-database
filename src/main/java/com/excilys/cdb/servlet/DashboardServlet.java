@@ -13,6 +13,7 @@ import javax.servlet.http.HttpServletResponse;
 import com.excilys.cdb.dto.ComputerDTO;
 import com.excilys.cdb.mapper.ComputerDTOMapper;
 import com.excilys.cdb.pagination.ComputerPage;
+import com.excilys.cdb.service.ComputerService;
 
 public class DashboardServlet extends HttpServlet {
 
@@ -37,6 +38,8 @@ public class DashboardServlet extends HttpServlet {
         request.setAttribute("computers", dtos);
         request.setAttribute("pageNumber", page.getPageNumber());
         request.setAttribute("totalPage", page.getPageTotal());
+        request.setAttribute("computerAmount", ComputerService.INSTANCE.getComputerAmount());
+        request.setAttribute("pageSize", pageSize);
         RequestDispatcher view = request.getRequestDispatcher("WEB-INF/dashboard.jsp");
         view.forward(request, response);
     }

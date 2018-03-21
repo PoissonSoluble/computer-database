@@ -80,6 +80,19 @@ public enum ComputerDAO {
         }
         return pages;
     }
+    
+    public int getComputerAmount() {
+        int count = 0;
+        try (Connection conn = dbConn.getConnection();
+                PreparedStatement stmt = conn.prepareStatement(SELECT_COUNT);
+                ResultSet rs = stmt.executeQuery();) {
+            rs.next();
+            count = rs.getInt("count");
+        } catch (SQLException e) {
+            logger.debug(new StringBuilder("getComputerListPageTotalAmount(int): ").append(e.getMessage()).toString());
+        }
+        return count;
+    }
 
     public List<Computer> listComputers() {
         ArrayList<Computer> computers = new ArrayList<>();

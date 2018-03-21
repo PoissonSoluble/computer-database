@@ -13,20 +13,20 @@
 
 <c:if test="${pageNumber != 1}">
 	<li><a
-		href="<tag:links linkTo="dashboard" pageNumber="${pageNumber - 1}" pageSize="10"/>"
+		href="<tag:links linkTo="dashboard" pageNumber="${pageNumber - 1}" pageSize="${pageSize }"/>"
 		aria-label="Previous"> <span aria-hidden="true">&laquo;</span>
 	</a></li>
 </c:if>
 
 <c:forEach var="i" begin="${ start }" end="${ stop }" step="1">
 	<li><a
-		href="<tag:links linkTo="dashboard" pageNumber="${i}" pageSize="10"/>"><c:out
+		href="<tag:links linkTo="dashboard" pageNumber="${i}" pageSize="${pageSize }"/>"><c:out
 				value="${i}" /></a></li>
 </c:forEach>
 
 <c:if test="${ pageNumber != totalPage }">
 	<li><a
-		href="<tag:links linkTo="dashboard" pageNumber="${pageNumber + 1}" pageSize="10"/>"
+		href="<tag:links linkTo="dashboard" pageNumber="${pageNumber + 1}" pageSize="${pageSize }"/>"
 		aria-label="Next"> <span aria-hidden="true">&raquo;</span>
 	</a></li>
 </c:if>

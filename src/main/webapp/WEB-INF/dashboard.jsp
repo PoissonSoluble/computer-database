@@ -28,7 +28,10 @@
 
 	<section id="main">
 		<div class="container">
-			<h1 id="homeTitle">121 Computers found</h1>
+			<h1 id="homeTitle">
+				<c:out value="${ computerAmount }" />
+				Computers found
+			</h1>
 			<div id="actions" class="form-horizontal">
 				<div class="pull-left">
 					<form id="searchForm" action="#" method="GET" class="form-inline">
@@ -95,13 +98,22 @@
 	<footer class="navbar-fixed-bottom">
 		<div class="container text-center">
 			<ul class="pagination">
-					<tag:pages />
+				<tag:pages />
 			</ul>
 
 			<div class="btn-group btn-group-sm pull-right" role="group">
-				<button type="button" class="btn btn-default">10</button>
-				<button type="button" class="btn btn-default">50</button>
-				<button type="button" class="btn btn-default">100</button>
+				<a
+					href="<tag:links linkTo="dashboard" pageNumber="${pageNumber}" pageSize="${10 }"/>">
+					<button type="button" class="btn btn-default">10</button>
+				</a>
+				<a
+					href="<tag:links linkTo="dashboard" pageNumber="${pageNumber}" pageSize="${50 }"/>">
+					<button type="button" class="btn btn-default">50</button>
+				</a>
+				<a
+					href="<tag:links linkTo="dashboard" pageNumber="${pageNumber}" pageSize="${100 }"/>">
+					<button type="button" class="btn btn-default">100</button>
+				</a>
 			</div>
 	</footer>
 	<script src="<c:url value="/static/js/jquery.min.js" />"></script>
