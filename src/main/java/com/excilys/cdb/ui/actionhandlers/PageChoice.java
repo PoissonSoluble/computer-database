@@ -49,8 +49,6 @@ public enum PageChoice {
         validChoices = Arrays.asList(pValidChoices);
     }
 
-    public abstract boolean handle(Page<?> page);
-
     public boolean accept(String choice) {
         if (validChoices.contains(choice.toLowerCase())) {
             return true;
@@ -61,4 +59,6 @@ public enum PageChoice {
     public String getTitle() {
         return title;
     }
+
+    public abstract boolean handle(Page<?> page);
 }

@@ -7,44 +7,44 @@ public class ComputerDTO {
     private String discontinued;
     private String company;
 
-    public long getId() {
-        return id;
-    }
-
-    public void setId(long pId) {
-        id = pId;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String pName) {
-        name = pName;
-    }
-
-    public String getIntroduced() {
-        return introduced;
-    }
-
-    public void setIntroduced(String pIntroduced) {
-        introduced = pIntroduced;
+    public String getCompany() {
+        return company;
     }
 
     public String getDiscontinued() {
         return discontinued;
     }
 
-    public void setDiscontinued(String pDiscontinued) {
-        discontinued = pDiscontinued;
+    public long getId() {
+        return id;
     }
 
-    public String getCompany() {
-        return company;
+    public String getIntroduced() {
+        return introduced;
+    }
+
+    public String getName() {
+        return name;
     }
 
     public void setCompany(String pCompany) {
         company = pCompany;
+    }
+
+    public void setDiscontinued(String pDiscontinued) {
+        discontinued = pDiscontinued;
+    }
+
+    public void setId(long pId) {
+        id = pId;
+    }
+
+    public void setIntroduced(String pIntroduced) {
+        introduced = pIntroduced;
+    }
+
+    public void setName(String pName) {
+        name = pName;
     }
 
 }

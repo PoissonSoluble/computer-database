@@ -15,7 +15,7 @@ public class CompanyLister implements CLIActionHandler {
 
     @Override
     public void handle() {
-        page = new CompanyPage(1, PAGE_SIZE);    
+        page = new CompanyPage(1, PAGE_SIZE);
         printPages();
     }
 
@@ -29,16 +29,6 @@ public class CompanyLister implements CLIActionHandler {
         return sb.toString();
     }
 
-    private void printPages() {
-        while (true) {
-            System.out.println(getPage(page.get()));
-            printPageMenu();
-            if(!handleChoice()) {
-                return;
-            }
-        }
-    }
-    
     private boolean handleChoice() {
         String input = CommandLineInterface.getUserInput().toLowerCase();
         PageChoice choice = Stream.of(PageChoice.values()).filter(v -> v.accept(input)).findFirst().get();
@@ -50,5 +40,15 @@ public class CompanyLister implements CLIActionHandler {
         Stream.of(PageChoice.values()).forEach(value -> menu.append(value.getTitle()).append(", "));
         menu.append("please pick one.");
         System.out.println(menu);
+    }
+
+    private void printPages() {
+        while (true) {
+            System.out.println(getPage(page.get()));
+            printPageMenu();
+            if (!handleChoice()) {
+                return;
+            }
+        }
     }
 }

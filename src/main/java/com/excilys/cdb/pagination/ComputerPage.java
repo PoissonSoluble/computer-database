@@ -10,7 +10,7 @@ public class ComputerPage extends Page<Computer> {
     public ComputerPage(int pPageNumber, int pPageSize) {
         super(pPageNumber, pPageSize);
     }
-    
+
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder("======== COMPUTERS ========\n");
@@ -24,13 +24,13 @@ public class ComputerPage extends Page<Computer> {
     }
 
     @Override
-    protected void refresh() {
-        elements = service.getComputerPage(pageNumber, pageSize);
-        pageTotal = getLastPageNumber();
+    protected int getLastPageNumber() {
+        return service.getComputerListPageTotalAmount(pageSize);
     }
 
     @Override
-    protected int getLastPageNumber() {
-        return service.getComputerListPageTotalAmount(pageSize);
+    protected void refresh() {
+        elements = service.getComputerPage(pageNumber, pageSize);
+        pageTotal = getLastPageNumber();
     }
 }

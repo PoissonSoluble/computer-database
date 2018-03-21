@@ -28,8 +28,8 @@
     <!-- server -->
     <tomcat7-maven.version>2.2</tomcat7-maven.version>
     <jstl.version>1.2</jstl.version>
-    <cargo.version>1.6.7</cargo.version>
     <maven-war.version>3.2.0</maven-war.version>
+    <tomcat.url>http://localhost:8080/manager/text</tomcat.url>
   </properties>
   <dependencies>
     <dependency>
@@ -75,7 +75,7 @@
     <dependency>
       <groupId>jstl</groupId>
       <artifactId>jstl</artifactId>
-      <version>1.2</version>
+      <version>${jstl.version}</version>
     </dependency>
   </dependencies>
   <build>
@@ -109,7 +109,7 @@
         <artifactId>tomcat7-maven-plugin</artifactId>
         <version>${tomcat7-maven.version}</version>
         <configuration>
-          <url>http://localhost:8080/manager/text</url>
+          <url>${tomcat.url}</url>
           <server>TomcatServer</server>
           <path>/cdb</path>
           <ignorePackaging>true</ignorePackaging>

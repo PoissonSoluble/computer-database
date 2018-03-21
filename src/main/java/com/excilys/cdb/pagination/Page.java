@@ -21,42 +21,42 @@ public abstract class Page<T> {
         return elements;
     }
 
-    public List<T> get(){
+    public List<T> get() {
         return elements;
     }
-    
+
+    public int getPageNumber() {
+        return pageNumber;
+    }
+
+    public int getPageTotal() {
+        return pageTotal;
+    }
+
+    public boolean isLastPage() {
+        return pageNumber == pageTotal;
+    }
+
     public List<T> last() {
         pageNumber = pageTotal;
         refresh();
         return elements;
     }
 
-    public List<T> next(){
-        if(pageNumber < pageTotal) {
+    public List<T> next() {
+        if (pageNumber < pageTotal) {
             pageNumber++;
         }
         refresh();
         return elements;
     }
 
-    public List<T> previous(){
-        if(pageNumber > 1) {
+    public List<T> previous() {
+        if (pageNumber > 1) {
             pageNumber--;
         }
         refresh();
         return elements;
-    }
-    
-    public boolean isLastPage() {
-        return pageNumber == pageTotal;
-    }
-    
-    public int getPageNumber() {
-        return pageNumber;
-    }
-    
-    public int getPageTotal() {
-        return pageTotal;
     }
 
     protected abstract int getLastPageNumber();

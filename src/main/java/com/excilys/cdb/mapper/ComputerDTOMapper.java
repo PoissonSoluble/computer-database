@@ -20,9 +20,9 @@ public class ComputerDTOMapper {
     }
 
     private String getFormattedDate(Optional<LocalDate> date) {
-        if(date.isPresent()) {
-            return date.get().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")); 
-        }else {
+        if (date.isPresent()) {
+            return date.get().format(DateTimeFormatter.ofPattern("dd/MM/yyyy"));
+        } else {
             return "";
         }
     }

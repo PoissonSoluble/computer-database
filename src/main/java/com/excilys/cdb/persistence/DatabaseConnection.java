@@ -22,7 +22,7 @@ public enum DatabaseConnection {
             e.printStackTrace();
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
-        } 
+        }
         return conn;
     }
 
