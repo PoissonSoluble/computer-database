@@ -23,4 +23,8 @@ public enum CompanyService {
             return new ArrayList<>();
         }
     }
+
+    public List<Company> getCompanies() {
+        return dao.listCompanies();
+    }
 }

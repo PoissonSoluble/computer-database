@@ -62,9 +62,8 @@ public enum CompanyDAO {
         try (Connection conn = dbConn.getConnection();
                 PreparedStatement stmt = conn.prepareStatement(SELECT_ALL);
                 ResultSet rs = stmt.executeQuery();) {
-
             while (rs.next()) {
-                companies.add(mapper.createCompany(rs.getLong(1)));
+                companies.add(mapper.createCompany(rs.getLong(1), rs.getString(2)));
             }
         } catch (SQLException e) {
             logger.debug(new StringBuilder("listCompanies(): ").append(e.getMessage()).toString());

@@ -23,4 +23,8 @@ public class CompanyDTO {
         name = pName;
     }
 
+    @Override
+    public String toString() {
+        return new StringBuilder().append(id).append(" ").append(name).toString();
+    }
 }
