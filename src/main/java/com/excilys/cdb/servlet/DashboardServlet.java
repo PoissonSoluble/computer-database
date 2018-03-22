@@ -40,7 +40,7 @@ public class DashboardServlet extends HttpServlet {
         request.setAttribute("totalPage", page.getPageTotal());
         request.setAttribute("computerAmount", ComputerService.INSTANCE.getComputerAmount());
         request.setAttribute("pageSize", pageSize);
-        RequestDispatcher view = request.getRequestDispatcher("WEB-INF/dashboard.jsp");
+        RequestDispatcher view = request.getRequestDispatcher("WEB-INF/views/dashboard.jsp");
         view.forward(request, response);
     }
 
