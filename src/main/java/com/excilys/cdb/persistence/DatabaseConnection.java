@@ -14,8 +14,9 @@ public enum DatabaseConnection {
         try {
             Properties prop = new Properties();
             prop.load(getClass().getClassLoader().getResourceAsStream("config.properties"));
-            Class.forName("com.mysql.jdbc.Driver");
-            conn = DriverManager.getConnection(getUrl(prop), prop.getProperty("dbid"), prop.getProperty("dbpassword"));
+            Class.forName(prop.getProperty("dbdriver"));
+            conn = DriverManager.getConnection(prop.getProperty("dburl", getUrl(prop)), prop.getProperty("dbid"),
+                    prop.getProperty("dbpassword"));
         } catch (IOException e) {
             e.printStackTrace();
         } catch (SQLException e) {
