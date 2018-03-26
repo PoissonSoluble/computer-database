@@ -1,6 +1,7 @@
 package com.excilys.cdb.ui.actionhandlers;
 
 import java.time.LocalDate;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 
 import com.excilys.cdb.model.Company;
@@ -17,11 +18,13 @@ public class ComputerItemizer implements CLIActionHandler {
     public void handle() {
         try {
             Long id = cliApi.askComputerID();
-            Computer computer = service.detailComputer(id);
+            Computer computer = service.detailComputer(id).get();
             printComputer(computer);
             CommandLineInterface.getUserInput();
         } catch (NumberFormatException e) {
             System.out.println("This is not a proper ID format. (an integer)");
+        } catch (NoSuchElementException e) {
+            System.out.println("This computer does not exists.");
         }
     }
 

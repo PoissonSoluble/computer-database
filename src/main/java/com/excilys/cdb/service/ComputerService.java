@@ -2,6 +2,7 @@ package com.excilys.cdb.service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,7 +31,7 @@ public enum ComputerService {
         logger.info(new StringBuilder("Computer removal : ").append(id).toString());
     }
 
-    public Computer detailComputer(Long id) {
+    public Optional<Computer> detailComputer(Long id) {
         return dao.getComputer(id);
     }
 

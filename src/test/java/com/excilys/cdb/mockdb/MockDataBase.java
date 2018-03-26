@@ -19,12 +19,12 @@ public class MockDataBase {
     private static final String INSERT_COMPANY = "INSERT INTO company (ca_name) VALUES(?);";
     private static final String INSERT_COMPUTER_SIMPLE = "INSERT INTO computer (cu_name) VALUES(?);";
     private static final String INSERT_COMPUTER_DATES = "INSERT INTO computer (cu_name, cu_introduced, cu_discontinued) VALUES(?,?,?);";
-    private static final String INSERT_COMPUTER_COMPANY = "INSERT INTO computer (cu_name, ca_company) VALUES(?,?);";
+    private static final String INSERT_COMPUTER_COMPANY = "INSERT INTO computer (cu_name, ca_id) VALUES(?,?);";
     private static final String DROP_COMPANY = "DROP TABLE company;";
     private static final String DROP_COMPUTER = "DROP TABLE computer;";
-    
+
     private static final String dateIntroduced = "1969-7-21";
-    private static final String dateDiscontinued = "1995-7-21"; 
+    private static final String dateDiscontinued = "1995-7-21";
 
     public static void createDatabase() {
         initDataBase();
@@ -88,7 +88,6 @@ public class MockDataBase {
             sqlFile.setConnection(conn);
             sqlFile.execute();
         } catch (SQLException | IOException | URISyntaxException | SqlToolError e) {
-            e.printStackTrace();
         }
     }
 

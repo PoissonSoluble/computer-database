@@ -20,7 +20,7 @@
 
 <c:forEach var="i" begin="${ start }" end="${ stop }" step="1">
 	<li><a
-		href="<tag:links linkTo="dashboard" pageNumberAtt="${i}" pageSizeAtt="${pageSize }"/>"><c:out
+		href="<tag:links linkTo="dashboard" pageNumberAtt="${i}" pageSizeAtt="${pageSize}"/>"><c:out
 				value="${i}" /></a></li>
 </c:forEach>
 

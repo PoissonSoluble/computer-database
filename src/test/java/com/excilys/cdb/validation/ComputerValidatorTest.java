@@ -12,15 +12,12 @@ import org.junit.Test;
 import com.excilys.cdb.mockdb.MockDataBase;
 import com.excilys.cdb.model.Company;
 import com.excilys.cdb.model.Computer;
-import com.excilys.cdb.persistence.DatabaseConnection;
 import com.excilys.cdb.validation.exceptions.InvalidDatesException;
 import com.excilys.cdb.validation.exceptions.NotExistingCompanyException;
 import com.excilys.cdb.validation.exceptions.NullNameException;
 import com.excilys.cdb.validation.exceptions.ValidationException;
 
 public class ComputerValidatorTest {
-
-    private static DatabaseConnection dbConn = DatabaseConnection.INSTANCE;
     
     @AfterClass
     public static void destroy() {

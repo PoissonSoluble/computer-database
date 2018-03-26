@@ -34,7 +34,7 @@ public enum ComputerDAO {
     private final String DELETE = "DELETE FROM computer WHERE cu_id = ?";
     private final String UPDATE = "UPDATE computer SET cu_name = ?, cu_introduced = ?, cu_discontinued = ?, ca_id = ? WHERE cu_id = ?";
 
-    public void createComputer(Computer computer) {
+    public Optional<Long> createComputer(Computer computer) {
         try (Connection conn = dbConn.getConnection();
                 PreparedStatement stmt = conn.prepareStatement(INSERT, Statement.RETURN_GENERATED_KEYS);) {
             setParameters(computer, stmt);
@@ -43,6 +43,7 @@ public enum ComputerDAO {
         } catch (SQLException e) {
             logger.debug(new StringBuilder("createComputer(): ").append(e.getMessage()).toString());
         }
+        return computer.getId();
     }
 
     public void deleteComputer(long id) {
@@ -54,7 +55,7 @@ public enum ComputerDAO {
         }
     }
 
-    public Computer getComputer(Long id) {
+    public Optional<Computer> getComputer(Long id) {
         Computer computer = null;
         try (Connection conn = dbConn.getConnection();
                 PreparedStatement stmt = conn.prepareStatement(SELECT_FROM_ID);) {
@@ -65,7 +66,7 @@ public enum ComputerDAO {
         } catch (SQLException e) {
             logger.debug(new StringBuilder("getComputer(Long): ").append(e.getMessage()).toString());
         }
-        return computer;
+        return Optional.ofNullable(computer);
     }
 
     public int getComputerListPageTotalAmount(int pageSize) {
@@ -119,11 +120,10 @@ public enum ComputerDAO {
 
     public void updateComputer(Computer computer) {
         try (Connection conn = dbConn.getConnection();
-                PreparedStatement stmt = conn.prepareStatement(UPDATE, Statement.RETURN_GENERATED_KEYS);) {
+                PreparedStatement stmt = conn.prepareStatement(UPDATE);) {
             setParameters(computer, stmt);
             stmt.setLong(5, computer.getId().get());
             stmt.executeUpdate();
-            retrieveComputerIDFromUpdate(computer, stmt);
         } catch (SQLException e) {
             logger.debug(new StringBuilder("updateComputer(Computer): ").append(e.getMessage()).toString());
         }
@@ -148,7 +148,7 @@ public enum ComputerDAO {
 
     private Computer retrieveComputerFromQuery(PreparedStatement stmt) throws SQLException {
         try (ResultSet rs = stmt.executeQuery();) {
-            if (rs.first()) {
+            if (rs.next()) {
                 return mapper.createComputer(rs.getLong(1), rs.getString(2), rs.getDate(3), rs.getDate(4),
                         rs.getLong(5), rs.getString(6));
             }
@@ -161,6 +161,7 @@ public enum ComputerDAO {
             if (generatedKeys.next()) {
                 computer.setId(generatedKeys.getLong(1));
             } else {
+                computer.setId(null);
                 throw new SQLException("Creating user failed, no ID obtained.");
             }
         }
