@@ -1,8 +1,5 @@
 package com.excilys.cdb.validation;
 
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
-
 import java.time.LocalDate;
 
 import org.junit.AfterClass;
@@ -18,7 +15,7 @@ import com.excilys.cdb.validation.exceptions.NullNameException;
 import com.excilys.cdb.validation.exceptions.ValidationException;
 
 public class ComputerValidatorTest {
-    
+
     @AfterClass
     public static void destroy() {
         MockDataBase.removeDataBase();
@@ -34,86 +31,46 @@ public class ComputerValidatorTest {
     public ComputerValidatorTest() {
     }
 
-    @Test
-    public void testDateUnvalidation() {
+    @Test(expected = InvalidDatesException.class)
+    public void testDateUnvalidation() throws ValidationException {
         Computer computer = new Computer();
         computer.setName("Test Name");
         computer.setIntroduced(LocalDate.of(1995, 7, 21));
         computer.setDiscontinued(LocalDate.of(1969, 7, 21));
-        try {
-            validator.validateComputer(computer);
-        } catch (InvalidDatesException e) {
-            assertTrue(true);
-            return;
-        } catch (ValidationException e) {
-            fail("The exception should be a InvalidDatesException.");
-        }
-        fail("The computer should not be validated with introduced superior to discontinued.");
+        validator.validateComputer(computer);
     }
 
     @Test
-    public void testDateValidation() {
+    public void testDateValidation() throws ValidationException {
         Computer computer = new Computer();
         computer.setName("Test Name");
         computer.setIntroduced(LocalDate.of(1969, 7, 21));
         computer.setDiscontinued(LocalDate.of(1995, 7, 21));
-        try {
-            validator.validateComputer(computer);
-        } catch (ValidationException e) {
-            fail("This computer should be validated but throws an exception.");
-        }
-        assertTrue(true);
+        validator.validateComputer(computer);
     }
 
-    @Test
-    public void testNameInvalidation() {
+    @Test(expected = NullNameException.class)
+    public void testNameInvalidation() throws ValidationException {
         Computer computer = new Computer();
-        try {
-            validator.validateComputer(computer);
-        } catch (NullNameException e) {
-            assertTrue(true);
-            return;
-        } catch (ValidationException e) {
-            fail("The exception should be a NullNameException.");
-        }
-        fail("The computer should not be validated with a null name.");
+        validator.validateComputer(computer);
     }
 
     @Test
-    public void testNameValidation() {
+    public void testNameValidation() throws ValidationException {
         Computer computer = new Computer();
         computer.setName("Test Name");
-        try {
-            validator.validateComputer(computer);
-        } catch (ValidationException e) {
-            fail("Should validate with simply the name");
-        }
-        assertTrue(true);
+        validator.validateComputer(computer);
     }
-    
+
     @Test
-    public void testCompanyValidation() {
+    public void testCompanyValidation() throws ValidationException {
         Computer computer = new Computer.Builder("Computer 1").withCompany(new Company.Builder(1L).build()).build();
-        try {
-            validator.validateComputer(computer);
-        }  catch (ValidationException e) {
-            fail("Should validate with this company.");
-        }
-        assertTrue(true);
+        validator.validateComputer(computer);
     }
-    
-    
-    @Test
-    public void testCompanyInvalidation() {
+
+    @Test(expected = NotExistingCompanyException.class)
+    public void testCompanyInvalidation() throws ValidationException {
         Computer computer = new Computer.Builder("Computer 1").withCompany(new Company.Builder(50L).build()).build();
-        try {
-            validator.validateComputer(computer);
-        } catch (NotExistingCompanyException e) {
-            assertTrue(true);
-            return;
-        } catch (ValidationException e) {
-            fail("The exception should be a NotExistingCompanyException.");
-        }
-        fail("The computer should not be validated with this company id.");
+        validator.validateComputer(computer);
     }
 }
