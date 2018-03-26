@@ -1,93 +1,95 @@
 package com.excilys.cdb.dao;
 
-import java.sql.Connection;
-import java.sql.Date;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
-import org.junit.Before;
+import java.util.NoSuchElementException;
+import java.util.Optional;
 
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
-import org.junit.runner.RunWith;
-import static org.junit.Assert.*;
-
-import static org.mockito.Matchers.*;
-
-import static org.mockito.Mockito.*;
-
-import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
-
-import com.excilys.cdb.model.Company;
+import com.excilys.cdb.mockdb.MockDataBase;
 import com.excilys.cdb.model.Computer;
-import com.excilys.cdb.persistence.DatabaseConnection;
 
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.time.LocalDate;
-
-//@RunWith(MockitoJUnitRunner.class)
 public class ComputerDAOTest {
 
-/*
-	@Mock
-	private DatabaseConnection databaseConnection;
+    @AfterClass
+    public static void destroy() {
+        MockDataBase.removeDataBase();
+    }
 
-	@Mock
-	private Connection sqlConnection;
+    @BeforeClass
+    public static void setUp() {
+        MockDataBase.createDatabase();
+    }
 
-	@Mock
-	private PreparedStatement stmt;
+    @Test
+    public void testCreationAndDeletion() {
+        Computer computer = new Computer.Builder("New Computer").build();
+        Optional<Long> idOpt = ComputerDAO.INSTANCE.createComputer(computer);
+        assertTrue(idOpt.isPresent());
+        assertTrue(ComputerDAO.INSTANCE.getComputer(idOpt.get()).isPresent());
+        ComputerDAO.INSTANCE.deleteComputer(idOpt.get());
+        assertFalse(ComputerDAO.INSTANCE.getComputer(idOpt.get()).isPresent());
+    }
 
-	@Mock
-	private ResultSet rs;
+    @Test
+    public void testListComputers() {
+        assertEquals(ComputerDAO.INSTANCE.listComputers().size(), 100);
+    }
 
-	private Computer computer;
-	private Company company;
-	@Before
-	public void setUp() throws Exception {
+    @Test
+    public void testPage() {
+        try {
+            assertEquals(ComputerDAO.INSTANCE.listComputersByPage(1, 10).size(), 10);
+        } catch (PageOutOfBoundsException e) {
+            fail("The first page should be available.");
+        }
+    }
 
-		assertNotNull(databaseConnection);
+    @Test
+    public void testPageOutOfBounds() {
+        try {
+            ComputerDAO.INSTANCE.listComputersByPage(11, 10);
+            fail("This page should not exist.");
+        } catch (PageOutOfBoundsException e) {
+            assertTrue(true);
+        }
+    }
 
-		when(sqlConnection.prepareStatement(any(String.class))).thenReturn(stmt);
-
-		when(databaseConnection.getConnection()).thenReturn(sqlConnection);
-
-		company = new Company.Builder(1L).withName("Test company").build();
-		computer = new Computer.Builder(1L).withName("Test").withIntroduced(LocalDate.of(2000, 01, 01))
-				.withDiscontinued(LocalDate.of(2010, 01, 01)).build();
-
-		when(rs.first()).thenReturn(true);
-		when(rs.getLong(1)).thenReturn(1L);
-		when(rs.getString(2)).thenReturn(computer.getName().get());
-		when(rs.getDate(3)).thenReturn(Date.valueOf(computer.getIntroduced().get()));
-		when(rs.getDate(4)).thenReturn(Date.valueOf(computer.getDiscontinued().get()));
-		when(rs.getLong(5)).thenReturn(1L);
-		when(rs.getString(6)).thenReturn(company.getName());
-		when(stmt.executeQuery()).thenReturn(rs);
-
-	}
-
-	@Test(expected = IllegalArgumentException.class)
-	public void nullCreateThrowsException() {
-
-		ComputerDAO.INSTANCE.createComputer(null);
-
-	}
-
-	@Test
-	public void createComputer() {
-		ComputerDAO.INSTANCE.createComputer(computer);
-	}
-
-	@Test
-
-	public void createAndRetrievePerson() throws Exception {
-		ComputerDAO.INSTANCE.createComputer(computer);
-
-		Computer result = ComputerDAO.INSTANCE.getComputer(1L);
-
-		assertEquals(computer, result);
-
-	}
-*/
+    @Test
+    public void testComputerUpdate() {
+        Computer computer = new Computer.Builder(1L).withName("New Computer 1").build();
+        ComputerDAO.INSTANCE.updateComputer(computer);
+        try {
+            assertEquals(ComputerDAO.INSTANCE.getComputer(1L).get().getName().get(), "New Computer 1");
+        } catch (NoSuchElementException e) {
+            fail("Computer not found.");
+        }
+    }
+    
+    @Test
+    public void testGetComputer() {
+        Optional<Computer> computerOpt = ComputerDAO.INSTANCE.getComputer(2L);
+        assertTrue(computerOpt.isPresent());
+        try {
+            assertEquals(computerOpt.get().getId().get(), new Long(2));
+            assertEquals(computerOpt.get().getName().get(), "Computer 2");
+            assertEquals(computerOpt.get().getIntroduced(), Optional.empty());
+            assertEquals(computerOpt.get().getDiscontinued(), Optional.empty());
+            assertEquals(computerOpt.get().getCompany().get().getId(), new Long(2));
+            assertEquals(computerOpt.get().getCompany().get().getName(), "Company 2");
+        } catch (NoSuchElementException e) {
+            fail("Wrong computer.");
+        }
+    }
+    
+    @Test
+    public void testPageAmount() {
+        assertEquals(ComputerDAO.INSTANCE.getComputerListPageTotalAmount(10), 10);
+    }
 }

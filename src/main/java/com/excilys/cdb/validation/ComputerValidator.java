@@ -12,32 +12,32 @@ import com.excilys.cdb.validation.exceptions.NullNameException;
 import com.excilys.cdb.validation.exceptions.ValidationException;
 
 public enum ComputerValidator {
-	INSTANCE;
+    INSTANCE;
 
-	private CompanyDAO companyDAO = CompanyDAO.INSTANCE;
+    private CompanyDAO companyDAO = CompanyDAO.INSTANCE;
 
-	public void validateComputer(Computer computer) throws ValidationException {
-		validateName(computer.getName());
-		validateDates(computer.getIntroduced(), computer.getDiscontinued());
-		validateCompany(computer.getCompany());
-	}
+    public void validateComputer(Computer computer) throws ValidationException {
+        validateName(computer.getName());
+        validateDates(computer.getIntroduced(), computer.getDiscontinued());
+        validateCompany(computer.getCompany());
+    }
 
-	private void validateName(Optional<String> name) throws NullNameException {
-		if (!name.isPresent()) {
-			throw new NullNameException();
-		}
-	}
+    private void validateCompany(Optional<Company> company) throws NotExistingCompanyException {
+        if (company.isPresent() && !companyDAO.getCompany(company.get().getId()).isPresent()) {
+            throw new NotExistingCompanyException();
+        }
+    }
 
-	private void validateDates(Optional<LocalDate> introduced, Optional<LocalDate> discontinued)
-			throws InvalidDatesException {
-		if (discontinued.isPresent() && introduced.isPresent() && introduced.get().isAfter(discontinued.get())) {
-			throw new InvalidDatesException();
-		}
-	}
+    private void validateDates(Optional<LocalDate> introduced, Optional<LocalDate> discontinued)
+            throws InvalidDatesException {
+        if (discontinued.isPresent() && introduced.isPresent() && introduced.get().isAfter(discontinued.get())) {
+            throw new InvalidDatesException();
+        }
+    }
 
-	private void validateCompany(Optional<Company> company) throws NotExistingCompanyException {
-		if (company.isPresent()	&& companyDAO.getCompany(company.get().getId()).isPresent()) {
-			throw new NotExistingCompanyException();
-		}
-	}
+    private void validateName(Optional<String> name) throws NullNameException {
+        if (!name.isPresent()) {
+            throw new NullNameException();
+        }
+    }
 }

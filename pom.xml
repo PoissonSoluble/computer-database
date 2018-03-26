@@ -8,6 +8,7 @@
   <version>0.0.1-SNAPSHOT</version>
   <name>computer-database</name>
   <description>computer-database</description>
+  <packaging>war</packaging>
   <properties>
     <!-- sets the projects encoding to UTF-8 -->
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -15,24 +16,36 @@
     <!-- test -->
     <junit.version>4.7</junit.version>
     <mockito.version>2.0.2-beta</mockito.version>
+    <hsqldb.version>2.4.0</hsqldb.version>
+    <sqltool.version>2.2.4</sqltool.version>
     <!-- compile -->
+    <javax-servlet.version>2.5</javax-servlet.version>
     <!-- logs -->
-    <slf4j.version>1.8.0-beta1</slf4j.version>
+    <slf4j.version>1.7.25</slf4j.version>
+    <logback.version>1.2.3</logback.version>
     <!-- runtime -->
     <mysql.version>5.1.6</mysql.version>
     <mysql-jdbc.version>8.0.8-dmr</mysql-jdbc.version>
     <mojo.version>1.2.1</mojo.version>
+    <!-- server -->
+    <tomcat7-maven.version>2.2</tomcat7-maven.version>
+    <jstl.version>1.2</jstl.version>
+    <maven-war.version>3.2.0</maven-war.version>
+    <tomcat.url>http://localhost:8080/manager/text</tomcat.url>
   </properties>
   <dependencies>
     <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-api</artifactId>
       <version>${slf4j.version}</version>
+      <scope>compile</scope>
     </dependency>
+    <!-- https://mvnrepository.com/artifact/ch.qos.logback/logback-classic -->
     <dependency>
-      <groupId>org.slf4j</groupId>
-      <artifactId>slf4j-jdk14</artifactId>
-      <version>${slf4j.version}</version>
+      <groupId>ch.qos.logback</groupId>
+      <artifactId>logback-classic</artifactId>
+      <version>${logback.version}</version>
+      <scope>compile</scope>
     </dependency>
     <!-- https://mvnrepository.com/artifact/mysql/mysql-connector-java -->
     <dependency>
@@ -51,6 +64,31 @@
       <groupId>org.mockito</groupId>
       <artifactId>mockito-all</artifactId>
       <version>${mockito.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <!-- https://mvnrepository.com/artifact/javax.servlet/servlet-api -->
+    <dependency>
+      <groupId>javax.servlet</groupId>
+      <artifactId>servlet-api</artifactId>
+      <version>${javax-servlet.version}</version>
+      <scope>compile</scope>
+    </dependency>
+    <!-- https://mvnrepository.com/artifact/jstl/jstl -->
+    <dependency>
+      <groupId>jstl</groupId>
+      <artifactId>jstl</artifactId>
+      <version>${jstl.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.hsqldb</groupId>
+      <artifactId>sqltool</artifactId>
+      <version>${sqltool.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.hsqldb</groupId>
+      <artifactId>hsqldb</artifactId>
+      <version>${hsqldb.version}</version>
       <scope>test</scope>
     </dependency>
   </dependencies>
@@ -80,14 +118,39 @@
           <mainClass>com.excilys.cdb.ui.CommandLineInterface</mainClass>
         </configuration>
       </plugin>
+      <plugin>
+        <groupId>org.apache.tomcat.maven</groupId>
+        <artifactId>tomcat7-maven-plugin</artifactId>
+        <version>${tomcat7-maven.version}</version>
+        <configuration>
+          <url>${tomcat.url}</url>
+          <server>TomcatServer</server>
+          <path>/cdb</path>
+          <ignorePackaging>true</ignorePackaging>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-war-plugin</artifactId>
+        <version>${maven-war.version}</version>
+      </plugin>
     </plugins>
   </build>
   <reporting>
     <plugins>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-project-info-reports-plugin</artifactId>
+        <version>2.9</version>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-checkstyle-plugin</artifactId>
         <version>3.0.0</version>
+        <configuration>
+          <configLocation>checkstyle.xml</configLocation>
+          <supressionsLocation>supressions.xml</supressionsLocation>
+        </configuration>
         <reportSets>
           <reportSet>
             <reports>

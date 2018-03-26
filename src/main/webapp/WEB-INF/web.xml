@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app 
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+    xmlns="http://java.sun.com/xml/ns/javaee" xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd" version="3.0">
+    <servlet>
+        <servlet-name>DashboardServlet</servlet-name>
+        <servlet-class>com.excilys.cdb.servlet.DashboardServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>DashboardServlet</servlet-name>
+        <url-pattern>/dashboard</url-pattern>
+    </servlet-mapping>
+    <servlet>
+        <servlet-name>CreateComputerServlet</servlet-name>
+        <servlet-class>com.excilys.cdb.servlet.CreateComputerServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>CreateComputerServlet</servlet-name>
+        <url-pattern>/addComputer</url-pattern>
+    </servlet-mapping>
+    <error-page>
+        <error-code>404</error-code>
+        <location>/WEB-INF/views/errors/404.jsp</location>
+    </error-page>
+</web-app>
