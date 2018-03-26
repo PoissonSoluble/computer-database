@@ -31,7 +31,7 @@ public enum CompanyDAO {
     public Optional<Company> getCompany(Company company) {
         return getCompany(company.getId());
     }
-
+    
     public Optional<Company> getCompany(Long id) {
         Company company = null;
         try (Connection conn = dbConn.getConnection();
