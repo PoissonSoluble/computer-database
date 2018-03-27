@@ -14,6 +14,7 @@ import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.excilys.cdb.dao.exception.DAOException;
 import com.excilys.cdb.mapper.ComputerMapper;
 import com.excilys.cdb.model.Computer;
 import com.excilys.cdb.persistence.DatabaseConnection;
@@ -47,13 +48,34 @@ public enum ComputerDAO {
         return computer.getId();
     }
 
-    public void deleteComputer(long id) {
+    public void deleteComputer(Long id) {
         LOGGER.info("Computer DAO : deletion");
         try (Connection conn = dbConn.getConnection(); PreparedStatement stmt = conn.prepareStatement(DELETE);) {
             stmt.setLong(1, id);
             stmt.executeUpdate();
         } catch (SQLException e) {
             LOGGER.error("deleteComputer(): {}", e);
+        }
+    }
+
+    public void deleteComputers(List<Long> ids) throws DAOException{
+        LOGGER.info("Computer DAO : deletion (multiple)");
+        try (Connection conn = dbConn.getConnection();) {
+            conn.setAutoCommit(false);
+            for (Long id : ids) {
+                try(PreparedStatement stmt = conn.prepareStatement(DELETE)){
+                    stmt.setLong(1, id);
+                    stmt.executeUpdate();
+                } catch(SQLException e) {
+                    conn.rollback();
+                    LOGGER.error("deleteComputers(): {}", e);
+                    throw new DAOException("Error while deleting a row.");
+                }
+            }
+            conn.commit();
+        } catch (SQLException e) {
+            LOGGER.error("deleteComputers(): {}", e);
+            throw new DAOException("Error while initiating the connection.");
         }
     }
 

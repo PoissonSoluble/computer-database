@@ -4,38 +4,44 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 
+import com.excilys.cdb.dao.exception.DAOException;
 import com.excilys.cdb.mockdb.MockDataBase;
 import com.excilys.cdb.model.Computer;
 
 public class ComputerDAOTest {
-    
+
     ComputerDAO dao = ComputerDAO.INSTANCE;
 
-    @AfterClass
-    public static void destroy() {
+    @After
+    public void destroy() {
         MockDataBase.removeDataBase();
     }
 
-    @BeforeClass
-    public static void setUp() {
+    @Before
+    public void setUp() {
         MockDataBase.createDatabase();
     }
 
     @Test
-    public void testCreationAndDeletion() {
+    public void testCreation() {
         Computer computer = new Computer.Builder("New Computer").build();
         Optional<Long> idOpt = dao.createComputer(computer);
         assertTrue(idOpt.isPresent());
         assertTrue(dao.getComputer(idOpt.get()).isPresent());
-        dao.deleteComputer(idOpt.get());
-        assertFalse(dao.getComputer(idOpt.get()).isPresent());
+    }
+    
+    public void testDeletion() {
+        dao.deleteComputer(5L);
+        assertFalse(dao.getComputer(5L).isPresent());
     }
 
     @Test
@@ -75,5 +81,17 @@ public class ComputerDAOTest {
     @Test
     public void testPageAmount() {
         assertEquals(dao.getComputerListPageTotalAmount(10), 10);
+    }
+
+    @Test
+    public void testMultipleDelete() throws DAOException {
+        List<Long> list = new ArrayList<>();
+        list.add(5L);
+        list.add(15L);
+        list.add(25L);
+        dao.deleteComputers(list);
+        list.stream().forEach(id -> {
+            assertFalse(dao.getComputer(id).isPresent());
+        });
     }
 }
