@@ -1,7 +1,10 @@
 package com.excilys.cdb.pagination;
 
+import java.util.ArrayList;
+
 import com.excilys.cdb.model.Computer;
 import com.excilys.cdb.service.ComputerService;
+import com.excilys.cdb.service.ServiceException;
 
 public class ComputerPage extends Page<Computer> {
 
@@ -25,12 +28,20 @@ public class ComputerPage extends Page<Computer> {
 
     @Override
     protected int getLastPageNumber() {
-        return service.getComputerListPageTotalAmount(pageSize);
+        try {
+            return service.getComputerListPageTotalAmount(pageSize);
+        } catch (ServiceException e) {
+            return 1;
+        }
     }
 
     @Override
     protected void refresh() {
-        elements = service.getComputerPage(pageNumber, pageSize);
+        try {
+            elements = service.getComputerPage(pageNumber, pageSize);
+        } catch (ServiceException e) {
+            elements = new ArrayList<>();
+        }
         pageTotal = getLastPageNumber();
     }
 }

@@ -1,4 +1,4 @@
-package com.excilys.cdb.dao.exception;
+package com.excilys.cdb.dao;
 
 @SuppressWarnings("serial")
 public class DAOException extends Exception {

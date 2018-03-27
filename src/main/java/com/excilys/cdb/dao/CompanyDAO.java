@@ -28,11 +28,11 @@ public enum CompanyDAO {
     private final String SELECT_COUNT = "SELECT count(ca_id) as count FROM company";
     private final String SELECT_A_PAGE = "SELECT ca_id, ca_name FROM company ORDER BY ca_id LIMIT ? OFFSET ?";
 
-    public Optional<Company> getCompany(Company company) {
+    public Optional<Company> getCompany(Company company) throws DAOException {
         return getCompany(company.getId());
     }
     
-    public Optional<Company> getCompany(Long id) {
+    public Optional<Company> getCompany(Long id) throws DAOException {
         LOGGER.info("Company DAO : get");
         Company company = null;
         try (Connection conn = dbConn.getConnection();
@@ -41,11 +41,12 @@ public enum CompanyDAO {
             company = retrieveCompanyFromQuery(stmt);
         } catch (SQLException e) {
             LOGGER.debug(new StringBuilder("getCompany(): ").append(e.getMessage()).toString());
+            throw new DAOException("Error while getting the company.");
         }
         return Optional.ofNullable(company);
     }
 
-    public int getCompanyListPageTotalAmount(int pageSize) {
+    public int getCompanyListPageTotalAmount(int pageSize) throws DAOException {
         LOGGER.info("Company DAO : page number");
         int pages = 0;
         try (Connection conn = dbConn.getConnection();
@@ -55,11 +56,12 @@ public enum CompanyDAO {
             pages = computePageAmountFromQuery(pageSize, rs);
         } catch (SQLException e) {
             LOGGER.debug(new StringBuilder("getCompanyListPageTotalAmount(int): ").append(e.getMessage()).toString());
+            throw new DAOException("Error while getting total page count.");
         }
         return pages;
     }
 
-    public List<Company> listCompanies() {
+    public List<Company> listCompanies() throws DAOException {
         LOGGER.info("Company DAO : list");
         ArrayList<Company> companies = new ArrayList<>();
         try (Connection conn = dbConn.getConnection();
@@ -70,11 +72,12 @@ public enum CompanyDAO {
             }
         } catch (SQLException e) {
             LOGGER.debug(new StringBuilder("listCompanies(): ").append(e.getMessage()).toString());
+            throw new DAOException("Error while listing companies.");
         }
         return companies;
     }
 
-    public List<Company> listCompaniesByPage(int pageNumber, int pageSize) throws PageOutOfBoundsException {
+    public List<Company> listCompaniesByPage(int pageNumber, int pageSize) throws PageOutOfBoundsException, DAOException {
         LOGGER.info(new StringBuilder("Company DAO : page (").append(pageNumber).append(",").append(pageSize)
                 .append(")").toString());
         ArrayList<Company> companies = new ArrayList<>();
@@ -83,6 +86,7 @@ public enum CompanyDAO {
             retrievePageContentFromQueryResult(stmt, companies);
         } catch (SQLException e) {
             LOGGER.debug(new StringBuilder("listCompaniesByPage(): ").append(e.getMessage()).toString());
+            throw new DAOException("Error while retriving page.");
         }
         return companies;
     }

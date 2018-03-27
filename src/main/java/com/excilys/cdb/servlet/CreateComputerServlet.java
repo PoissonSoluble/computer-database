@@ -20,6 +20,7 @@ import com.excilys.cdb.model.Company;
 import com.excilys.cdb.model.Computer;
 import com.excilys.cdb.service.CompanyService;
 import com.excilys.cdb.service.ComputerService;
+import com.excilys.cdb.service.ServiceException;
 import com.excilys.cdb.validation.exceptions.InvalidDatesException;
 import com.excilys.cdb.validation.exceptions.NotExistingCompanyException;
 import com.excilys.cdb.validation.exceptions.NullNameException;
@@ -44,7 +45,10 @@ public class CreateComputerServlet extends HttpServlet {
             throws ServletException, IOException {
         CompanyDTOMapper mapper = new CompanyDTOMapper();
         List<CompanyDTO> dtos = new ArrayList<>();
-        CompanyService.INSTANCE.getCompanies().forEach(company -> dtos.add(mapper.createCompanyDTO(company)));
+        try {
+            CompanyService.INSTANCE.getCompanies().forEach(company -> dtos.add(mapper.createCompanyDTO(company)));
+        } catch (ServiceException e) {
+        }
         request.setAttribute("companies", dtos);
         RequestDispatcher view = request.getRequestDispatcher("WEB-INF/views/addComputer.jsp");
         view.forward(request, response);

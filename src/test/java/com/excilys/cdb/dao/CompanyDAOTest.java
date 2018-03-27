@@ -27,22 +27,22 @@ public class CompanyDAOTest {
     }
 
     @Test
-    public void testListCompanies() {
+    public void testListCompanies() throws DAOException {
         assertEquals(dao.listCompanies().size(), 20);
     }
 
     @Test
-    public void testPage() throws PageOutOfBoundsException {
+    public void testPage() throws PageOutOfBoundsException, DAOException {
         assertEquals(dao.listCompaniesByPage(1, 10).size(), 10);
     }
 
     @Test(expected = PageOutOfBoundsException.class)
-    public void testPageOutOfBounds() throws PageOutOfBoundsException {
+    public void testPageOutOfBounds() throws PageOutOfBoundsException, DAOException {
         dao.listCompaniesByPage(3, 10);
     }
 
     @Test
-    public void testGetCompany() throws NoSuchElementException{
+    public void testGetCompany() throws NoSuchElementException, DAOException{
         Optional<Company> companyOpt = dao.getCompany(2L);
         assertTrue(companyOpt.isPresent());
         assertEquals(companyOpt.get().getId(), new Long(2));

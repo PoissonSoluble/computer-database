@@ -14,6 +14,7 @@ import com.excilys.cdb.dto.ComputerDTO;
 import com.excilys.cdb.mapper.ComputerDTOMapper;
 import com.excilys.cdb.pagination.ComputerPage;
 import com.excilys.cdb.service.ComputerService;
+import com.excilys.cdb.service.ServiceException;
 
 public class DashboardServlet extends HttpServlet {
 
@@ -34,11 +35,15 @@ public class DashboardServlet extends HttpServlet {
         List<ComputerDTO> dtos = new ArrayList<>();
         ComputerDTOMapper mapper = new ComputerDTOMapper();
         page.get().forEach(computer -> dtos.add(mapper.createComputerDTO(computer)));
-        
+
         request.setAttribute("computers", dtos);
         request.setAttribute("pageNumber", page.getPageNumber());
         request.setAttribute("totalPage", page.getPageTotal());
-        request.setAttribute("computerAmount", ComputerService.INSTANCE.getComputerAmount());
+        try {
+            request.setAttribute("computerAmount", ComputerService.INSTANCE.getComputerAmount());
+        } catch (ServiceException e) {
+            request.setAttribute("computerAmount", 0);
+        }
         request.setAttribute("pageSize", pageSize);
         RequestDispatcher view = request.getRequestDispatcher("WEB-INF/views/dashboard.jsp");
         view.forward(request, response);

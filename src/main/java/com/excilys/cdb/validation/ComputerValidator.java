@@ -4,6 +4,7 @@ import java.time.LocalDate;
 import java.util.Optional;
 
 import com.excilys.cdb.dao.CompanyDAO;
+import com.excilys.cdb.dao.DAOException;
 import com.excilys.cdb.model.Company;
 import com.excilys.cdb.model.Computer;
 import com.excilys.cdb.validation.exceptions.InvalidDatesException;
@@ -22,9 +23,13 @@ public enum ComputerValidator {
         validateCompany(computer.getCompany());
     }
 
-    private void validateCompany(Optional<Company> company) throws NotExistingCompanyException {
-        if (company.isPresent() && !companyDAO.getCompany(company.get().getId()).isPresent()) {
-            throw new NotExistingCompanyException();
+    private void validateCompany(Optional<Company> company) throws ValidationException {
+        try {
+            if (company.isPresent() && !companyDAO.getCompany(company.get().getId()).isPresent()) {
+                throw new NotExistingCompanyException();
+            }
+        } catch (DAOException e) {
+            throw new ValidationException();
         }
     }
 

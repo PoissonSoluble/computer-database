@@ -13,7 +13,6 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.excilys.cdb.dao.exception.DAOException;
 import com.excilys.cdb.mockdb.MockDataBase;
 import com.excilys.cdb.model.Computer;
 
@@ -32,42 +31,42 @@ public class ComputerDAOTest {
     }
 
     @Test
-    public void testCreation() {
+    public void testCreation() throws DAOException {
         Computer computer = new Computer.Builder("New Computer").build();
         Optional<Long> idOpt = dao.createComputer(computer);
         assertTrue(idOpt.isPresent());
         assertTrue(dao.getComputer(idOpt.get()).isPresent());
     }
     
-    public void testDeletion() {
+    public void testDeletion() throws DAOException {
         dao.deleteComputer(5L);
         assertFalse(dao.getComputer(5L).isPresent());
     }
 
     @Test
-    public void testListComputers() {
+    public void testListComputers() throws DAOException {
         assertEquals(dao.listComputers().size(), 100);
     }
 
     @Test
-    public void testPage() throws PageOutOfBoundsException {
+    public void testPage() throws PageOutOfBoundsException, DAOException {
         assertEquals(dao.listComputersByPage(1, 10).size(), 10);
     }
 
     @Test(expected = PageOutOfBoundsException.class)
-    public void testPageOutOfBounds() throws PageOutOfBoundsException {
+    public void testPageOutOfBounds() throws PageOutOfBoundsException, DAOException {
         dao.listComputersByPage(11, 10);
     }
 
     @Test
-    public void testComputerUpdate() throws NoSuchElementException {
+    public void testComputerUpdate() throws NoSuchElementException, DAOException {
         Computer computer = new Computer.Builder(1L).withName("New Computer 1").build();
         dao.updateComputer(computer);
         assertEquals(dao.getComputer(1L).get().getName().get(), "New Computer 1");
     }
 
     @Test
-    public void testGetComputer() throws NoSuchElementException {
+    public void testGetComputer() throws NoSuchElementException, DAOException {
         Optional<Computer> computerOpt = dao.getComputer(2L);
         assertTrue(computerOpt.isPresent());
         assertEquals(computerOpt.get().getId().get(), new Long(2));
@@ -79,19 +78,19 @@ public class ComputerDAOTest {
     }
 
     @Test
-    public void testPageAmount() {
+    public void testPageAmount() throws DAOException {
         assertEquals(dao.getComputerListPageTotalAmount(10), 10);
     }
 
     @Test
     public void testMultipleDelete() throws DAOException {
-        List<Long> list = new ArrayList<>();
-        list.add(5L);
-        list.add(15L);
-        list.add(25L);
-        dao.deleteComputers(list);
-        list.stream().forEach(id -> {
+        List<Long> ids = new ArrayList<>();
+        ids.add(5L);
+        ids.add(15L);
+        ids.add(25L);
+        dao.deleteComputers(ids);
+        for(Long id : ids) {
             assertFalse(dao.getComputer(id).isPresent());
-        });
+        }
     }
 }
