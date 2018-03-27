@@ -33,6 +33,7 @@ public enum CompanyDAO {
     }
     
     public Optional<Company> getCompany(Long id) {
+        logger.info("Company DAO : get");
         Company company = null;
         try (Connection conn = dbConn.getConnection();
                 PreparedStatement stmt = conn.prepareStatement(SELECT_FROM_ID);) {
@@ -45,6 +46,7 @@ public enum CompanyDAO {
     }
 
     public int getCompanyListPageTotalAmount(int pageSize) {
+        logger.info("Company DAO : page number");
         int pages = 0;
         try (Connection conn = dbConn.getConnection();
                 PreparedStatement stmt = conn.prepareStatement(SELECT_COUNT);
@@ -58,6 +60,7 @@ public enum CompanyDAO {
     }
 
     public List<Company> listCompanies() {
+        logger.info("Company DAO : list");
         ArrayList<Company> companies = new ArrayList<>();
         try (Connection conn = dbConn.getConnection();
                 PreparedStatement stmt = conn.prepareStatement(SELECT_ALL);
@@ -72,6 +75,8 @@ public enum CompanyDAO {
     }
 
     public List<Company> listCompaniesByPage(int pageNumber, int pageSize) throws PageOutOfBoundsException {
+        logger.info(new StringBuilder("Company DAO : page (").append(pageNumber).append(",").append(pageSize)
+                .append(")").toString());
         ArrayList<Company> companies = new ArrayList<>();
         try (Connection conn = dbConn.getConnection(); PreparedStatement stmt = conn.prepareStatement(SELECT_A_PAGE);) {
             retrieveParametersForComputerPage(pageNumber, pageSize, stmt);
