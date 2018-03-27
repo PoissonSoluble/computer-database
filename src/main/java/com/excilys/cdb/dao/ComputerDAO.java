@@ -24,7 +24,7 @@ public enum ComputerDAO {
 
     private DatabaseConnection dbConn = DatabaseConnection.INSTANCE;
     private ComputerMapper mapper = ComputerMapper.INSTANCE;
-    private Logger logger = LoggerFactory.getLogger(ComputerDAO.class);
+    private final Logger LOGGER = LoggerFactory.getLogger(ComputerDAO.class);
 
     private final String SELECT_ALL = "SELECT cu_id, cu_name, cu_introduced, cu_discontinued, ca_id, ca_name FROM computer LEFT JOIN company USING(ca_id)";
     private final String SELECT_FROM_ID = "SELECT cu_id, cu_name, cu_introduced, cu_discontinued, ca_id, ca_name FROM computer LEFT JOIN company USING(ca_id) WHERE cu_id = ?";
@@ -35,30 +35,30 @@ public enum ComputerDAO {
     private final String UPDATE = "UPDATE computer SET cu_name = ?, cu_introduced = ?, cu_discontinued = ?, ca_id = ? WHERE cu_id = ?";
 
     public Optional<Long> createComputer(Computer computer) {
-        logger.info("Computer DAO : creation");
+        LOGGER.info("Computer DAO : creation");
         try (Connection conn = dbConn.getConnection();
                 PreparedStatement stmt = conn.prepareStatement(INSERT, Statement.RETURN_GENERATED_KEYS);) {
             setParameters(computer, stmt);
             stmt.executeUpdate();
             retrieveComputerIDFromUpdate(computer, stmt);
         } catch (SQLException e) {
-            logger.error("createComputer(): {}", e);
+            LOGGER.error("createComputer(): {}", e);
         }
         return computer.getId();
     }
 
     public void deleteComputer(long id) {
-        logger.info("Computer DAO : deletion");
+        LOGGER.info("Computer DAO : deletion");
         try (Connection conn = dbConn.getConnection(); PreparedStatement stmt = conn.prepareStatement(DELETE);) {
             stmt.setLong(1, id);
             stmt.executeUpdate();
         } catch (SQLException e) {
-            logger.error("deleteComputer(): {}", e);
+            LOGGER.error("deleteComputer(): {}", e);
         }
     }
 
     public Optional<Computer> getComputer(Long id) {
-        logger.info("Computer DAO : get");
+        LOGGER.info("Computer DAO : get");
         Computer computer = null;
         try (Connection conn = dbConn.getConnection();
                 PreparedStatement stmt = conn.prepareStatement(SELECT_FROM_ID);) {
@@ -67,13 +67,13 @@ public enum ComputerDAO {
                 computer = retrieveComputerFromQuery(stmt);
             }
         } catch (SQLException e) {
-            logger.error("getComputer(Long): {}", e);
+            LOGGER.error("getComputer(Long): {}", e);
         }
         return Optional.ofNullable(computer);
     }
 
     public int getComputerListPageTotalAmount(int pageSize) {
-        logger.info("Computer DAO : page number");
+        LOGGER.info("Computer DAO : page number");
         int pages = 0;
         try (Connection conn = dbConn.getConnection();
                 PreparedStatement stmt = conn.prepareStatement(SELECT_COUNT);
@@ -81,13 +81,13 @@ public enum ComputerDAO {
             rs.next();
             pages = computePageAmountFromQuery(pageSize, rs);
         } catch (SQLException e) {
-            logger.error("getComputerListPageTotalAmount(int): {}", e);
+            LOGGER.error("getComputerListPageTotalAmount(int): {}", e);
         }
         return pages;
     }
 
     public int getComputerAmount() {
-        logger.info("Computer DAO : count");
+        LOGGER.info("Computer DAO : count");
         int count = 0;
         try (Connection conn = dbConn.getConnection();
                 PreparedStatement stmt = conn.prepareStatement(SELECT_COUNT);
@@ -95,45 +95,45 @@ public enum ComputerDAO {
             rs.next();
             count = rs.getInt("count");
         } catch (SQLException e) {
-            logger.error("getComputerListPageTotalAmount(int): {}", e);
+            LOGGER.error("getComputerListPageTotalAmount(int): {}", e);
         }
         return count;
     }
 
     public List<Computer> listComputers() {
-        logger.info("Computer DAO : list");
+        LOGGER.info("Computer DAO : list");
         ArrayList<Computer> computers = new ArrayList<>();
         try (Connection conn = dbConn.getConnection();
                 PreparedStatement stmt = conn.prepareStatement(SELECT_ALL);
                 ResultSet rs = stmt.executeQuery();) {
             retrieveComputersFromQuery(computers, rs);
         } catch (SQLException e) {
-            logger.error("listComputers(): {}", e);
+            LOGGER.error("listComputers(): {}", e);
         }
         return computers;
     }
 
     public List<Computer> listComputersByPage(int pageNumber, int pageSize) throws PageOutOfBoundsException {
-        logger.info(new StringBuilder("Computer DAO : page (").append(pageNumber).append(",").append(pageSize)
+        LOGGER.info(new StringBuilder("Computer DAO : page (").append(pageNumber).append(",").append(pageSize)
                 .append(")").toString());
         ArrayList<Computer> computers = new ArrayList<>();
         try (Connection conn = dbConn.getConnection(); PreparedStatement stmt = conn.prepareStatement(SELECT_PAGE);) {
             retrieveParametersForComputerPage(pageNumber, pageSize, stmt);
             retrievePageContentFromQueryResult(stmt, computers);
         } catch (SQLException e) {
-            logger.error("listComputersByPage(int,int): {}", e);
+            LOGGER.error("listComputersByPage(int,int): {}", e);
         }
         return computers;
     }
 
     public void updateComputer(Computer computer) {
-        logger.info("Computer DAO : update");
+        LOGGER.info("Computer DAO : update");
         try (Connection conn = dbConn.getConnection(); PreparedStatement stmt = conn.prepareStatement(UPDATE);) {
             setParameters(computer, stmt);
             stmt.setLong(5, computer.getId().get());
             stmt.executeUpdate();
         } catch (SQLException e) {
-            logger.error("updateComputer(Computer): {}", e);
+            LOGGER.error("updateComputer(Computer): {}", e);
         }
     }
 

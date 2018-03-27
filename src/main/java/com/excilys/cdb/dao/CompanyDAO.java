@@ -21,7 +21,7 @@ public enum CompanyDAO {
 
     private DatabaseConnection dbConn = DatabaseConnection.INSTANCE;
     private CompanyMapper mapper = CompanyMapper.INSTANCE;
-    private Logger logger = LoggerFactory.getLogger(CompanyDAO.class);
+    private final Logger LOGGER = LoggerFactory.getLogger(CompanyDAO.class);
 
     private final String SELECT_ALL = "SELECT ca_id, ca_name FROM company";
     private final String SELECT_FROM_ID = "SELECT ca_id, ca_name FROM company WHERE ca_id = ?";
@@ -33,20 +33,20 @@ public enum CompanyDAO {
     }
     
     public Optional<Company> getCompany(Long id) {
-        logger.info("Company DAO : get");
+        LOGGER.info("Company DAO : get");
         Company company = null;
         try (Connection conn = dbConn.getConnection();
                 PreparedStatement stmt = conn.prepareStatement(SELECT_FROM_ID);) {
             stmt.setLong(1, id);
             company = retrieveCompanyFromQuery(stmt);
         } catch (SQLException e) {
-            logger.debug(new StringBuilder("getCompany(): ").append(e.getMessage()).toString());
+            LOGGER.debug(new StringBuilder("getCompany(): ").append(e.getMessage()).toString());
         }
         return Optional.ofNullable(company);
     }
 
     public int getCompanyListPageTotalAmount(int pageSize) {
-        logger.info("Company DAO : page number");
+        LOGGER.info("Company DAO : page number");
         int pages = 0;
         try (Connection conn = dbConn.getConnection();
                 PreparedStatement stmt = conn.prepareStatement(SELECT_COUNT);
@@ -54,13 +54,13 @@ public enum CompanyDAO {
             rs.next();
             pages = computePageAmountFromQuery(pageSize, rs);
         } catch (SQLException e) {
-            logger.debug(new StringBuilder("getCompanyListPageTotalAmount(int): ").append(e.getMessage()).toString());
+            LOGGER.debug(new StringBuilder("getCompanyListPageTotalAmount(int): ").append(e.getMessage()).toString());
         }
         return pages;
     }
 
     public List<Company> listCompanies() {
-        logger.info("Company DAO : list");
+        LOGGER.info("Company DAO : list");
         ArrayList<Company> companies = new ArrayList<>();
         try (Connection conn = dbConn.getConnection();
                 PreparedStatement stmt = conn.prepareStatement(SELECT_ALL);
@@ -69,20 +69,20 @@ public enum CompanyDAO {
                 companies.add(mapper.createCompany(rs.getLong(1), rs.getString(2)));
             }
         } catch (SQLException e) {
-            logger.debug(new StringBuilder("listCompanies(): ").append(e.getMessage()).toString());
+            LOGGER.debug(new StringBuilder("listCompanies(): ").append(e.getMessage()).toString());
         }
         return companies;
     }
 
     public List<Company> listCompaniesByPage(int pageNumber, int pageSize) throws PageOutOfBoundsException {
-        logger.info(new StringBuilder("Company DAO : page (").append(pageNumber).append(",").append(pageSize)
+        LOGGER.info(new StringBuilder("Company DAO : page (").append(pageNumber).append(",").append(pageSize)
                 .append(")").toString());
         ArrayList<Company> companies = new ArrayList<>();
         try (Connection conn = dbConn.getConnection(); PreparedStatement stmt = conn.prepareStatement(SELECT_A_PAGE);) {
             retrieveParametersForComputerPage(pageNumber, pageSize, stmt);
             retrievePageContentFromQueryResult(stmt, companies);
         } catch (SQLException e) {
-            logger.debug(new StringBuilder("listCompaniesByPage(): ").append(e.getMessage()).toString());
+            LOGGER.debug(new StringBuilder("listCompaniesByPage(): ").append(e.getMessage()).toString());
         }
         return companies;
     }

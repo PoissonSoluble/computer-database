@@ -27,6 +27,7 @@
     <mysql.version>5.1.6</mysql.version>
     <mysql-jdbc.version>8.0.8-dmr</mysql-jdbc.version>
     <mojo.version>1.2.1</mojo.version>
+    <hikaricp.version>2.7.8</hikaricp.version>
     <!-- server -->
     <tomcat7-maven.version>2.2</tomcat7-maven.version>
     <jstl.version>1.2</jstl.version>
@@ -90,6 +91,12 @@
       <artifactId>hsqldb</artifactId>
       <version>${hsqldb.version}</version>
       <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>com.zaxxer</groupId>
+      <artifactId>HikariCP</artifactId>
+      <version>${hikaricp.version}</version>
+      <scope>compile</scope>
     </dependency>
   </dependencies>
   <build>
