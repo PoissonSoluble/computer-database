@@ -6,8 +6,8 @@ import static org.junit.Assert.assertTrue;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 
 import com.excilys.cdb.mockdb.MockDataBase;
@@ -16,13 +16,13 @@ import com.excilys.cdb.model.Company;
 public class CompanyDAOTest {
     CompanyDAO dao = CompanyDAO.INSTANCE;
 
-    @AfterClass
-    public static void destroy() {
+    @After
+    public void destroy() {
         MockDataBase.removeDataBase();
     }
 
-    @BeforeClass
-    public static void setUp() {
+    @Before
+    public void setUp() {
         MockDataBase.createDatabase();
     }
 

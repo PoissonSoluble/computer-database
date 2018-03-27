@@ -52,8 +52,8 @@
 			</div>
 		</div>
 
-		<form id="deleteForm" action="#" method="POST">
-			<input type="hidden" name="selection" value="">
+		<form id="deleteForm" action="<tag:links linkTo="deleteComputers"/>" method="POST">
+			<input type="hidden" id="deleteSelection" name="selection" value="">
 		</form>
 
 		<div class="container" style="margin-top: 10px;">
@@ -84,7 +84,7 @@
 					<c:forEach items="${computers}" var="computer">
 						<tr>
 							<td class="editMode"><input type="checkbox" name="cb"
-								class="cb" value="0"></td>
+								class="cb" value="${computer.id}"></td>
 							<td><a href="editComputer.html" onclick=""><c:out
 										value="${computer.name}" /></a></td>
 							<td><c:out value="${computer.introduced}" /></td>
@@ -121,7 +121,18 @@
 	<script src="<c:url value="/static/js/jquery.min.js" />"></script>
 	<script src="<c:url value="/static/js/bootstrap.min.js" />"></script>
 	<script src="<c:url value="/static/js/dashboard.js" />"></script>
-
+	<script>
+		function deleteSelected(){
+			let values = [];
+			$("input:checkbox[name=cb]:checked").each(function(){
+    			values.push($(this).val());
+			});
+			$("#deleteSelection").val(JSON.stringify(values));
+			$("deleteForm").submit(function(event){
+    			event.preventDefault();
+			})
+		}
+	</script>
 </body>
 
 </html>
