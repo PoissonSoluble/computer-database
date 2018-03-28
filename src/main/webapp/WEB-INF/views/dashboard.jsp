@@ -52,8 +52,10 @@
 			</div>
 		</div>
 
-		<form id="deleteForm" action="<tag:links linkTo="deleteComputers"/>" method="POST">
+		<form id="deleteForm" action="<tag:links linkTo="deleteComputer"/>" method="POST">
 			<input type="hidden" id="deleteSelection" name="selection" value="">
+			<input type="hidden" name="pageNumber" value="${pageNumber}"/>
+			<input type="hidden" name="pageSize" value="${pageSize}"/>
 		</form>
 
 		<div class="container" style="margin-top: 10px;">
@@ -121,18 +123,6 @@
 	<script src="<c:url value="/static/js/jquery.min.js" />"></script>
 	<script src="<c:url value="/static/js/bootstrap.min.js" />"></script>
 	<script src="<c:url value="/static/js/dashboard.js" />"></script>
-	<script>
-		function deleteSelected(){
-			let values = [];
-			$("input:checkbox[name=cb]:checked").each(function(){
-    			values.push($(this).val());
-			});
-			$("#deleteSelection").val(JSON.stringify(values));
-			$("deleteForm").submit(function(event){
-    			event.preventDefault();
-			})
-		}
-	</script>
 </body>
 
 </html>

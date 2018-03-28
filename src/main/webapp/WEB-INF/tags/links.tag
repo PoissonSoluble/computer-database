@@ -20,6 +20,9 @@
 			<c:when test="${ linkTo.equals('addComputer') }">
 				<c:set var="tmpPath" value="${ tmpPath.concat('/cdb/addComputer') }" />
 			</c:when>
+			<c:when test="${ linkTo.equals('deleteComputer') }">
+				<c:set var="tmpPath" value="${ tmpPath.concat('/cdb/deleteComputer') }" />
+			</c:when>
 		</c:choose>
 	</c:when>
 	<c:otherwise>

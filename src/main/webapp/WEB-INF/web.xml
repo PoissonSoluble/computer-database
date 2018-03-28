@@ -16,6 +16,14 @@
     <servlet-name>CreateComputerServlet</servlet-name>
     <url-pattern>/addComputer</url-pattern>
   </servlet-mapping>
+  <servlet>
+    <servlet-name>DeleteComputerServlet</servlet-name>
+    <servlet-class>com.excilys.cdb.servlet.DeleteComputerServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>DeleteComputerServlet</servlet-name>
+    <url-pattern>/deleteComputer</url-pattern>
+  </servlet-mapping>
   <error-page>
     <error-code>404</error-code>
     <location>/WEB-INF/views/errors/404.jsp</location>

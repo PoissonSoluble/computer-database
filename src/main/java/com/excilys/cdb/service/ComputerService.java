@@ -39,6 +39,16 @@ public enum ComputerService {
             LOGGER.debug("deleteComputer : {}", e);
         }
     }
+    
+
+    public void deleteComputers(List<Long> ids) {
+        try {
+            dao.deleteComputers(ids);
+            LOGGER.info(new StringBuilder("Computers removal : ").append(ids).toString());
+        } catch (DAOException e) {
+            LOGGER.debug("deleteComputer : {}", e);
+        }
+    }
 
     public Optional<Computer> detailComputer(Long id) {
         try {
