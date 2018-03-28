@@ -68,27 +68,27 @@ public enum ComputerService {
         }
     }
 
-    public int getComputerAmount() throws ServiceException {
+    public int getComputerAmount(String search) throws ServiceException {
         try {
-            return dao.getComputerAmount();
+            return dao.getComputerAmount(search);
         } catch (DAOException e) {
             LOGGER.debug("getComputerAmount : {}", e);
             throw new ServiceException("Error while getting the computer count.");
         }
     }
 
-    public int getComputerListPageTotalAmount(int pageSize) throws ServiceException {
+    public int getComputerListPageTotalAmount(int pageSize, String search) throws ServiceException {
         try {
-            return dao.getComputerListPageTotalAmount(pageSize);
+            return dao.getComputerListPageTotalAmount(pageSize, search);
         } catch (DAOException e) {
             LOGGER.debug("getComputerListPageTotalAmount : {}", e);
             throw new ServiceException("Error while getting the total page amount.");
         }
     }
 
-    public List<Computer> getComputerPage(int page, int pageSize) throws ServiceException{
+    public List<Computer> getComputerPage(int page, int pageSize, String search) throws ServiceException{
         try {
-            return dao.listComputersByPage(page, pageSize);
+            return dao.listComputersByPage(page, pageSize, search);
         } catch (PageOutOfBoundsException e) {
             return new ArrayList<>();
         } catch (DAOException e) {

@@ -26,8 +26,9 @@ public enum CompanyService {
         }
     }
 
-    public List<Company> getCompanyPage(int page, int pageSize) throws ServiceException {
+    public List<Company> getCompanyPage(int page, int pageSize, String search) throws ServiceException {
         try {
+            /* TODO : implement search */
             return dao.listCompaniesByPage(page, pageSize);
         } catch (PageOutOfBoundsException e) {
             return new ArrayList<>();

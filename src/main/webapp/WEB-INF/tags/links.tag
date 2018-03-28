@@ -5,12 +5,14 @@
 <%@attribute name="pageNumberAtt" required="false"%>
 <%@attribute name="pageSizeAtt" required="false"%>
 <%@attribute name="computerIdAtt" required="false"%>
+<%@attribute name="searchAtt" required="false"%>
 
 <c:set var="emptyText" value="" />
 <c:set var="tmpPath" value="" />
 <c:set var="tmpPageNb" value="" />
 <c:set var="tmpPageSize" value="" />
 <c:set var="tmpComputerId" value="" />
+<c:set var="tmpSearch" value="" />
 
 <%-- --%>
 <c:choose>
@@ -59,9 +61,17 @@
 	</c:if>
 </c:if>
 
+<c:if test="${ not empty searchAtt}">
+	<c:if test="${ not empty tmpPageNb }">
+		<c:set var="tmpSearch"
+			value="${ emptyText.concat('&search=').concat(searchAtt) }" />
+	</c:if>
+</c:if>
+
 <c:set var="tmpPath" value="${ tmpPath.concat(tmpPageNb) }" />
 <c:set var="tmpPath" value="${ tmpPath.concat(tmpPageSize) }" />
 <c:set var="tmpPath" value="${ tmpPath.concat(tmpComputerId) }" />
+<c:set var="tmpPath" value="${ tmpPath.concat(tmpSearch) }" />
 
 
 <c:out value="${ tmpPath }" escapeXml="false" />

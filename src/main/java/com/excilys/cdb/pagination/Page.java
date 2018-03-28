@@ -1,16 +1,19 @@
 package com.excilys.cdb.pagination;
 
 import java.util.List;
+import java.util.Optional;
 
 public abstract class Page<T> {
     protected List<T> elements;
     protected int pageNumber;
     protected int pageSize;
     protected int pageTotal;
+    protected String search;
 
-    public Page(int pPageNumber, int pPageSize) {
+    public Page(int pPageNumber, int pPageSize, Optional<String> pSearch) {
         pageNumber = pPageNumber;
         pageSize = pPageSize;
+        search = pSearch.orElse("");
         pageTotal = getLastPageNumber();
         refresh();
     }

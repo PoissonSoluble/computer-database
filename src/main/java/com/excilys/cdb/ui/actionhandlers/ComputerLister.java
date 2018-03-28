@@ -15,7 +15,7 @@ public class ComputerLister implements CLIActionHandler {
 
     @Override
     public void handle() {
-        page = new ComputerPage(1, PAGE_SIZE);
+        page = new ComputerPage(1, PAGE_SIZE, "");
         printPages();
     }
 

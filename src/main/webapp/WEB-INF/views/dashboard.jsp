@@ -36,6 +36,8 @@
 				<div class="pull-left">
 					<form id="searchForm" action="#" method="GET" class="form-inline">
 
+						<input type="hidden" name="pageNumber" value="${pageNumber}"/>
+						<input type="hidden" name="pageSize" value="${pageSize}"/>
 						<input type="search" id="searchbox" name="search"
 							class="form-control" placeholder="Search name" /> <input
 							type="submit" id="searchsubmit" value="Filter by name"

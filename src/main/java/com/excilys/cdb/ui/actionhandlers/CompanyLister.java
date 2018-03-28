@@ -15,7 +15,7 @@ public class CompanyLister implements CLIActionHandler {
 
     @Override
     public void handle() {
-        page = new CompanyPage(1, PAGE_SIZE);
+        page = new CompanyPage(1, PAGE_SIZE, "");
         printPages();
     }
 
