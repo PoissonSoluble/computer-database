@@ -18,7 +18,7 @@ public class ComputerItemizer implements CLIActionHandler {
     public void handle() {
         try {
             Long id = cliApi.askComputerID();
-            Computer computer = service.detailComputer(id).get();
+            Computer computer = service.getComputer(id).get();
             printComputer(computer);
             CommandLineInterface.getUserInput();
         } catch (NumberFormatException e) {

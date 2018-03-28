@@ -25,7 +25,8 @@ public enum ComputerValidator {
 
     private void validateCompany(Optional<Company> company) throws ValidationException {
         try {
-            if (company.isPresent() && !companyDAO.getCompany(company.get().getId()).isPresent()) {
+            if (company.isPresent() && company.get().getId().isPresent()
+                    && !companyDAO.getCompany(company.get().getId().get()).isPresent()) {
                 throw new NotExistingCompanyException();
             }
         } catch (DAOException e) {

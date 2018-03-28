@@ -73,8 +73,8 @@ public class ComputerDAOTest {
         assertEquals(computerOpt.get().getName().get(), "Computer 2");
         assertEquals(computerOpt.get().getIntroduced(), Optional.empty());
         assertEquals(computerOpt.get().getDiscontinued(), Optional.empty());
-        assertEquals(computerOpt.get().getCompany().get().getId(), new Long(2));
-        assertEquals(computerOpt.get().getCompany().get().getName(), "Company 2");
+        assertEquals(computerOpt.get().getCompany().get().getId().get(), new Long(2));
+        assertEquals(computerOpt.get().getCompany().get().getName().get(), "Company 2");
     }
 
     @Test

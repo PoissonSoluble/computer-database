@@ -1,5 +1,7 @@
 package com.excilys.cdb.model;
 
+import java.util.Optional;
+
 public class Company {
     public static class Builder {
         private Long id;
@@ -32,16 +34,12 @@ public class Company {
 
     }
 
-    private Long id;
-
-    private String name;
-
-    public Company() {
-    }
+    private Optional<Long> id;
+    private Optional<String> name;
 
     public Company(Builder builder) {
-        id = builder.id;
-        name = builder.name;
+        id = Optional.ofNullable(builder.id);
+        name = Optional.ofNullable(builder.name);
     }
 
     @Override
@@ -73,11 +71,11 @@ public class Company {
         return true;
     }
 
-    public Long getId() {
+    public Optional<Long> getId() {
         return id;
     }
 
-    public String getName() {
+    public Optional<String> getName() {
         return name;
     }
 
@@ -91,11 +89,11 @@ public class Company {
     }
 
     public void setId(Long pId) {
-        id = pId;
+        id = Optional.ofNullable(pId);
     }
 
     public void setName(String pName) {
-        name = pName;
+        name = Optional.ofNullable(pName);
     }
 
     @Override

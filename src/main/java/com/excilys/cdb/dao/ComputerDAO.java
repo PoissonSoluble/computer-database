@@ -236,8 +236,8 @@ public enum ComputerDAO {
         stmt.setString(1, computer.getName().get());
         addDateToStatement(2, computer.getIntroduced(), stmt);
         addDateToStatement(3, computer.getDiscontinued(), stmt);
-        if (computer.getCompany().isPresent()) {
-            stmt.setLong(4, computer.getCompany().get().getId());
+        if (computer.getCompany().isPresent() && computer.getCompany().get().getId().isPresent()) {
+            stmt.setLong(4, computer.getCompany().get().getId().get());
         } else {
             stmt.setNull(4, java.sql.Types.BIGINT);
         }

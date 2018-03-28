@@ -29,7 +29,11 @@ public enum CompanyDAO {
     private final String SELECT_A_PAGE = "SELECT ca_id, ca_name FROM company ORDER BY ca_id LIMIT ? OFFSET ?";
 
     public Optional<Company> getCompany(Company company) throws DAOException {
-        return getCompany(company.getId());
+        if(company.getId().isPresent()) {
+            return getCompany(company.getId().get());
+        } else {
+            throw new DAOException("The id is null.");
+        }
     }
     
     public Optional<Company> getCompany(Long id) throws DAOException {

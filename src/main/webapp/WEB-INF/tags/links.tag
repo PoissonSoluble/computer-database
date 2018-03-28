@@ -4,11 +4,13 @@
 <%@attribute name="linkTo" required="true"%>
 <%@attribute name="pageNumberAtt" required="false"%>
 <%@attribute name="pageSizeAtt" required="false"%>
+<%@attribute name="computerIdAtt" required="false"%>
 
 <c:set var="emptyText" value="" />
 <c:set var="tmpPath" value="" />
 <c:set var="tmpPageNb" value="" />
 <c:set var="tmpPageSize" value="" />
+<c:set var="tmpComputerId" value="" />
 
 <%-- --%>
 <c:choose>
@@ -22,6 +24,9 @@
 			</c:when>
 			<c:when test="${ linkTo.equals('deleteComputer') }">
 				<c:set var="tmpPath" value="${ tmpPath.concat('/cdb/deleteComputer') }" />
+			</c:when>
+			<c:when test="${ linkTo.equals('editComputer') }">
+				<c:set var="tmpPath" value="${ tmpPath.concat('/cdb/editComputer') }" />
 			</c:when>
 		</c:choose>
 	</c:when>
@@ -37,6 +42,14 @@
 	</c:if>
 </c:if>
 
+
+<c:if test="${not empty computerIdAtt}">
+	<c:if test="${computerIdAtt.matches('[0-9]+') }">
+		<c:set var="tmpComputerId"
+			value="${ emptyText.concat('?computerId=').concat(computerIdAtt) }" />
+	</c:if>
+</c:if>
+
 <c:if test="${ not empty pageSizeAtt or pageSizeAtt > 0}">
 	<c:if test="${ pageSizeAtt.matches('[0-9]+') }">
 		<c:if test="${ not empty tmpPageNb }">
@@ -48,6 +61,7 @@
 
 <c:set var="tmpPath" value="${ tmpPath.concat(tmpPageNb) }" />
 <c:set var="tmpPath" value="${ tmpPath.concat(tmpPageSize) }" />
+<c:set var="tmpPath" value="${ tmpPath.concat(tmpComputerId) }" />
 
 
 <c:out value="${ tmpPath }" escapeXml="false" />

@@ -50,7 +50,7 @@ public enum ComputerService {
         }
     }
 
-    public Optional<Computer> detailComputer(Long id) {
+    public Optional<Computer> getComputer(Long id) {
         try {
             return dao.getComputer(id);
         } catch (DAOException e) {

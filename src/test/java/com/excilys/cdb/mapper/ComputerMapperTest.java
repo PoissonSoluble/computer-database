@@ -22,8 +22,8 @@ public class ComputerMapperTest {
         assertEquals(computer.getName().get(), "Computer");
         assertEquals(computer.getIntroduced().get(), LocalDate.of(1969, 7, 21));
         assertEquals(computer.getDiscontinued().get(), LocalDate.of(1995, 7, 21));
-        assertEquals(computer.getCompany().get().getId(), new Long(1L));
-        assertEquals(computer.getCompany().get().getName(), "Company");
+        assertEquals(computer.getCompany().get().getId().get(), new Long(1L));
+        assertEquals(computer.getCompany().get().getName().get(), "Company");
     }    
     
     @Test

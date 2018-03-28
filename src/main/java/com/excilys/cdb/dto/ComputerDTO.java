@@ -5,9 +5,9 @@ public class ComputerDTO {
     private String name;
     private String introduced;
     private String discontinued;
-    private String company;
+    private CompanyDTO company;
 
-    public String getCompany() {
+    public CompanyDTO getCompany() {
         return company;
     }
 
@@ -27,7 +27,7 @@ public class ComputerDTO {
         return name;
     }
 
-    public void setCompany(String pCompany) {
+    public void setCompany(CompanyDTO pCompany) {
         company = pCompany;
     }
 

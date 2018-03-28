@@ -29,8 +29,16 @@ public class DeleteComputerServlet extends HttpServlet {
      */
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        int pageNumber = Integer.parseInt(request.getParameter("pageNumber"));
-        int pageSize = Integer.parseInt(request.getParameter("pageSize"));
+        int pageNumber;
+        int pageSize;
+        try {
+            pageNumber = Integer.parseInt(request.getParameter("pageNumber"));
+            pageSize = Integer.parseInt(request.getParameter("pageSize"));
+        } catch (NumberFormatException e) {
+            pageNumber = 1;
+            pageSize = 10;
+
+        }
         response.sendRedirect(new StringBuilder("/cdb/dashboard?pageNumber=").append(pageNumber).append("&pageSize=")
                 .append(pageSize).toString());
     }

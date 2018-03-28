@@ -10,7 +10,7 @@ public class CompanyMapperTest {
     @Test
     public void testCreation() {
         Company company = CompanyMapper.INSTANCE.createCompany(1L, "Company");
-        assertEquals(company.getId(), new Long(1L));
-        assertEquals(company.getName(), "Company");
+        assertEquals(company.getId().get(), new Long(1L));
+        assertEquals(company.getName().get(), "Company");
     }
 }

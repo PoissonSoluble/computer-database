@@ -87,11 +87,11 @@
 						<tr>
 							<td class="editMode"><input type="checkbox" name="cb"
 								class="cb" value="${computer.id}"></td>
-							<td><a href="editComputer.html" onclick=""><c:out
+							<td><a href="<tag:links linkTo="editComputer" computerIdAtt="${computer.id}"/>" onclick=""><c:out
 										value="${computer.name}" /></a></td>
 							<td><c:out value="${computer.introduced}" /></td>
 							<td><c:out value="${computer.discontinued}" /></td>
-							<td><c:out value="${computer.company}" /></td>
+							<td><c:out value="${computer.company.name}" /></td>
 						</tr>
 					</c:forEach>
 				</tbody>

@@ -45,7 +45,7 @@ public class CompanyDAOTest {
     public void testGetCompany() throws NoSuchElementException, DAOException{
         Optional<Company> companyOpt = dao.getCompany(2L);
         assertTrue(companyOpt.isPresent());
-        assertEquals(companyOpt.get().getId(), new Long(2));
-        assertEquals(companyOpt.get().getName(), "Company 2");
+        assertEquals(companyOpt.get().getId().get(), new Long(2));
+        assertEquals(companyOpt.get().getName().get(), "Company 2");
     }
 }
