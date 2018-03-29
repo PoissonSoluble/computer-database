@@ -21,8 +21,8 @@
 <body>
 	<header class="navbar navbar-inverse navbar-fixed-top">
 		<div class="container">
-			<a class="navbar-brand" href="<tag:links linkTo="dashboard"/>"> Application - Computer
-				Database </a>
+			<a class="navbar-brand" href="<tag:links linkTo="dashboard"/>">
+				Application - Computer Database </a>
 		</div>
 	</header>
 
@@ -36,28 +36,27 @@
 				<div class="pull-left">
 					<form id="searchForm" action="#" method="GET" class="form-inline">
 
-						<input type="hidden" name="pageNumber" value="${pageNumber}"/>
-						<input type="hidden" name="pageSize" value="${pageSize}"/>
-						<input type="search" id="searchbox" name="search"
-							class="form-control" placeholder="Search name" /> <input
-							type="submit" id="searchsubmit" value="Filter by name"
-							class="btn btn-primary" />
+						<input type="hidden" name="pageNumber" value="${pageNumber}" /> <input
+							type="hidden" name="pageSize" value="${pageSize}" /> <input
+							type="search" id="searchbox" name="search" class="form-control"
+							placeholder="Search name" /> <input type="submit"
+							id="searchsubmit" value="Filter by name" class="btn btn-primary" />
 					</form>
 				</div>
 				<div class="pull-right">
-					<a class="btn btn-success" id="addComputer" href="<tag:links linkTo="addComputer"/>">
-						Add	Computer
-					</a> 
-					<a class="btn btn-default" id="editComputer" href="#"
+					<a class="btn btn-success" id="addComputer"
+						href="<tag:links linkTo="addComputer"/>"> Add Computer </a> <a
+						class="btn btn-default" id="editComputer" href="#"
 						onclick="$.fn.toggleEditMode();">Edit</a>
 				</div>
 			</div>
 		</div>
 
-		<form id="deleteForm" action="<tag:links linkTo="deleteComputer"/>" method="POST">
+		<form id="deleteForm" action="<tag:links linkTo="deleteComputer"/>"
+			method="POST">
 			<input type="hidden" id="deleteSelection" name="selection" value="">
-			<input type="hidden" name="pageNumber" value="${pageNumber}"/>
-			<input type="hidden" name="pageSize" value="${pageSize}"/>
+			<input type="hidden" name="pageNumber" value="${pageNumber}" /> <input
+				type="hidden" name="pageSize" value="${pageSize}" />
 		</form>
 
 		<div class="container" style="margin-top: 10px;">
@@ -74,12 +73,36 @@
 									class="fa fa-trash-o fa-lg"></i>
 							</a>
 						</span></th>
-						<th>Computer name</th>
-						<th>Introduced date</th>
+						<th>
+							<a 
+							href="<tag:links linkTo="dashboard" pageNumberAtt="${pageNumber}" 
+							pageSizeAtt="${pageSize}" orderAtt="CU_NAME" searchAtt="${search}"/>">
+								Computer name
+							</a>
+						</th>
+						<th>
+							<a 
+							href="<tag:links linkTo="dashboard" pageNumberAtt="${pageNumber}" 
+							pageSizeAtt="${pageSize}" orderAtt="CU_INTRODUCED" searchAtt="${search}"/>">
+								Introduced date
+							</a>
+						</th>
 						<!-- Table header for Discontinued Date -->
-						<th>Discontinued date</th>
+						<th>
+							<a 
+							href="<tag:links linkTo="dashboard" pageNumberAtt="${pageNumber}" 
+							pageSizeAtt="${pageSize}" orderAtt="CU_DISCONTINUED" searchAtt="${search}"/>">
+								Discontinued date
+							</a>
+						</th>
 						<!-- Table header for Company -->
-						<th>Company</th>
+						<th>
+							<a 
+							href="<tag:links linkTo="dashboard" pageNumberAtt="${pageNumber}" 
+							pageSizeAtt="${pageSize}" orderAtt="CA_NAME" searchAtt="${search}"/>">
+								Company
+							</a>
+						</th>
 
 					</tr>
 				</thead>
@@ -89,8 +112,9 @@
 						<tr>
 							<td class="editMode"><input type="checkbox" name="cb"
 								class="cb" value="${computer.id}"></td>
-							<td><a href="<tag:links linkTo="editComputer" computerIdAtt="${computer.id}"/>" onclick=""><c:out
-										value="${computer.name}" /></a></td>
+							<td><a
+								href="<tag:links linkTo="editComputer" computerIdAtt="${computer.id}"/>"
+								onclick=""><c:out value="${computer.name}" /></a></td>
 							<td><c:out value="${computer.introduced}" /></td>
 							<td><c:out value="${computer.discontinued}" /></td>
 							<td><c:out value="${computer.company.name}" /></td>
@@ -111,12 +135,10 @@
 				<a
 					href="<tag:links linkTo="dashboard" pageNumberAtt="1" pageSizeAtt="${10 }"/>">
 					<button type="button" class="btn btn-default">10</button>
-				</a>
-				<a
+				</a> <a
 					href="<tag:links linkTo="dashboard" pageNumberAtt="1" pageSizeAtt="${50 }"/>">
 					<button type="button" class="btn btn-default">50</button>
-				</a>
-				<a
+				</a> <a
 					href="<tag:links linkTo="dashboard" pageNumberAtt="1" pageSizeAtt="${100 }"/>">
 					<button type="button" class="btn btn-default">100</button>
 				</a>

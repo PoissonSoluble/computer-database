@@ -6,6 +6,8 @@
 <%@attribute name="pageSizeAtt" required="false"%>
 <%@attribute name="computerIdAtt" required="false"%>
 <%@attribute name="searchAtt" required="false"%>
+<%@attribute name="orderAtt" required="false"%>
+<%@attribute name="ascendingAtt" required="false"%>
 
 <c:set var="emptyText" value="" />
 <c:set var="tmpPath" value="" />
@@ -13,6 +15,8 @@
 <c:set var="tmpPageSize" value="" />
 <c:set var="tmpComputerId" value="" />
 <c:set var="tmpSearch" value="" />
+<c:set var="tmpOrder" value="" />
+<c:set var="tmpAscending" value="" />
 
 <%-- --%>
 <c:choose>
@@ -68,10 +72,38 @@
 	</c:if>
 </c:if>
 
+<c:if test="${ not empty orderAtt}">
+	<c:if test="${ not empty tmpPageNb }">
+		<c:set var="tmpOrder"
+			value="${ emptyText.concat('&order=').concat(orderAtt) }" />
+		<c:choose>
+			<c:when test="${empty ascendingAtt}">
+				<c:choose>
+					<c:when test="${order.equals(orderAtt)}">
+						<c:set var="tmpAscending"
+							value="${ emptyText.concat('&ascending=').concat(not ascending) }" />
+					</c:when>
+					<c:otherwise>
+						<c:set var="tmpAscending"
+							value="${ emptyText.concat('&ascending=true') }" />
+					</c:otherwise>
+				</c:choose>
+			</c:when>
+			<c:otherwise>
+				<c:set var="tmpAscending"
+					value="${ emptyText.concat('&ascending=').concat(ascendingAtt) }" />
+			</c:otherwise>
+		</c:choose>
+	</c:if>
+</c:if>
+
+
 <c:set var="tmpPath" value="${ tmpPath.concat(tmpPageNb) }" />
 <c:set var="tmpPath" value="${ tmpPath.concat(tmpPageSize) }" />
 <c:set var="tmpPath" value="${ tmpPath.concat(tmpComputerId) }" />
 <c:set var="tmpPath" value="${ tmpPath.concat(tmpSearch) }" />
+<c:set var="tmpPath" value="${ tmpPath.concat(tmpOrder) }" />
+<c:set var="tmpPath" value="${ tmpPath.concat(tmpAscending) }" />
 
 
 <c:out value="${ tmpPath }" escapeXml="false" />

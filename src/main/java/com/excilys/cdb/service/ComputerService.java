@@ -8,6 +8,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.excilys.cdb.dao.ComputerDAO;
+import com.excilys.cdb.dao.ComputerOrdering;
 import com.excilys.cdb.dao.DAOException;
 import com.excilys.cdb.dao.PageOutOfBoundsException;
 import com.excilys.cdb.model.Computer;
@@ -39,7 +40,6 @@ public enum ComputerService {
             LOGGER.debug("deleteComputer : {}", e);
         }
     }
-    
 
     public void deleteComputers(List<Long> ids) {
         try {
@@ -85,10 +85,22 @@ public enum ComputerService {
             throw new ServiceException("Error while getting the total page amount.");
         }
     }
-
-    public List<Computer> getComputerPage(int page, int pageSize, String search) throws ServiceException{
+    
+    public List<Computer> getComputerPage(int page, int pageSize, String search) throws ServiceException {
         try {
-            return dao.listComputersByPage(page, pageSize, search);
+            return dao.listComputersByPage(page, pageSize, search, ComputerOrdering.CU_ID, true);
+        } catch (PageOutOfBoundsException e) {
+            return new ArrayList<>();
+        } catch (DAOException e) {
+            LOGGER.debug("getComputerPage : {}", e);
+            throw new ServiceException("Error while getting the page.");
+        }
+    }
+    
+    public List<Computer> getComputerPage(int page, int pageSize, String search, ComputerOrdering order,
+            boolean ascending) throws ServiceException {
+        try {
+            return dao.listComputersByPage(page, pageSize, search, order, ascending);
         } catch (PageOutOfBoundsException e) {
             return new ArrayList<>();
         } catch (DAOException e) {

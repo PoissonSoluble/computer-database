@@ -3,6 +3,8 @@ package com.excilys.cdb.servlet;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.NoSuchElementException;
+import java.util.stream.Stream;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
@@ -10,6 +12,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.excilys.cdb.dao.ComputerOrdering;
 import com.excilys.cdb.dto.ComputerDTO;
 import com.excilys.cdb.mapper.ComputerDTOMapper;
 import com.excilys.cdb.pagination.ComputerPage;
@@ -21,6 +24,8 @@ public class DashboardServlet extends HttpServlet {
     private static final long serialVersionUID = -3346293799223556529L;
     private final int DEFAULT_PAGE = 1;
     private final int DEFAULT_SIZE = 10;
+    private final ComputerOrdering DEFAULT_ORDER = ComputerOrdering.CU_ID;
+    private final boolean DEFAULT_ASCENDING = true;
 
     public DashboardServlet() {
         super();
@@ -31,19 +36,61 @@ public class DashboardServlet extends HttpServlet {
         int pageNumber = getIntParam(request, "pageNumber", DEFAULT_PAGE);
         int pageSize = getIntParam(request, "pageSize", DEFAULT_SIZE);
         String search = request.getParameter("search");
+        ComputerOrdering order = getOrderingParam(request, "order", DEFAULT_ORDER);
+        boolean ascending = getBooleanParam(request, "ascending", DEFAULT_ASCENDING);
 
-        ComputerPage page = new ComputerPage(pageNumber, pageSize, search);
+        ComputerPage page = new ComputerPage(pageNumber, pageSize, search, order, ascending);
         List<ComputerDTO> dtos = new ArrayList<>();
-        ComputerDTOMapper mapper = new ComputerDTOMapper();
-        page.get().forEach(computer -> dtos.add(mapper.createComputerDTO(computer)));
+        getDTOs(page, dtos);
 
-        setRequestAttributes(request, pageSize, search, page, dtos);
+        setRequestAttributes(request, pageSize, search, page, dtos, order, ascending);
         RequestDispatcher view = request.getRequestDispatcher("WEB-INF/views/dashboard.jsp");
         view.forward(request, response);
     }
 
+    private boolean getBooleanParam(HttpServletRequest request, String paramName, boolean defaultValue) {
+        String param = request.getParameter(paramName);
+        if (param != null) {
+            if (param.toLowerCase().equals("true")) {
+                return true;
+            } else if (param.toLowerCase().equals("false")) {
+                return false;
+            }
+        }
+        return defaultValue;
+    }
+
+    private void getDTOs(ComputerPage page, List<ComputerDTO> dtos) {
+        ComputerDTOMapper mapper = new ComputerDTOMapper();
+        page.get().forEach(computer -> dtos.add(mapper.createComputerDTO(computer)));
+    }
+
+    private int getIntParam(HttpServletRequest request, String param, int defaultValue) {
+        try {
+            return Integer.parseInt(request.getParameter(param));
+        } catch (NumberFormatException e) {
+            return defaultValue;
+        }
+    }
+
+    private ComputerOrdering getOrderingParam(HttpServletRequest request, String paramName, ComputerOrdering defaultValue) {
+        String orderString = request.getParameter(paramName);
+        ComputerOrdering order;
+        if (orderString == null) {
+            order = defaultValue;
+        } else {
+            try {
+                order = Stream.of(ComputerOrdering.values()).filter(v -> v.accept(orderString)).findFirst().get();
+                System.out.println(order.toString());
+            } catch (NoSuchElementException e) {
+                order = defaultValue;
+            }
+        }
+        return order;
+    }
+
     private void setRequestAttributes(HttpServletRequest request, int pageSize, String search, ComputerPage page,
-            List<ComputerDTO> dtos) {
+            List<ComputerDTO> dtos, ComputerOrdering order, boolean ascending) {
         request.setAttribute("computers", dtos);
         request.setAttribute("pageNumber", page.getPageNumber());
         request.setAttribute("totalPage", page.getPageTotal());
@@ -57,13 +104,7 @@ public class DashboardServlet extends HttpServlet {
             request.setAttribute("computerAmount", 0);
         }
         request.setAttribute("pageSize", pageSize);
-    }
-
-    private int getIntParam(HttpServletRequest request, String param, int defaultValue) {
-        try {
-            return Integer.parseInt(request.getParameter(param));
-        } catch (NumberFormatException e) {
-            return defaultValue;
-        }
+        request.setAttribute("order", order.toString());
+        request.setAttribute("ascending", ascending);
     }
 }

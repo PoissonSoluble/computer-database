@@ -3,6 +3,7 @@ package com.excilys.cdb.pagination;
 import java.util.ArrayList;
 import java.util.Optional;
 
+import com.excilys.cdb.dao.ComputerOrdering;
 import com.excilys.cdb.model.Computer;
 import com.excilys.cdb.service.ComputerService;
 import com.excilys.cdb.service.ServiceException;
@@ -10,9 +11,14 @@ import com.excilys.cdb.service.ServiceException;
 public class ComputerPage extends Page<Computer> {
 
     private static ComputerService service = ComputerService.INSTANCE;
+    private ComputerOrdering order;
+    private boolean ascending;
 
-    public ComputerPage(int pPageNumber, int pPageSize, String search) {
+    public ComputerPage(int pPageNumber, int pPageSize, String search, ComputerOrdering pOrder, boolean pAscending) {
         super(pPageNumber, pPageSize, Optional.ofNullable(search));
+        order = pOrder;
+        ascending = pAscending;
+        refresh();
     }
 
     @Override
@@ -39,7 +45,7 @@ public class ComputerPage extends Page<Computer> {
     @Override
     protected void refresh() {
         try {
-            elements = service.getComputerPage(pageNumber, pageSize, search);
+            elements = service.getComputerPage(pageNumber, pageSize, search, order, ascending);
         } catch (ServiceException e) {
             elements = new ArrayList<>();
         }

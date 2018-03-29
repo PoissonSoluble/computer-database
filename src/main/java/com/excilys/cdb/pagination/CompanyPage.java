@@ -13,6 +13,7 @@ public class CompanyPage extends Page<Company> {
 
     public CompanyPage(int pPageNumber, int pPageSize, String search) {
         super(pPageNumber, pPageSize, Optional.ofNullable(search));
+        refresh();
     }
 
     @Override

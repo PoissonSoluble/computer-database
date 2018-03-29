@@ -28,7 +28,9 @@ public enum ComputerDAO {
 
     private final String SELECT_ALL = "SELECT cu_id, cu_name, cu_introduced, cu_discontinued, ca_id, ca_name FROM computer LEFT JOIN company USING(ca_id)";
     private final String SELECT_FROM_ID = "SELECT cu_id, cu_name, cu_introduced, cu_discontinued, ca_id, ca_name FROM computer LEFT JOIN company USING(ca_id) WHERE cu_id = ?";
-    private final String SELECT_PAGE = "SELECT cu_id, cu_name, cu_introduced, cu_discontinued, ca_id, ca_name FROM computer LEFT JOIN company USING(ca_id) WHERE cu_name LIKE ? ORDER BY cu_id LIMIT ? OFFSET ?";
+    private final String SELECT_PAGE = "SELECT cu_id, cu_name, cu_introduced, cu_discontinued, ca_id, ca_name FROM computer LEFT JOIN company USING(ca_id) ORDER BY %s  LIMIT ? OFFSET ?";
+    private final String SELECT_PAGE_SEARCH = "SELECT cu_id, cu_name, cu_introduced, cu_discontinued, ca_id, ca_name FROM computer LEFT JOIN company USING(ca_id) WHERE cu_name LIKE ? ORDER BY %s LIMIT ? OFFSET ?";
+    private final String SELECT_COUNT = "SELECT count(cu_id) as count FROM computer";
     private final String SELECT_COUNT_SEARCH = "SELECT count(cu_id) as count FROM computer WHERE cu_name LIKE ?";
     private final String INSERT = "INSERT INTO computer (cu_name, cu_introduced, cu_discontinued, ca_id) VALUES(?,?,?,?)";
     private final String DELETE = "DELETE FROM computer WHERE cu_id = ?";
@@ -87,12 +89,14 @@ public enum ComputerDAO {
         return Optional.ofNullable(computer);
     }
 
-    public int getComputerAmount(String search) throws DAOException {
+    public int getComputerAmount() throws DAOException {
         LOGGER.info("Computer DAO : count");
         int count = 0;
         try (Connection conn = dbConn.getConnection();
-                PreparedStatement stmt = conn.prepareStatement(SELECT_COUNT_SEARCH);) {
-            count = prepareAndRetrieveComputerCount(stmt, search);
+                PreparedStatement stmt = conn.prepareStatement(SELECT_COUNT);
+                ResultSet rs = stmt.executeQuery();) {
+            rs.next();
+            count = rs.getInt("count");
         } catch (SQLException e) {
             LOGGER.error("getComputerListPageTotalAmount(int): {}", e);
             throw new DAOException("Error while getting the number of computers.");
@@ -100,12 +104,18 @@ public enum ComputerDAO {
         return count;
     }
 
-    private int prepareAndRetrieveComputerCount(PreparedStatement stmt, String search) throws SQLException {
-        int count;
-        stmt.setString(1, new StringBuilder("%").append(search).append("%").toString());
-        try (ResultSet rs = stmt.executeQuery();) {
-            rs.next();
-            count = rs.getInt("count");
+    public int getComputerAmount(String search) throws DAOException {
+        LOGGER.info("Computer DAO : count");
+        int count = 0;
+        if (search == "" || search == null) {
+            return getComputerAmount();
+        }
+        try (Connection conn = dbConn.getConnection();
+                PreparedStatement stmt = conn.prepareStatement(SELECT_COUNT_SEARCH);) {
+            count = prepareAndRetrieveComputerCount(stmt, search);
+        } catch (SQLException e) {
+            LOGGER.error("getComputerListPageTotalAmount(int): {}", e);
+            throw new DAOException("Error while getting the number of computers.");
         }
         return count;
     }
@@ -141,24 +151,49 @@ public enum ComputerDAO {
         return computers;
     }
 
-    public List<Computer> listComputersByPage(int pageNumber, int pageSize)
-            throws PageOutOfBoundsException, DAOException {
-        return listComputersByPage(pageNumber, pageSize, "%");
-    }
-
-    public List<Computer> listComputersByPage(int pageNumber, int pageSize, String search)
+    public List<Computer> listComputersByPage(int pageNumber, int pageSize, ComputerOrdering order, boolean ascending)
             throws PageOutOfBoundsException, DAOException {
         LOGGER.info(new StringBuilder("Computer DAO : page (").append(pageNumber).append(",").append(pageSize)
                 .append(")").toString());
         ArrayList<Computer> computers = new ArrayList<>();
-        try (Connection conn = dbConn.getConnection(); PreparedStatement stmt = conn.prepareStatement(SELECT_PAGE);) {
-            retrieveParametersForComputerPage(pageNumber, pageSize, search, stmt);
+        try (Connection conn = dbConn.getConnection();
+                PreparedStatement stmt = conn.prepareStatement(constructPageRequest(order, ascending, SELECT_PAGE));) {
+            retrieveParametersForComputerPage(pageNumber, pageSize, stmt);
             retrievePageContentFromQueryResult(stmt, computers);
         } catch (SQLException e) {
             LOGGER.error("listComputersByPage(int,int): {}", e);
             throw new DAOException("Error while returning the page.");
         }
         return computers;
+    }
+
+    public List<Computer> listComputersByPage(int pageNumber, int pageSize, String search, ComputerOrdering order,
+            boolean ascending) throws PageOutOfBoundsException, DAOException {
+        LOGGER.info(new StringBuilder("Computer DAO : page (").append(pageNumber).append(",").append(pageSize)
+                .append(")").toString());
+        if (search == "" || search == null) {
+            return listComputersByPage(pageNumber, pageSize, order, ascending);
+        }
+        ArrayList<Computer> computers = new ArrayList<>();
+        try (Connection conn = dbConn.getConnection();
+                PreparedStatement stmt = conn
+                        .prepareStatement(constructPageRequest(order, ascending, SELECT_PAGE_SEARCH));) {
+            retrieveParametersForComputerPageWithSearch(pageNumber, pageSize, search, stmt);
+            retrievePageContentFromQueryResult(stmt, computers);
+        } catch (SQLException e) {
+            LOGGER.error("listComputersByPage(int,int): {}", e);
+            throw new DAOException("Error while returning the page.");
+        }
+        return computers;
+    }
+
+    private String constructPageRequest(ComputerOrdering order, boolean ascending, String originalRequest) {
+        String request = order.toString();
+        if (!ascending) {
+            request += " DESC";
+        }
+        return String.format(originalRequest, request);
+        
     }
 
     public void updateComputer(Computer computer) throws DAOException {
@@ -214,6 +249,16 @@ public enum ComputerDAO {
         return pages;
     }
 
+    private int prepareAndRetrieveComputerCount(PreparedStatement stmt, String search) throws SQLException {
+        int count;
+        stmt.setString(1, new StringBuilder("%").append(search).append("%").toString());
+        try (ResultSet rs = stmt.executeQuery();) {
+            rs.next();
+            count = rs.getInt("count");
+        }
+        return count;
+    }
+
     private Computer retrieveComputerFromQuery(PreparedStatement stmt) throws SQLException {
         try (ResultSet rs = stmt.executeQuery();) {
             if (rs.next()) {
@@ -252,8 +297,14 @@ public enum ComputerDAO {
         }
     }
 
-    private void retrieveParametersForComputerPage(int pageNumber, int pageSize, String search, PreparedStatement stmt)
+    private void retrieveParametersForComputerPage(int pageNumber, int pageSize, PreparedStatement stmt)
             throws SQLException {
+        stmt.setInt(1, pageSize);
+        stmt.setInt(2, pageSize * (pageNumber - 1));
+    }
+
+    private void retrieveParametersForComputerPageWithSearch(int pageNumber, int pageSize, String search,
+            PreparedStatement stmt) throws SQLException {
         stmt.setString(1, new StringBuilder("%").append(search).append("%").toString());
         stmt.setInt(2, pageSize);
         stmt.setInt(3, pageSize * (pageNumber - 1));

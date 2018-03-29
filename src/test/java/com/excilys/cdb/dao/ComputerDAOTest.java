@@ -50,12 +50,12 @@ public class ComputerDAOTest {
 
     @Test
     public void testPage() throws PageOutOfBoundsException, DAOException {
-        assertEquals(dao.listComputersByPage(1, 10).size(), 10);
+        assertEquals(dao.listComputersByPage(1, 10, ComputerOrdering.CU_ID, true).size(), 10);
     }
 
     @Test(expected = PageOutOfBoundsException.class)
     public void testPageOutOfBounds() throws PageOutOfBoundsException, DAOException {
-        dao.listComputersByPage(11, 10);
+        dao.listComputersByPage(11, 10, ComputerOrdering.CU_ID, true);
     }
 
     @Test

@@ -3,6 +3,7 @@ package com.excilys.cdb.ui.actionhandlers;
 import java.util.List;
 import java.util.stream.Stream;
 
+import com.excilys.cdb.dao.ComputerOrdering;
 import com.excilys.cdb.model.Computer;
 import com.excilys.cdb.pagination.ComputerPage;
 import com.excilys.cdb.pagination.Page;
@@ -15,7 +16,7 @@ public class ComputerLister implements CLIActionHandler {
 
     @Override
     public void handle() {
-        page = new ComputerPage(1, PAGE_SIZE, "");
+        page = new ComputerPage(1, PAGE_SIZE, "", ComputerOrdering.CU_ID, true);
         printPages();
     }
 

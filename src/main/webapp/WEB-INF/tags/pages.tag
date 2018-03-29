@@ -12,21 +12,33 @@
 </c:if>
 
 <c:if test="${pageNumber != 1}">
-	<li><a
-		href="<tag:links linkTo="dashboard" pageNumberAtt="${pageNumber - 1}" pageSizeAtt="${pageSize }" searchAtt="${search}"/>"
-		aria-label="Previous"> <span aria-hidden="true">&laquo;</span>
-	</a></li>
+	<li>
+		<a
+		href="<tag:links linkTo="dashboard" pageNumberAtt="${pageNumber - 1}" pageSizeAtt="${pageSize }" 
+		searchAtt="${search}" orderAtt="${order}"  ascendingAtt="${ascending}"/>"
+		aria-label="Previous"> 
+			<span aria-hidden="true">&laquo;</span>
+		</a>
+	</li>
 </c:if>
 
 <c:forEach var="i" begin="${ start }" end="${ stop }" step="1">
-	<li><a
-		href="<tag:links linkTo="dashboard" pageNumberAtt="${i}" pageSizeAtt="${pageSize}" searchAtt="${search}"/>"><c:out
-				value="${i}" /></a></li>
+	<li>
+		<a
+		href="<tag:links linkTo="dashboard" pageNumberAtt="${i}" pageSizeAtt="${pageSize}" 
+		searchAtt="${search}" orderAtt="${order}"  ascendingAtt="${ascending}"/>">
+			<c:out value="${i}" />
+		</a>
+	</li>
 </c:forEach>
 
 <c:if test="${ pageNumber != totalPage }">
-	<li><a
-		href="<tag:links linkTo="dashboard" pageNumberAtt="${pageNumber + 1}" pageSizeAtt="${pageSize }" searchAtt="${search}"/>"
-		aria-label="Next"> <span aria-hidden="true">&raquo;</span>
-	</a></li>
+	<li>
+		<a
+		href="<tag:links linkTo="dashboard" pageNumberAtt="${pageNumber + 1}" pageSizeAtt="${pageSize }" 
+		searchAtt="${search}" orderAtt="${order}"  ascendingAtt="${ascending}"/>"
+		aria-label="Next"> 
+			<span aria-hidden="true">&raquo;</span>
+		</a>
+	</li>
 </c:if>
