@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -107,7 +108,7 @@ public enum ComputerDAO {
     public int getComputerAmount(String search) throws DAOException {
         LOGGER.info("Computer DAO : count");
         int count = 0;
-        if (search == "" || search == null) {
+        if (StringUtils.isBlank(search)) {
             return getComputerAmount();
         }
         try (Connection conn = dbConn.getConnection();
@@ -171,7 +172,7 @@ public enum ComputerDAO {
             boolean ascending) throws PageOutOfBoundsException, DAOException {
         LOGGER.info(new StringBuilder("Computer DAO : page (").append(pageNumber).append(",").append(pageSize)
                 .append(")").toString());
-        if (search == "" || search == null) {
+        if (StringUtils.isBlank(search)) {
             return listComputersByPage(pageNumber, pageSize, order, ascending);
         }
         ArrayList<Computer> computers = new ArrayList<>();

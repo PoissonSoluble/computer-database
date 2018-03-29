@@ -81,7 +81,6 @@ public class DashboardServlet extends HttpServlet {
         } else {
             try {
                 order = Stream.of(ComputerOrdering.values()).filter(v -> v.accept(orderString)).findFirst().get();
-                System.out.println(order.toString());
             } catch (NoSuchElementException e) {
                 order = defaultValue;
             }
