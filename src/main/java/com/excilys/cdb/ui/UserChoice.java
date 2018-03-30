@@ -10,6 +10,7 @@ import com.excilys.cdb.ui.actionhandlers.ComputerItemizer;
 import com.excilys.cdb.ui.actionhandlers.ComputerLister;
 import com.excilys.cdb.ui.actionhandlers.ComputerModifier;
 import com.excilys.cdb.ui.actionhandlers.ComputerRemover;
+import com.excilys.cdb.ui.actionhandlers.CompanyRemover;
 
 enum UserChoice {
     LIST_COMPUTERS("1/ List computers", new ComputerLister(), "1", "list computers"),
@@ -18,7 +19,8 @@ enum UserChoice {
     CREATE_COMPUTER("4/ Create computer", new ComputerCreator(), "4", "create computer"),
     UPDATE_COMPUTER("5/ Update computer", new ComputerModifier(), "5", "update computer"),
     REMOVE_COMPUTER("6/ Remove computer", new ComputerRemover(), "6", "remove computer"),
-    EXIT("7/ Exit", null, "7", "exit");
+    REMOVE_COMPANY("7/ Remove company", new CompanyRemover(), "7", "remove company"),
+    EXIT("8/ Exit", null, "8", "exit");
 
     private List<String> validChoices;
     private String title;

@@ -17,6 +17,24 @@ public enum CompanyService {
     private CompanyDAO dao = CompanyDAO.INSTANCE;
     private final Logger LOGGER = LoggerFactory.getLogger(CompanyService.class);
 
+    public void deleteCompany(Long id) {
+        try {
+            dao.deleteCompany(id);
+            LOGGER.info(new StringBuilder("Company removal : ").append(id).toString());
+        } catch (DAOException e) {
+            LOGGER.debug("deleteCompany : {}", e);
+        }
+    }
+    
+    public boolean exists(Long id) {
+        try {
+            return dao.getCompany(id).isPresent();
+        } catch (DAOException e) {
+            LOGGER.debug("exists : {}", e);
+            return false;
+        }
+    }
+    
     public int getCompanyListPageTotalAmount(int pageSize) throws ServiceException {
         try {
             return dao.getCompanyListPageTotalAmount(pageSize);

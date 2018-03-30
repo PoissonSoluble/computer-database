@@ -5,12 +5,12 @@ import com.excilys.cdb.service.ComputerService;
 public class ComputerRemover implements CLIActionHandler {
 
     private ComputerService service = ComputerService.INSTANCE;
-    private CLIComputerAPI cliApi = CLIComputerAPI.INSTANCE;
+    private CLIUserInputsAPI cliApi = CLIUserInputsAPI.INSTANCE;
 
     @Override
     public void handle() {
         try {
-            Long id = cliApi.askComputerID();
+            Long id = cliApi.askID("computer");
             if (!service.exists(id)) {
                 System.out.println("This computer does not exists.");
                 return;

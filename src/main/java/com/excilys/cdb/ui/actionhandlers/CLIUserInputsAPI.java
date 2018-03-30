@@ -8,11 +8,11 @@ import com.excilys.cdb.model.Company;
 import com.excilys.cdb.model.Computer;
 import com.excilys.cdb.ui.CommandLineInterface;
 
-public enum CLIComputerAPI {
+public enum CLIUserInputsAPI {
     INSTANCE;
 
-    public Long askComputerID() throws NumberFormatException {
-        System.out.print("Enter the computer ID: ");
+    public Long askID(String type) throws NumberFormatException {
+        System.out.print(new StringBuilder("Enter the ").append(type).append(" ID: ").toString());
         String stringId = CommandLineInterface.getUserInput();
         return Long.parseLong(stringId);
     }

@@ -35,6 +35,7 @@ public enum ComputerDAO {
     private final String SELECT_COUNT_SEARCH = "SELECT count(cu_id) as count FROM computer WHERE cu_name LIKE ?";
     private final String INSERT = "INSERT INTO computer (cu_name, cu_introduced, cu_discontinued, ca_id) VALUES(?,?,?,?)";
     private final String DELETE = "DELETE FROM computer WHERE cu_id = ?";
+    private final String DELETE_COMPANY = "DELETE FROM computer WHERE ca_id = ?";
     private final String UPDATE = "UPDATE computer SET cu_name = ?, cu_introduced = ?, cu_discontinued = ?, ca_id = ? WHERE cu_id = ?";
 
     public Optional<Long> createComputer(Computer computer) throws DAOException {
@@ -188,15 +189,6 @@ public enum ComputerDAO {
         return computers;
     }
 
-    private String constructPageRequest(ComputerOrdering order, boolean ascending, String originalRequest) {
-        String request = order.toString();
-        if (!ascending) {
-            request += " DESC";
-        }
-        return String.format(originalRequest, request);
-        
-    }
-
     public void updateComputer(Computer computer) throws DAOException {
         LOGGER.info("Computer DAO : update");
         try (Connection conn = dbConn.getConnection(); PreparedStatement stmt = conn.prepareStatement(UPDATE);) {
@@ -217,7 +209,7 @@ public enum ComputerDAO {
             stmt.setNull(parameterIndex, java.sql.Types.DATE);
         }
     }
-
+    
     private void applyDeletionOnList(List<Long> ids, Connection conn) throws SQLException, DAOException {
         for (Long id : ids) {
             try (PreparedStatement stmt = conn.prepareStatement(DELETE)) {
@@ -237,6 +229,15 @@ public enum ComputerDAO {
         pages = count / pageSize;
         pages += (count % pageSize) != 0 ? 1 : 0;
         return pages;
+    }
+
+    private String constructPageRequest(ComputerOrdering order, boolean ascending, String originalRequest) {
+        String request = order.toString();
+        if (!ascending) {
+            request += " DESC";
+        }
+        return String.format(originalRequest, request);
+        
     }
 
     private int prepareAndExecutedPageNumberQuery(int pageSize, PreparedStatement stmt, String search)
@@ -319,6 +320,13 @@ public enum ComputerDAO {
             stmt.setLong(4, computer.getCompany().get().getId().get());
         } else {
             stmt.setNull(4, java.sql.Types.BIGINT);
+        }
+    }
+
+    protected void deleteComputerFromCompany(Long companyId, Connection conn) throws SQLException, DAOException {
+        try(PreparedStatement stmt = conn.prepareStatement(DELETE_COMPANY);){
+            stmt.setLong(1, companyId);
+            stmt.executeUpdate();
         }
     }
 }

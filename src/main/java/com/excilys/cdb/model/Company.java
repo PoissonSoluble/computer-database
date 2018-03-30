@@ -98,6 +98,14 @@ public class Company {
 
     @Override
     public String toString() {
-        return new StringBuilder(id.toString()).append(" - ").append(name).toString();
+        StringBuilder sb = new StringBuilder();
+        if(id.isPresent()) {
+            sb.append(id.get());
+            sb.append(" - ");
+        }
+        if(name.isPresent()) {
+            sb.append(name.get());
+        }
+        return sb.toString();
     }
 }

@@ -12,12 +12,12 @@ import com.excilys.cdb.ui.CommandLineInterface;
 public class ComputerItemizer implements CLIActionHandler {
 
     private ComputerService service = ComputerService.INSTANCE;
-    private CLIComputerAPI cliApi = CLIComputerAPI.INSTANCE;
+    private CLIUserInputsAPI cliApi = CLIUserInputsAPI.INSTANCE;
 
     @Override
     public void handle() {
         try {
-            Long id = cliApi.askComputerID();
+            Long id = cliApi.askID("computer");
             Computer computer = service.getComputer(id).get();
             printComputer(computer);
             CommandLineInterface.getUserInput();

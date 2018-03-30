@@ -10,12 +10,12 @@ import com.excilys.cdb.validation.exceptions.ValidationException;
 public class ComputerModifier implements CLIActionHandler {
 
     ComputerService service = ComputerService.INSTANCE;
-    CLIComputerAPI cliApi = CLIComputerAPI.INSTANCE;
+    CLIUserInputsAPI cliApi = CLIUserInputsAPI.INSTANCE;
 
     @Override
     public void handle() {
         try {
-            Long id = cliApi.askComputerID();
+            Long id = cliApi.askID("computer");
             if (!service.exists(id)) {
                 System.out.println("This computer does not exists.");
                 return;

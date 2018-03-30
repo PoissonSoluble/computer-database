@@ -10,7 +10,7 @@ import com.excilys.cdb.validation.exceptions.ValidationException;
 public class ComputerCreator implements CLIActionHandler {
 
     ComputerService service = ComputerService.INSTANCE;
-    CLIComputerAPI filler = CLIComputerAPI.INSTANCE;
+    CLIUserInputsAPI filler = CLIUserInputsAPI.INSTANCE;
 
     @Override
     public void handle() {

@@ -21,12 +21,14 @@ public enum CompanyDAO {
 
     private DatabaseConnection dbConn = DatabaseConnection.INSTANCE;
     private CompanyMapper mapper = CompanyMapper.INSTANCE;
+    private ComputerDAO computerDao = ComputerDAO.INSTANCE;
     private final Logger LOGGER = LoggerFactory.getLogger(CompanyDAO.class);
 
     private final String SELECT_ALL = "SELECT ca_id, ca_name FROM company";
     private final String SELECT_FROM_ID = "SELECT ca_id, ca_name FROM company WHERE ca_id = ?";
     private final String SELECT_COUNT = "SELECT count(ca_id) as count FROM company";
     private final String SELECT_A_PAGE = "SELECT ca_id, ca_name FROM company ORDER BY ca_id LIMIT ? OFFSET ?";
+    private final String DELETE_COMPANY = "DELETE FROM company WHERE ca_id = ?";
 
     public Optional<Company> getCompany(Company company) throws DAOException {
         if(company.getId().isPresent()) {
@@ -101,6 +103,25 @@ public enum CompanyDAO {
         pages = count / pageSize;
         pages += (count % pageSize) != 0 ? 1 : 0;
         return pages;
+    }
+    
+    public void deleteCompany(Long id) throws DAOException{
+        LOGGER.info("Company DAO : delete");
+        try(Connection conn = dbConn.getConnection();){
+            conn.setAutoCommit(false);
+            try(PreparedStatement stmt = conn.prepareStatement(DELETE_COMPANY);){
+                computerDao.deleteComputerFromCompany(id, conn);
+                stmt.setLong(1, id);
+                stmt.executeUpdate();
+            }catch(SQLException | DAOException e) {
+                conn.rollback();
+                LOGGER.error("deleteCompany : {}");
+                throw new DAOException("Error while deleting the company.");
+            }
+            conn.commit();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 
     private Company retrieveCompanyFromQuery(PreparedStatement stmt) throws SQLException {
