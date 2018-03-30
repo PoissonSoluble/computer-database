@@ -5,12 +5,12 @@ import java.util.List;
 
 import com.excilys.cdb.ui.actionhandlers.CLIActionHandler;
 import com.excilys.cdb.ui.actionhandlers.CompanyLister;
+import com.excilys.cdb.ui.actionhandlers.CompanyRemover;
 import com.excilys.cdb.ui.actionhandlers.ComputerCreator;
 import com.excilys.cdb.ui.actionhandlers.ComputerItemizer;
 import com.excilys.cdb.ui.actionhandlers.ComputerLister;
 import com.excilys.cdb.ui.actionhandlers.ComputerModifier;
 import com.excilys.cdb.ui.actionhandlers.ComputerRemover;
-import com.excilys.cdb.ui.actionhandlers.CompanyRemover;
 
 enum UserChoice {
     LIST_COMPUTERS("1/ List computers", new ComputerLister(), "1", "list computers"),

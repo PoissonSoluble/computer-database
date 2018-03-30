@@ -10,13 +10,13 @@ public enum ComputerOrdering {
     CU_DISCONTINUED("cu_discontinued", "discontinued", "computer_discontinued"),
     CA_ID("ca_id", "companyId"),
     CA_NAME("ca_name", "company_name");
-    
+
     private List<String> validChoices;
-    
-    private ComputerOrdering(String...pValidChoices) {
+
+    private ComputerOrdering(String... pValidChoices) {
         validChoices = Arrays.asList(pValidChoices);
     }
-    
+
     public boolean accept(String choice) {
         return validChoices.contains(choice.toLowerCase());
     }

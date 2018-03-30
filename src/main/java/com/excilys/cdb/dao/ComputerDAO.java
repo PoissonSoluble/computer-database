@@ -209,7 +209,7 @@ public enum ComputerDAO {
             stmt.setNull(parameterIndex, java.sql.Types.DATE);
         }
     }
-    
+
     private void applyDeletionOnList(List<Long> ids, Connection conn) throws SQLException, DAOException {
         for (Long id : ids) {
             try (PreparedStatement stmt = conn.prepareStatement(DELETE)) {
@@ -237,7 +237,7 @@ public enum ComputerDAO {
             request += " DESC";
         }
         return String.format(originalRequest, request);
-        
+
     }
 
     private int prepareAndExecutedPageNumberQuery(int pageSize, PreparedStatement stmt, String search)
@@ -324,7 +324,7 @@ public enum ComputerDAO {
     }
 
     protected void deleteComputerFromCompany(Long companyId, Connection conn) throws SQLException, DAOException {
-        try(PreparedStatement stmt = conn.prepareStatement(DELETE_COMPANY);){
+        try (PreparedStatement stmt = conn.prepareStatement(DELETE_COMPANY);) {
             stmt.setLong(1, companyId);
             stmt.executeUpdate();
         }

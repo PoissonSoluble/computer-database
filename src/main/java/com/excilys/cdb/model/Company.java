@@ -99,11 +99,11 @@ public class Company {
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
-        if(id.isPresent()) {
+        if (id.isPresent()) {
             sb.append(id.get());
             sb.append(" - ");
         }
-        if(name.isPresent()) {
+        if (name.isPresent()) {
             sb.append(name.get());
         }
         return sb.toString();

@@ -40,10 +40,41 @@ public class EditComputerServlet extends HttpServlet {
         super();
     }
 
+    private void executeUpdate(HttpServletRequest request, Computer computer) {
+        try {
+            ComputerService.INSTANCE.updateComputer(computer);
+        } catch (NullNameException e) {
+            request.setAttribute("error", "The name cannot be empty.");
+        } catch (NotExistingCompanyException e) {
+            request.setAttribute("error", "The company does not exist in the database.");
+        } catch (InvalidDatesException e) {
+            request.setAttribute("error", "The dates are not valid.");
+        } catch (ValidationException e) {
+            request.setAttribute("error", "There was a problem while validating the data. Please check your entries.");
+        }
+    }
+
+    private LocalDate getDate(String dateString) {
+        try {
+            return LocalDate.parse(dateString, DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+        } catch (DateTimeException | NullPointerException e) {
+            return null;
+        }
+    }
+
+    private Optional<Long> getLongParam(HttpServletRequest request, String param) {
+        try {
+            return Optional.ofNullable(Long.parseLong(request.getParameter(param)));
+        } catch (NumberFormatException e) {
+            return Optional.empty();
+        }
+    }
+
     /**
      * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse
      *      response)
      */
+    @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         if (request.getParameter("computerId") == null) {
@@ -74,6 +105,7 @@ public class EditComputerServlet extends HttpServlet {
      * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse
      *      response)
      */
+    @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         try {
@@ -86,42 +118,12 @@ public class EditComputerServlet extends HttpServlet {
             if (companyID.isPresent()) {
                 company = new Company.Builder(companyID.get()).build();
             }
-            Computer computer = new Computer.Builder(id).withName(name).withIntroduced(introduced).withDiscontinued(discontinued)
-                    .withCompany(company).build();
+            Computer computer = new Computer.Builder(id).withName(name).withIntroduced(introduced)
+                    .withDiscontinued(discontinued).withCompany(company).build();
             executeUpdate(request, computer);
-        }catch(NoSuchElementException e) {
+        } catch (NoSuchElementException e) {
             request.setAttribute("error", "No such computer in database.");
         }
         doGet(request, response);
-    }
-
-    private void executeUpdate(HttpServletRequest request, Computer computer) {
-        try {
-            ComputerService.INSTANCE.updateComputer(computer);
-        } catch (NullNameException e) {
-            request.setAttribute("error", "The name cannot be empty.");
-        } catch (NotExistingCompanyException e) {
-            request.setAttribute("error", "The company does not exist in the database.");
-        } catch (InvalidDatesException e) {
-            request.setAttribute("error", "The dates are not valid.");
-        } catch (ValidationException e) {
-            request.setAttribute("error", "There was a problem while validating the data. Please check your entries.");
-        }
-    }
-
-    private Optional<Long> getLongParam(HttpServletRequest request, String param) {
-        try {
-            return Optional.ofNullable(Long.parseLong(request.getParameter(param)));
-        } catch (NumberFormatException e) {
-            return Optional.empty();
-        }
-    }
-
-    private LocalDate getDate(String dateString) {
-        try {
-            return LocalDate.parse(dateString, DateTimeFormatter.ofPattern("yyyy-MM-dd"));
-        } catch (DateTimeException | NullPointerException e) {
-            return null;
-        }
     }
 }

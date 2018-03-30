@@ -73,7 +73,8 @@ public class DashboardServlet extends HttpServlet {
         }
     }
 
-    private ComputerOrdering getOrderingParam(HttpServletRequest request, String paramName, ComputerOrdering defaultValue) {
+    private ComputerOrdering getOrderingParam(HttpServletRequest request, String paramName,
+            ComputerOrdering defaultValue) {
         String orderString = request.getParameter(paramName);
         ComputerOrdering order;
         if (orderString == null) {

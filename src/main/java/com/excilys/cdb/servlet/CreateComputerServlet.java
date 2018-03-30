@@ -37,10 +37,41 @@ public class CreateComputerServlet extends HttpServlet {
         // TODO Auto-generated constructor stub
     }
 
+    private void executeCreation(HttpServletRequest request, Computer computer) {
+        try {
+            ComputerService.INSTANCE.createComputer(computer);
+        } catch (NullNameException e) {
+            request.setAttribute("error", "The name cannot be empty.");
+        } catch (NotExistingCompanyException e) {
+            request.setAttribute("error", "The company does not exist in the database.");
+        } catch (InvalidDatesException e) {
+            request.setAttribute("error", "The dates are not valid.");
+        } catch (ValidationException e) {
+            request.setAttribute("error", "There was a problem while validating the data. Please check your entries.");
+        }
+    }
+
+    private LocalDate getDate(String dateString) {
+        try {
+            return LocalDate.parse(dateString, DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+        } catch (DateTimeException | NullPointerException e) {
+            return null;
+        }
+    }
+
+    private Optional<Long> getLongParam(HttpServletRequest request, String param) {
+        try {
+            return Optional.ofNullable(Long.parseLong(request.getParameter(param)));
+        } catch (NumberFormatException e) {
+            return Optional.empty();
+        }
+    }
+
     /**
      * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse
      *      response)
      */
+    @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         CompanyDTOMapper mapper = new CompanyDTOMapper();
@@ -58,6 +89,7 @@ public class CreateComputerServlet extends HttpServlet {
      * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse
      *      response)
      */
+    @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         String name = request.getParameter("name");
@@ -72,35 +104,5 @@ public class CreateComputerServlet extends HttpServlet {
                 .withCompany(company).build();
         executeCreation(request, computer);
         doGet(request, response);
-    }
-
-    private void executeCreation(HttpServletRequest request, Computer computer) {
-        try {
-            ComputerService.INSTANCE.createComputer(computer);
-        } catch (NullNameException e) {
-            request.setAttribute("error", "The name cannot be empty.");
-        } catch (NotExistingCompanyException e) {
-            request.setAttribute("error", "The company does not exist in the database.");
-        } catch (InvalidDatesException e) {
-            request.setAttribute("error", "The dates are not valid.");
-        } catch (ValidationException e) {
-            request.setAttribute("error", "There was a problem while validating the data. Please check your entries.");
-        }
-    }
-
-    private Optional<Long> getLongParam(HttpServletRequest request, String param) {
-        try {
-            return Optional.ofNullable(Long.parseLong(request.getParameter(param)));
-        } catch (NumberFormatException e) {
-            return Optional.empty();
-        }
-    }
-
-    private LocalDate getDate(String dateString) {
-        try {
-            return LocalDate.parse(dateString, DateTimeFormatter.ofPattern("yyyy-MM-dd"));
-        } catch (DateTimeException | NullPointerException e) {
-            return null;
-        }
     }
 }

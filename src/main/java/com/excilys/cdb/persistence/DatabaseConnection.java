@@ -30,7 +30,7 @@ public enum DatabaseConnection {
         }
     }
 
-    public Connection getConnection() throws SQLException{
+    public Connection getConnection() throws SQLException {
         Connection conn = null;
         Properties prop = new Properties();
         try {

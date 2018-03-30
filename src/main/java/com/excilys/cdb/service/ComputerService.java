@@ -50,21 +50,21 @@ public enum ComputerService {
         }
     }
 
-    public Optional<Computer> getComputer(Long id) {
-        try {
-            return dao.getComputer(id);
-        } catch (DAOException e) {
-            LOGGER.debug("detailComputer : {}", e);
-            return Optional.empty();
-        }
-    }
-
     public boolean exists(Long id) {
         try {
             return dao.getComputer(id).isPresent();
         } catch (DAOException e) {
             LOGGER.debug("exists : {}", e);
             return false;
+        }
+    }
+
+    public Optional<Computer> getComputer(Long id) {
+        try {
+            return dao.getComputer(id);
+        } catch (DAOException e) {
+            LOGGER.debug("detailComputer : {}", e);
+            return Optional.empty();
         }
     }
 
@@ -85,7 +85,7 @@ public enum ComputerService {
             throw new ServiceException("Error while getting the total page amount.");
         }
     }
-    
+
     public List<Computer> getComputerPage(int page, int pageSize, String search) throws ServiceException {
         try {
             return dao.listComputersByPage(page, pageSize, search, ComputerOrdering.CU_ID, true);
@@ -96,7 +96,7 @@ public enum ComputerService {
             throw new ServiceException("Error while getting the page.");
         }
     }
-    
+
     public List<Computer> getComputerPage(int page, int pageSize, String search, ComputerOrdering order,
             boolean ascending) throws ServiceException {
         try {

@@ -30,14 +30,33 @@ public enum CompanyDAO {
     private final String SELECT_A_PAGE = "SELECT ca_id, ca_name FROM company ORDER BY ca_id LIMIT ? OFFSET ?";
     private final String DELETE_COMPANY = "DELETE FROM company WHERE ca_id = ?";
 
+    public void deleteCompany(Long id) throws DAOException {
+        LOGGER.info("Company DAO : delete");
+        try (Connection conn = dbConn.getConnection();) {
+            conn.setAutoCommit(false);
+            try (PreparedStatement stmt = conn.prepareStatement(DELETE_COMPANY);) {
+                computerDao.deleteComputerFromCompany(id, conn);
+                stmt.setLong(1, id);
+                stmt.executeUpdate();
+            } catch (SQLException | DAOException e) {
+                conn.rollback();
+                LOGGER.error("deleteCompany : {}");
+                throw new DAOException("Error while deleting the company.");
+            }
+            conn.commit();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
     public Optional<Company> getCompany(Company company) throws DAOException {
-        if(company.getId().isPresent()) {
+        if (company.getId().isPresent()) {
             return getCompany(company.getId().get());
         } else {
             throw new DAOException("The id is null.");
         }
     }
-    
+
     public Optional<Company> getCompany(Long id) throws DAOException {
         LOGGER.info("Company DAO : get");
         Company company = null;
@@ -83,7 +102,8 @@ public enum CompanyDAO {
         return companies;
     }
 
-    public List<Company> listCompaniesByPage(int pageNumber, int pageSize) throws PageOutOfBoundsException, DAOException {
+    public List<Company> listCompaniesByPage(int pageNumber, int pageSize)
+            throws PageOutOfBoundsException, DAOException {
         LOGGER.info(new StringBuilder("Company DAO : page (").append(pageNumber).append(",").append(pageSize)
                 .append(")").toString());
         ArrayList<Company> companies = new ArrayList<>();
@@ -103,25 +123,6 @@ public enum CompanyDAO {
         pages = count / pageSize;
         pages += (count % pageSize) != 0 ? 1 : 0;
         return pages;
-    }
-    
-    public void deleteCompany(Long id) throws DAOException{
-        LOGGER.info("Company DAO : delete");
-        try(Connection conn = dbConn.getConnection();){
-            conn.setAutoCommit(false);
-            try(PreparedStatement stmt = conn.prepareStatement(DELETE_COMPANY);){
-                computerDao.deleteComputerFromCompany(id, conn);
-                stmt.setLong(1, id);
-                stmt.executeUpdate();
-            }catch(SQLException | DAOException e) {
-                conn.rollback();
-                LOGGER.error("deleteCompany : {}");
-                throw new DAOException("Error while deleting the company.");
-            }
-            conn.commit();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
     }
 
     private Company retrieveCompanyFromQuery(PreparedStatement stmt) throws SQLException {

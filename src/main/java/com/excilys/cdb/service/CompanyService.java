@@ -25,7 +25,7 @@ public enum CompanyService {
             LOGGER.debug("deleteCompany : {}", e);
         }
     }
-    
+
     public boolean exists(Long id) {
         try {
             return dao.getCompany(id).isPresent();
@@ -34,7 +34,16 @@ public enum CompanyService {
             return false;
         }
     }
-    
+
+    public List<Company> getCompanies() throws ServiceException {
+        try {
+            return dao.listCompanies();
+        } catch (DAOException e) {
+            LOGGER.debug("getCompanies : {}", e);
+            throw new ServiceException("Error while retrieving the companies.");
+        }
+    }
+
     public int getCompanyListPageTotalAmount(int pageSize) throws ServiceException {
         try {
             return dao.getCompanyListPageTotalAmount(pageSize);
@@ -53,15 +62,6 @@ public enum CompanyService {
         } catch (DAOException e) {
             LOGGER.debug("getCompanyPage : {}", e);
             throw new ServiceException("Error while retrieving page.");
-        }
-    }
-
-    public List<Company> getCompanies() throws ServiceException {
-        try {
-            return dao.listCompanies();
-        } catch (DAOException e) {
-            LOGGER.debug("getCompanies : {}", e);
-            throw new ServiceException("Error while retrieving the companies.");
         }
     }
 }
