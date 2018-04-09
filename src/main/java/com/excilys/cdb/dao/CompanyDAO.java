@@ -6,6 +6,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 
 import org.slf4j.Logger;
@@ -50,9 +51,9 @@ public enum CompanyDAO {
     }
 
     public Optional<Company> getCompany(Company company) throws DAOException {
-        if (company.getId().isPresent()) {
+        try {
             return getCompany(company.getId().get());
-        } else {
+        } catch (NoSuchElementException e) {
             throw new DAOException("The id is null.");
         }
     }

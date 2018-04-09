@@ -25,6 +25,7 @@ public enum DatabaseConnection {
             dataSource.setJdbcUrl(prop.getProperty("dburl", getUrl(prop)));
             dataSource.setUsername(prop.getProperty("dbid"));
             dataSource.setPassword(prop.getProperty("dbpassword"));
+            dataSource.setMaxLifetime(60000);
         } catch (IOException e) {
             LOGGER.error("Error while initiating Hikari connection pool. {}", e);
         }

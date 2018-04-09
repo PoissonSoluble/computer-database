@@ -9,6 +9,7 @@ import java.sql.Statement;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 
 import org.apache.commons.lang3.StringUtils;
@@ -203,9 +204,9 @@ public enum ComputerDAO {
 
     private void addDateToStatement(int parameterIndex, Optional<LocalDate> date, PreparedStatement stmt)
             throws SQLException {
-        if (date.isPresent()) {
+        try {
             stmt.setDate(parameterIndex, Date.valueOf(date.get()));
-        } else {
+        } catch (NoSuchElementException e) {
             stmt.setNull(parameterIndex, java.sql.Types.DATE);
         }
     }
