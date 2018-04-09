@@ -9,7 +9,6 @@ import java.sql.Statement;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.NoSuchElementException;
 import java.util.Optional;
 
 import org.apache.commons.lang3.StringUtils;
@@ -17,6 +16,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.excilys.cdb.mapper.ComputerMapper;
+import com.excilys.cdb.model.Company;
 import com.excilys.cdb.model.Computer;
 import com.excilys.cdb.persistence.DatabaseConnection;
 
@@ -26,18 +26,18 @@ public enum ComputerDAO {
 
     private DatabaseConnection dbConn = DatabaseConnection.INSTANCE;
     private ComputerMapper mapper = ComputerMapper.INSTANCE;
-    private final Logger LOGGER = LoggerFactory.getLogger(ComputerDAO.class);
+    private final static Logger LOGGER = LoggerFactory.getLogger(ComputerDAO.class);
 
-    private final String SELECT_ALL = "SELECT cu_id, cu_name, cu_introduced, cu_discontinued, ca_id, ca_name FROM computer LEFT JOIN company USING(ca_id)";
-    private final String SELECT_FROM_ID = "SELECT cu_id, cu_name, cu_introduced, cu_discontinued, ca_id, ca_name FROM computer LEFT JOIN company USING(ca_id) WHERE cu_id = ?";
-    private final String SELECT_PAGE = "SELECT cu_id, cu_name, cu_introduced, cu_discontinued, ca_id, ca_name FROM computer LEFT JOIN company USING(ca_id) ORDER BY %s  LIMIT ? OFFSET ?";
-    private final String SELECT_PAGE_SEARCH = "SELECT cu_id, cu_name, cu_introduced, cu_discontinued, ca_id, ca_name FROM computer LEFT JOIN company USING(ca_id) WHERE cu_name LIKE ? ORDER BY %s LIMIT ? OFFSET ?";
-    private final String SELECT_COUNT = "SELECT count(cu_id) as count FROM computer";
-    private final String SELECT_COUNT_SEARCH = "SELECT count(cu_id) as count FROM computer WHERE cu_name LIKE ?";
-    private final String INSERT = "INSERT INTO computer (cu_name, cu_introduced, cu_discontinued, ca_id) VALUES(?,?,?,?)";
-    private final String DELETE = "DELETE FROM computer WHERE cu_id = ?";
-    private final String DELETE_COMPANY = "DELETE FROM computer WHERE ca_id = ?";
-    private final String UPDATE = "UPDATE computer SET cu_name = ?, cu_introduced = ?, cu_discontinued = ?, ca_id = ? WHERE cu_id = ?";
+    private final static String SELECT_ALL = "SELECT cu_id, cu_name, cu_introduced, cu_discontinued, ca_id, ca_name FROM computer LEFT JOIN company USING(ca_id)";
+    private final static String SELECT_FROM_ID = "SELECT cu_id, cu_name, cu_introduced, cu_discontinued, ca_id, ca_name FROM computer LEFT JOIN company USING(ca_id) WHERE cu_id = ?";
+    private final static String SELECT_PAGE = "SELECT cu_id, cu_name, cu_introduced, cu_discontinued, ca_id, ca_name FROM computer LEFT JOIN company USING(ca_id) ORDER BY %s  LIMIT ? OFFSET ?";
+    private final static String SELECT_PAGE_SEARCH = "SELECT cu_id, cu_name, cu_introduced, cu_discontinued, ca_id, ca_name FROM computer LEFT JOIN company USING(ca_id) WHERE cu_name LIKE ? ORDER BY %s LIMIT ? OFFSET ?";
+    private final static String SELECT_COUNT = "SELECT count(cu_id) as count FROM computer";
+    private final static String SELECT_COUNT_SEARCH = "SELECT count(cu_id) as count FROM computer WHERE cu_name LIKE ?";
+    private final static String INSERT = "INSERT INTO computer (cu_name, cu_introduced, cu_discontinued, ca_id) VALUES(?,?,?,?)";
+    private final static String DELETE = "DELETE FROM computer WHERE cu_id = ?";
+    private final static String DELETE_COMPANY = "DELETE FROM computer WHERE ca_id = ?";
+    private final static String UPDATE = "UPDATE computer SET cu_name = ?, cu_introduced = ?, cu_discontinued = ?, ca_id = ? WHERE cu_id = ?";
 
     public Optional<Long> createComputer(Computer computer) throws DAOException {
         LOGGER.info("Computer DAO : creation");
@@ -194,7 +194,7 @@ public enum ComputerDAO {
         LOGGER.info("Computer DAO : update");
         try (Connection conn = dbConn.getConnection(); PreparedStatement stmt = conn.prepareStatement(UPDATE);) {
             setParameters(computer, stmt);
-            stmt.setLong(5, computer.getId().get());
+            stmt.setLong(5, computer.getId().orElseThrow(() -> new DAOException("Id is null.")));
             stmt.executeUpdate();
         } catch (SQLException e) {
             LOGGER.error("updateComputer(Computer): {}", e);
@@ -204,9 +204,9 @@ public enum ComputerDAO {
 
     private void addDateToStatement(int parameterIndex, Optional<LocalDate> date, PreparedStatement stmt)
             throws SQLException {
-        try {
+        if (date.isPresent()) {
             stmt.setDate(parameterIndex, Date.valueOf(date.get()));
-        } catch (NoSuchElementException e) {
+        } else {
             stmt.setNull(parameterIndex, java.sql.Types.DATE);
         }
     }
@@ -225,7 +225,8 @@ public enum ComputerDAO {
     }
 
     private int computePageAmountFromQuery(int pageSize, ResultSet rs) throws SQLException {
-        int pages, count;
+        int pages;
+        int count;
         count = rs.getInt("count");
         pages = count / pageSize;
         pages += (count % pageSize) != 0 ? 1 : 0;
@@ -314,11 +315,12 @@ public enum ComputerDAO {
     }
 
     private void setParameters(Computer computer, PreparedStatement stmt) throws SQLException {
-        stmt.setString(1, computer.getName().get());
+        stmt.setString(1, computer.getName().orElse(""));
         addDateToStatement(2, computer.getIntroduced(), stmt);
         addDateToStatement(3, computer.getDiscontinued(), stmt);
-        if (computer.getCompany().isPresent() && computer.getCompany().get().getId().isPresent()) {
-            stmt.setLong(4, computer.getCompany().get().getId().get());
+        Optional<Company> companyOpt = computer.getCompany();
+        if (companyOpt.isPresent() && companyOpt.get().getId().isPresent()) {
+            stmt.setLong(4, companyOpt.get().getId().get());
         } else {
             stmt.setNull(4, java.sql.Types.BIGINT);
         }

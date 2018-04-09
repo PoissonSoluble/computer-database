@@ -13,14 +13,13 @@ import com.excilys.cdb.service.ComputerService;
 
 public class DeleteComputerServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
-    private ComputerService service = ComputerService.INSTANCE;
+    private static final ComputerService COMPUTER_SERVICE = ComputerService.INSTANCE;
 
     /**
      * @see HttpServlet#HttpServlet()
      */
     public DeleteComputerServlet() {
         super();
-        // TODO Auto-generated constructor stub
     }
 
     /**
@@ -56,7 +55,7 @@ public class DeleteComputerServlet extends HttpServlet {
         for (String idString : selection.split(",")) {
             ids.add(Long.parseLong(idString));
         }
-        service.deleteComputers(ids);
+        COMPUTER_SERVICE.deleteComputers(ids);
         doGet(request, response);
     }
 }

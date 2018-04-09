@@ -52,22 +52,27 @@ public class Computer {
         }
     }
 
-    private Long id;
-    private String name;
-    private LocalDate introduced;
-    private LocalDate discontinued;
+    private Optional<Long> id;
+    private Optional<String> name;
+    private Optional<LocalDate> introduced;
+    private Optional<LocalDate> discontinued;
 
-    private Company company;
+    private Optional<Company> company;
 
     public Computer() {
+        id = Optional.empty();
+        name = Optional.empty();
+        introduced = Optional.empty();
+        discontinued = Optional.empty();
+        company = Optional.empty();
     }
 
     public Computer(Builder builder) {
-        id = builder.id;
-        name = builder.name;
-        introduced = builder.introduced;
-        discontinued = builder.discontinued;
-        company = builder.company;
+        id = Optional.ofNullable(builder.id);
+        name = Optional.ofNullable(builder.name);
+        introduced = Optional.ofNullable(builder.introduced);
+        discontinued = Optional.ofNullable(builder.discontinued);
+        company = Optional.ofNullable(builder.company);
     }
 
     @Override
@@ -82,36 +87,36 @@ public class Computer {
             return false;
         }
         Computer other = (Computer) obj;
-        if (Optional.ofNullable(company).isPresent()) {
-            if (Optional.ofNullable(other.company).isPresent()) {
+        if (!company.isPresent()) {
+            if (other.company.isPresent()) {
                 return false;
             }
         } else if (!company.equals(other.company)) {
             return false;
         }
-        if (!Optional.ofNullable(discontinued).isPresent()) {
-            if (Optional.ofNullable(other.discontinued).isPresent()) {
+        if (!discontinued.isPresent()) {
+            if (other.discontinued.isPresent()) {
                 return false;
             }
         } else if (!discontinued.equals(other.discontinued)) {
             return false;
         }
-        if (!Optional.ofNullable(id).isPresent()) {
-            if (Optional.ofNullable(other.id).isPresent()) {
+        if (!id.isPresent()) {
+            if (other.id.isPresent()) {
                 return false;
             }
         } else if (!id.equals(other.id)) {
             return false;
         }
-        if (!Optional.ofNullable(introduced).isPresent()) {
-            if (Optional.ofNullable(other.introduced).isPresent()) {
+        if (!introduced.isPresent()) {
+            if (other.introduced.isPresent()) {
                 return false;
             }
         } else if (!introduced.equals(other.introduced)) {
             return false;
         }
-        if (!Optional.ofNullable(name).isPresent()) {
-            if (Optional.ofNullable(other.name).isPresent()) {
+        if (!name.isPresent()) {
+            if (other.name.isPresent()) {
                 return false;
             }
         } else if (!name.equals(other.name)) {
@@ -121,68 +126,68 @@ public class Computer {
     }
 
     public Optional<Company> getCompany() {
-        return Optional.ofNullable(company);
+        return company;
     }
 
     public Optional<LocalDate> getDiscontinued() {
-        return Optional.ofNullable(discontinued);
+        return discontinued;
     }
 
     public Optional<Long> getId() {
-        return Optional.ofNullable(id);
+        return id;
     }
 
     public Optional<LocalDate> getIntroduced() {
-        return Optional.ofNullable(introduced);
+        return introduced;
     }
 
     public Optional<String> getName() {
-        return Optional.ofNullable(name);
+        return name;
     }
 
     @Override
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = (prime * result) + ((company == null) ? 0 : company.hashCode());
-        result = (prime * result) + ((discontinued == null) ? 0 : discontinued.hashCode());
-        result = (prime * result) + ((id == null) ? 0 : id.hashCode());
-        result = (prime * result) + ((introduced == null) ? 0 : introduced.hashCode());
-        result = (prime * result) + ((name == null) ? 0 : name.hashCode());
+        result = (prime * result) + ((!company.isPresent()) ? 0 : company.hashCode());
+        result = (prime * result) + ((!discontinued.isPresent()) ? 0 : discontinued.hashCode());
+        result = (prime * result) + ((!id.isPresent()) ? 0 : id.hashCode());
+        result = (prime * result) + ((!introduced.isPresent()) ? 0 : introduced.hashCode());
+        result = (prime * result) + ((!name.isPresent()) ? 0 : name.hashCode());
         return result;
     }
 
     public void setCompany(Company pCompany) {
-        company = pCompany;
+        company = Optional.ofNullable(pCompany);
     }
 
     public void setDiscontinued(LocalDate pDiscontinued) {
-        discontinued = pDiscontinued;
+        discontinued = Optional.ofNullable(pDiscontinued);
     }
 
     public void setId(Long pId) {
-        id = pId;
+        id = Optional.ofNullable(pId);
     }
 
     public void setIntroduced(LocalDate pintroduced) {
-        introduced = pintroduced;
+        introduced = Optional.ofNullable(pintroduced);
     }
 
     public void setName(String pName) {
-        name = pName;
+        name = Optional.ofNullable(pName);
     }
 
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
-        if (Optional.ofNullable(id).isPresent()) {
-            sb.append(id.toString());
+        if (id.isPresent()) {
+            sb.append(id.get());
         }
-        if (Optional.ofNullable(name).isPresent()) {
-            sb.append(" - ").append(name);
+        if (name.isPresent()) {
+            sb.append(" - ").append(name.get());
         }
-        if (Optional.ofNullable(company).isPresent()) {
-            sb.append(" (").append(company).append(")");
+        if (company.isPresent()) {
+            sb.append(" (").append(company.get()).append(")");
         }
         return sb.toString();
     }

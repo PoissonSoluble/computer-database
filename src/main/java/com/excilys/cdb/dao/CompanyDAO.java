@@ -6,7 +6,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.NoSuchElementException;
 import java.util.Optional;
 
 import org.slf4j.Logger;
@@ -20,42 +19,31 @@ public enum CompanyDAO {
 
     INSTANCE;
 
+    private final static Logger LOGGER = LoggerFactory.getLogger(CompanyDAO.class);
+    private final static String SELECT_ALL = "SELECT ca_id, ca_name FROM company";
+    private final static String SELECT_FROM_ID = "SELECT ca_id, ca_name FROM company WHERE ca_id = ?";
+    private final static String SELECT_COUNT = "SELECT count(ca_id) as count FROM company";
+
+    private final static String SELECT_A_PAGE = "SELECT ca_id, ca_name FROM company ORDER BY ca_id LIMIT ? OFFSET ?";
+    private final static String DELETE_COMPANY = "DELETE FROM company WHERE ca_id = ?";
     private DatabaseConnection dbConn = DatabaseConnection.INSTANCE;
     private CompanyMapper mapper = CompanyMapper.INSTANCE;
     private ComputerDAO computerDao = ComputerDAO.INSTANCE;
-    private final Logger LOGGER = LoggerFactory.getLogger(CompanyDAO.class);
-
-    private final String SELECT_ALL = "SELECT ca_id, ca_name FROM company";
-    private final String SELECT_FROM_ID = "SELECT ca_id, ca_name FROM company WHERE ca_id = ?";
-    private final String SELECT_COUNT = "SELECT count(ca_id) as count FROM company";
-    private final String SELECT_A_PAGE = "SELECT ca_id, ca_name FROM company ORDER BY ca_id LIMIT ? OFFSET ?";
-    private final String DELETE_COMPANY = "DELETE FROM company WHERE ca_id = ?";
 
     public void deleteCompany(Long id) throws DAOException {
         LOGGER.info("Company DAO : delete");
         try (Connection conn = dbConn.getConnection();) {
             conn.setAutoCommit(false);
-            try (PreparedStatement stmt = conn.prepareStatement(DELETE_COMPANY);) {
-                computerDao.deleteComputerFromCompany(id, conn);
-                stmt.setLong(1, id);
-                stmt.executeUpdate();
-            } catch (SQLException | DAOException e) {
-                conn.rollback();
-                LOGGER.error("deleteCompany : {}");
-                throw new DAOException("Error while deleting the company.");
-            }
+            executeDeleteStatement(id, conn);
             conn.commit();
         } catch (SQLException e) {
-            e.printStackTrace();
+            LOGGER.debug(new StringBuilder("deleteCompany(): ").append(e.getMessage()).toString());
+            throw new DAOException("Error while deleting the company.");
         }
     }
 
     public Optional<Company> getCompany(Company company) throws DAOException {
-        try {
-            return getCompany(company.getId().get());
-        } catch (NoSuchElementException e) {
-            throw new DAOException("The id is null.");
-        }
+        return getCompany(company.getId().orElseThrow(() -> new DAOException("The id is null.")));
     }
 
     public Optional<Company> getCompany(Long id) throws DAOException {
@@ -119,18 +107,30 @@ public enum CompanyDAO {
     }
 
     private int computePageAmountFromQuery(int pageSize, ResultSet rs) throws SQLException {
-        int pages, count;
+        int pages;
+        int count;
         count = rs.getInt("count");
         pages = count / pageSize;
         pages += (count % pageSize) != 0 ? 1 : 0;
         return pages;
     }
 
+    private void executeDeleteStatement(Long id, Connection conn) throws SQLException, DAOException {
+        try (PreparedStatement stmt = conn.prepareStatement(DELETE_COMPANY);) {
+            computerDao.deleteComputerFromCompany(id, conn);
+            stmt.setLong(1, id);
+            stmt.executeUpdate();
+        } catch (SQLException | DAOException e) {
+            conn.rollback();
+            LOGGER.error("deleteCompany : {}");
+            throw new DAOException("Error while deleting the company.");
+        }
+    }
+
     private Company retrieveCompanyFromQuery(PreparedStatement stmt) throws SQLException {
         try (ResultSet rs = stmt.executeQuery();) {
             if (rs.next()) {
-                Company company = mapper.createCompany(rs.getLong(1), rs.getString(2));
-                return company;
+                return mapper.createCompany(rs.getLong(1), rs.getString(2));
             }
         }
         return null;

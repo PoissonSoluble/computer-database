@@ -4,9 +4,6 @@ public class CompanyDTO {
     private long id;
     private String name;
 
-    public CompanyDTO() {
-    }
-
     public long getId() {
         return id;
     }

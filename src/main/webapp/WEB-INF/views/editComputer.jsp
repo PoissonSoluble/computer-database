@@ -47,7 +47,14 @@
 									name="introduced" id="introduced" value="${computer.introduced}">
 							</div>
 							<div class="form-group">
-								<label for="discontinued">Discontinued date</label> <input
+						
+	<script src="<c:url value="/static/js/jquery.min.js" />"></script>
+	<script src="<c:url value="/static/js/jquery.form-validator.min.js" />"></script>
+	<script src="<c:url value="/static/js/bootstrap.min.js" />"></script>
+	<script src="<c:url value="/static/js/dashboard.js" />"></script>
+	<script>
+		$.validate();
+	</script>		<label for="discontinued">Discontinued date</label> <input
 									type="date" type="date" data-validation="date"
 									data-validation-format="yyyy-mm-dd"
 									data-validation-optional="true" class="form-control"
@@ -78,5 +85,12 @@
             </div>
         </div>
     </section>
+	<script src="<c:url value="/static/js/jquery.min.js" />"></script>
+	<script src="<c:url value="/static/js/jquery.form-validator.min.js" />"></script>
+	<script src="<c:url value="/static/js/bootstrap.min.js" />"></script>
+	<script src="<c:url value="/static/js/dashboard.js" />"></script>
+	<script>
+		$.validate();
+	</script>
 </body>
 </html>

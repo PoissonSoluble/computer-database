@@ -14,9 +14,10 @@ public class CompanyLister implements CLIActionHandler {
     private Page<Company> page;
 
     @Override
-    public void handle() {
+    public boolean handle() {
         page = new CompanyPage(1, PAGE_SIZE, "");
         printPages();
+        return true;
     }
 
     private String getPage(List<Company> companies) {
@@ -31,8 +32,8 @@ public class CompanyLister implements CLIActionHandler {
 
     private boolean handleChoice() {
         String input = CommandLineInterface.getUserInput().toLowerCase();
-        PageChoice choice = Stream.of(PageChoice.values()).filter(v -> v.accept(input)).findFirst().get();
-        return choice.handle(page);
+        return Stream.of(PageChoice.values()).filter(v -> v.accept(input)).findFirst().orElse(PageChoice.CURRENT_PAGE)
+                .handle(page);
     }
 
     private void printPageMenu() {

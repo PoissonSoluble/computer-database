@@ -14,10 +14,12 @@ public enum DatabaseConnection {
     INSTANCE;
 
     private HikariDataSource dataSource;
-    private final Logger LOGGER = LoggerFactory.getLogger(DatabaseConnection.class);
+    private final static Logger LOGGER = LoggerFactory.getLogger(DatabaseConnection.class);
 
     private DatabaseConnection() {
-        LOGGER.info("Init Hikari connection pool");
+    }
+    
+    private void init() {
         Properties prop = new Properties();
         try {
             prop.load(getClass().getClassLoader().getResourceAsStream("config.properties"));
@@ -32,6 +34,9 @@ public enum DatabaseConnection {
     }
 
     public Connection getConnection() throws SQLException {
+        if(dataSource == null) {
+            init();
+        }
         Connection conn = null;
         Properties prop = new Properties();
         try {

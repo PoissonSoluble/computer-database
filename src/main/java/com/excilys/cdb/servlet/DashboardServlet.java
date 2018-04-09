@@ -3,7 +3,6 @@ package com.excilys.cdb.servlet;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.NoSuchElementException;
 import java.util.stream.Stream;
 
 import javax.servlet.RequestDispatcher;
@@ -22,10 +21,10 @@ import com.excilys.cdb.service.ServiceException;
 public class DashboardServlet extends HttpServlet {
 
     private static final long serialVersionUID = -3346293799223556529L;
-    private final int DEFAULT_PAGE = 1;
-    private final int DEFAULT_SIZE = 10;
-    private final ComputerOrdering DEFAULT_ORDER = ComputerOrdering.CU_ID;
-    private final boolean DEFAULT_ASCENDING = true;
+    private static final int DEFAULT_PAGE = 1;
+    private static final int DEFAULT_SIZE = 10;
+    private static final ComputerOrdering DEFAULT_ORDER = ComputerOrdering.CU_ID;
+    private static final boolean DEFAULT_ASCENDING = true;
 
     public DashboardServlet() {
         super();
@@ -51,9 +50,9 @@ public class DashboardServlet extends HttpServlet {
     private boolean getBooleanParam(HttpServletRequest request, String paramName, boolean defaultValue) {
         String param = request.getParameter(paramName);
         if (param != null) {
-            if (param.toLowerCase().equals("true")) {
+            if (param.equalsIgnoreCase("true")) {
                 return true;
-            } else if (param.toLowerCase().equals("false")) {
+            } else if (param.equalsIgnoreCase("false")) {
                 return false;
             }
         }
@@ -80,11 +79,8 @@ public class DashboardServlet extends HttpServlet {
         if (orderString == null) {
             order = defaultValue;
         } else {
-            try {
-                order = Stream.of(ComputerOrdering.values()).filter(v -> v.accept(orderString)).findFirst().get();
-            } catch (NoSuchElementException e) {
-                order = defaultValue;
-            }
+            order = Stream.of(ComputerOrdering.values()).filter(v -> v.accept(orderString)).findFirst()
+                    .orElse(defaultValue);
         }
         return order;
     }

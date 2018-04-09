@@ -23,11 +23,13 @@ public enum ComputerValidator {
         validateCompany(computer.getCompany());
     }
 
-    private void validateCompany(Optional<Company> company) throws ValidationException {
+    private void validateCompany(Optional<Company> companyOpt) throws ValidationException {
         try {
-            if (company.isPresent() && company.get().getId().isPresent()
-                    && !companyDAO.getCompany(company.get().getId().get()).isPresent()) {
-                throw new NotExistingCompanyException();
+            if (companyOpt.isPresent()) {
+                Company company = companyOpt.get();
+                if(company.getId().isPresent() && !companyDAO.getCompany(company.getId().get()).isPresent()) {
+                    throw new NotExistingCompanyException();
+                }
             }
         } catch (DAOException e) {
             throw new ValidationException();

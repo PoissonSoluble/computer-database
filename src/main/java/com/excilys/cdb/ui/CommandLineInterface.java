@@ -1,6 +1,5 @@
 package com.excilys.cdb.ui;
 
-import java.util.NoSuchElementException;
 import java.util.Scanner;
 import java.util.stream.Stream;
 
@@ -25,24 +24,16 @@ public class CommandLineInterface {
     }
 
     public boolean handleChoice(String userInput) {
-        try {
-            UserChoice choice = Stream.of(UserChoice.values()).filter(v -> v.accept(userInput)).findFirst().get();
-            return choice.handleChoice();
-        } catch (NoSuchElementException e) {
-            System.err.println("This choice is not valid.\n");
-            return true;
-        }
+        return Stream.of(UserChoice.values()).filter(v -> v.accept(userInput)).findFirst().orElse(UserChoice.ANY)
+                .handleChoice();
+
     }
 
     public void start() {
         CommandLineInterface.sc = new Scanner(System.in);
-        while (true) {
+        do {
             System.out.print(getMenu());
-            if (!handleChoice(getUserInput())) {
-                break;
-            }
-        }
-        System.out.println("Goodbye !");
+        } while (handleChoice(getUserInput()));
         CommandLineInterface.sc.close();
     }
 }

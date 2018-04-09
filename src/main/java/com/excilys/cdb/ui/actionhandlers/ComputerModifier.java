@@ -13,18 +13,19 @@ public class ComputerModifier implements CLIActionHandler {
     CLIUserInputsAPI cliApi = CLIUserInputsAPI.INSTANCE;
 
     @Override
-    public void handle() {
+    public boolean handle() {
         try {
             Long id = cliApi.askID("computer");
             if (!service.exists(id)) {
                 System.out.println("This computer does not exists.");
-                return;
+                return true;
             }
             Computer computer = cliApi.askParametersForComputer();
             checkNullAndUpdate(id, computer);
         } catch (NumberFormatException e) {
             System.out.println("This is not a proper ID format. (an integer)");
         }
+        return true;
     }
 
     private void checkNullAndUpdate(Long id, Computer computer) {

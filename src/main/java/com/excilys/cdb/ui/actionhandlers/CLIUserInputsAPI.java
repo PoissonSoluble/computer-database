@@ -59,7 +59,7 @@ public enum CLIUserInputsAPI {
         try {
             Optional<Long> company = askCompany();
             if (company.isPresent()) {
-                computer.setCompany(new Company.Builder(askCompany().get()).build());
+                computer.setCompany(new Company.Builder(company.get()).build());
             }
         } catch (NumberFormatException e) {
             System.out.println("Wrong company ID format. (need an integer)");
@@ -99,7 +99,7 @@ public enum CLIUserInputsAPI {
 
     private boolean readName(Computer computer) {
         computer.setName(askName());
-        if (computer.getName() == null) {
+        if (computer.getName().isPresent()) {
             System.out.println("The name cannot be null.");
             return false;
         }

@@ -7,6 +7,7 @@ import java.util.Optional;
 import com.excilys.cdb.model.Company;
 import com.excilys.cdb.model.Computer;
 import com.excilys.cdb.service.ComputerService;
+import com.excilys.cdb.ui.CLIException;
 import com.excilys.cdb.ui.CommandLineInterface;
 
 public class ComputerItemizer implements CLIActionHandler {
@@ -15,21 +16,22 @@ public class ComputerItemizer implements CLIActionHandler {
     private CLIUserInputsAPI cliApi = CLIUserInputsAPI.INSTANCE;
 
     @Override
-    public void handle() {
+    public boolean handle() {
         try {
             Long id = cliApi.askID("computer");
-            Computer computer = service.getComputer(id).get();
-            printComputer(computer);
+            printComputer(service.getComputer(id));
             CommandLineInterface.getUserInput();
         } catch (NumberFormatException e) {
             System.out.println("This is not a proper ID format. (an integer)");
         } catch (NoSuchElementException e) {
             System.out.println("This computer does not exists.");
         }
+        return true;
     }
 
-    private String constructDetailString(Computer computer) {
-        StringBuilder sb = new StringBuilder("\n== Details of computer#").append(computer.getId().get())
+    private String constructDetailString(Computer computer) throws CLIException {
+        StringBuilder sb = new StringBuilder("\n== Details of computer#")
+                .append(computer.getId().orElseThrow(() -> new CLIException("Computer cannot be printed without ID")))
                 .append(" ==\n");
         sb.append("Name: ").append(computer.getName().get()).append("\n");
         sb.append("Introduced date: ");
@@ -64,11 +66,15 @@ public class ComputerItemizer implements CLIActionHandler {
         return sb;
     }
 
-    private void printComputer(Computer computer) {
-        if (computer == null) {
+    private void printComputer(Optional<Computer> computer) {
+        if (!computer.isPresent()) {
             System.out.println("This computer does not exist.");
         } else {
-            System.out.println(constructDetailString(computer));
+            try {
+                System.out.println(constructDetailString(computer.get()));
+            } catch (CLIException e) {
+                System.err.println(e.getMessage());
+            }
         }
     }
 }

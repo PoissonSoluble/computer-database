@@ -13,11 +13,12 @@ public class ComputerCreator implements CLIActionHandler {
     CLIUserInputsAPI filler = CLIUserInputsAPI.INSTANCE;
 
     @Override
-    public void handle() {
+    public boolean handle() {
         Computer computer = filler.askParametersForComputer();
         if (computer != null) {
             createComputer(computer);
         }
+        return true;
     }
 
     private void createComputer(Computer computer) {

@@ -15,9 +15,10 @@ public class ComputerLister implements CLIActionHandler {
     private Page<Computer> page;
 
     @Override
-    public void handle() {
+    public boolean handle() {
         page = new ComputerPage(1, PAGE_SIZE, "", ComputerOrdering.CU_ID, true);
         printPages();
+        return true;
     }
 
     private String getPage(List<Computer> computers) {
@@ -32,13 +33,14 @@ public class ComputerLister implements CLIActionHandler {
 
     private boolean handleChoice() {
         String input = CommandLineInterface.getUserInput().toLowerCase();
-        PageChoice choice = Stream.of(PageChoice.values()).filter(v -> v.accept(input)).findFirst().get();
-        return choice.handle(page);
+        return Stream.of(PageChoice.values()).filter(v -> v.accept(input)).findFirst().orElse(PageChoice.CURRENT_PAGE)
+                .handle(page);
     }
 
     private void printPageMenu() {
         StringBuilder menu = new StringBuilder();
-        Stream.of(PageChoice.values()).forEach(value -> menu.append(value.getTitle()).append(", "));
+        Stream.of(PageChoice.values()).filter(pageChoice -> !pageChoice.isHidden())
+                .forEach(value -> menu.append(value.getTitle()).append(", "));
         menu.append("please pick one.");
         System.out.println(menu);
     }

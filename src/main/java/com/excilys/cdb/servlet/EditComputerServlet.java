@@ -6,7 +6,6 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.NoSuchElementException;
 import java.util.Optional;
 
 import javax.servlet.RequestDispatcher;
@@ -31,7 +30,7 @@ import com.excilys.cdb.validation.exceptions.ValidationException;
 
 public class EditComputerServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
-    private final ComputerService SERVICE = ComputerService.INSTANCE;
+    private static final ComputerService COMPUTER_SERVICE = ComputerService.INSTANCE;
 
     /**
      * @see HttpServlet#HttpServlet()
@@ -52,6 +51,24 @@ public class EditComputerServlet extends HttpServlet {
         } catch (ValidationException e) {
             request.setAttribute("error", "There was a problem while validating the data. Please check your entries.");
         }
+    }
+
+    private void generateAndForwardDTOs(HttpServletRequest request, HttpServletResponse response,
+            Optional<Computer> computerOpt) throws ServletException, IOException {
+        ComputerDTOMapper computerMapper = new ComputerDTOMapper();
+        ComputerDTO computer = computerMapper.createComputerDTO(computerOpt.get());
+        CompanyDTOMapper companyMapper = new CompanyDTOMapper();
+        List<CompanyDTO> companies = new ArrayList<>();
+        try {
+            CompanyService.INSTANCE.getCompanies()
+                    .forEach(company -> companies.add(companyMapper.createCompanyDTO(company)));
+        } catch (ServiceException e) {
+            throw new ServletException("Error while getting the DTOs.");
+        }
+        request.setAttribute("companies", companies);
+        request.setAttribute("computer", computer);
+        RequestDispatcher view = request.getRequestDispatcher("WEB-INF/views/editComputer.jsp");
+        view.forward(request, response);
     }
 
     private LocalDate getDate(String dateString) {
@@ -81,21 +98,10 @@ public class EditComputerServlet extends HttpServlet {
             response.sendRedirect("/cdb/dashboard");
         } else {
             Long id = Long.parseLong(request.getParameter("computerId"));
-            try {
-                ComputerDTOMapper computerMapper = new ComputerDTOMapper();
-                ComputerDTO computer = computerMapper.createComputerDTO(SERVICE.getComputer(id).get());
-                CompanyDTOMapper companyMapper = new CompanyDTOMapper();
-                List<CompanyDTO> companies = new ArrayList<>();
-                try {
-                    CompanyService.INSTANCE.getCompanies()
-                            .forEach(company -> companies.add(companyMapper.createCompanyDTO(company)));
-                } catch (ServiceException e) {
-                }
-                request.setAttribute("companies", companies);
-                request.setAttribute("computer", computer);
-                RequestDispatcher view = request.getRequestDispatcher("WEB-INF/views/editComputer.jsp");
-                view.forward(request, response);
-            } catch (NoSuchElementException e) {
+            Optional<Computer> computerOpt = COMPUTER_SERVICE.getComputer(id);
+            if (computerOpt.isPresent()) {
+                generateAndForwardDTOs(request, response, computerOpt);
+            } else {
                 response.sendRedirect("/cdb/dashboard");
             }
         }
@@ -108,8 +114,9 @@ public class EditComputerServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        try {
-            Long id = getLongParam(request, "id").get();
+        Optional<Long> idOpt = getLongParam(request, "id");
+        if (idOpt.isPresent()) {
+            Long id = idOpt.get();
             String name = request.getParameter("name");
             LocalDate introduced = getDate(request.getParameter("introduced"));
             LocalDate discontinued = getDate(request.getParameter("discontinued"));
@@ -121,7 +128,7 @@ public class EditComputerServlet extends HttpServlet {
             Computer computer = new Computer.Builder(id).withName(name).withIntroduced(introduced)
                     .withDiscontinued(discontinued).withCompany(company).build();
             executeUpdate(request, computer);
-        } catch (NoSuchElementException e) {
+        } else {
             request.setAttribute("error", "No such computer in database.");
         }
         doGet(request, response);

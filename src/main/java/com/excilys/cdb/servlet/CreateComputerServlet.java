@@ -79,6 +79,7 @@ public class CreateComputerServlet extends HttpServlet {
         try {
             CompanyService.INSTANCE.getCompanies().forEach(company -> companies.add(mapper.createCompanyDTO(company)));
         } catch (ServiceException e) {
+            throw new ServletException("Error while getting the company DTOs.");
         }
         request.setAttribute("companies", companies);
         RequestDispatcher view = request.getRequestDispatcher("WEB-INF/views/addComputer.jsp");

@@ -11,6 +11,8 @@ import com.excilys.cdb.ui.actionhandlers.ComputerItemizer;
 import com.excilys.cdb.ui.actionhandlers.ComputerLister;
 import com.excilys.cdb.ui.actionhandlers.ComputerModifier;
 import com.excilys.cdb.ui.actionhandlers.ComputerRemover;
+import com.excilys.cdb.ui.actionhandlers.DefaultHandler;
+import com.excilys.cdb.ui.actionhandlers.ExitHandler;
 
 enum UserChoice {
     LIST_COMPUTERS("1/ List computers", new ComputerLister(), "1", "list computers"),
@@ -20,7 +22,8 @@ enum UserChoice {
     UPDATE_COMPUTER("5/ Update computer", new ComputerModifier(), "5", "update computer"),
     REMOVE_COMPUTER("6/ Remove computer", new ComputerRemover(), "6", "remove computer"),
     REMOVE_COMPANY("7/ Remove company", new CompanyRemover(), "7", "remove company"),
-    EXIT("8/ Exit", null, "8", "exit");
+    EXIT("8/ Exit", new ExitHandler(), "8", "exit"),
+    ANY("", new DefaultHandler());
 
     private List<String> validChoices;
     private String title;
@@ -33,10 +36,7 @@ enum UserChoice {
     }
 
     public boolean accept(String choice) {
-        if (validChoices.contains(choice.toLowerCase())) {
-            return true;
-        }
-        return false;
+        return validChoices.contains(choice.toLowerCase());
     }
 
     public String getTitle() {
@@ -44,11 +44,6 @@ enum UserChoice {
     }
 
     public boolean handleChoice() {
-        if (handler == null) {
-            return false;
-        } else {
-            handler.handle();
-            return true;
-        }
+        return handler.handle();
     }
 }
