@@ -4,16 +4,22 @@ import java.time.LocalDate;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
 import com.excilys.cdb.model.Company;
 import com.excilys.cdb.model.Computer;
-import com.excilys.cdb.service.ComputerService;
+import com.excilys.cdb.service.IComputerService;
 import com.excilys.cdb.ui.CLIException;
 import com.excilys.cdb.ui.CommandLineInterface;
 
+@Component("computerItemizer")
 public class ComputerItemizer implements CLIActionHandler {
 
-    private ComputerService service = ComputerService.INSTANCE;
-    private CLIUserInputsAPI cliApi = CLIUserInputsAPI.INSTANCE;
+    @Autowired
+    private IComputerService service;
+    @Autowired
+    private CLIUserInputsAPI cliApi;
 
     @Override
     public boolean handle() {

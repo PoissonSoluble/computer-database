@@ -4,12 +4,14 @@ import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
 import java.util.Optional;
 
+import org.springframework.stereotype.Component;
+
 import com.excilys.cdb.model.Company;
 import com.excilys.cdb.model.Computer;
 import com.excilys.cdb.ui.CommandLineInterface;
 
-public enum CLIUserInputsAPI {
-    INSTANCE;
+@Component("cliApi")
+public class CLIUserInputsAPI {
 
     public Long askID(String type) throws NumberFormatException {
         System.out.print(new StringBuilder("Enter the ").append(type).append(" ID: ").toString());
@@ -99,7 +101,7 @@ public enum CLIUserInputsAPI {
 
     private boolean readName(Computer computer) {
         computer.setName(askName());
-        if (computer.getName().isPresent()) {
+        if (!computer.getName().isPresent()) {
             System.out.println("The name cannot be null.");
             return false;
         }

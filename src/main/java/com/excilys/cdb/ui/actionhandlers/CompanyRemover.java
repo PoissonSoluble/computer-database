@@ -1,11 +1,17 @@
 package com.excilys.cdb.ui.actionhandlers;
 
-import com.excilys.cdb.service.CompanyService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
+import com.excilys.cdb.service.ICompanyService;
+
+@Component("companyRemover")
 public class CompanyRemover implements CLIActionHandler {
 
-    private CompanyService service = CompanyService.INSTANCE;
-    private CLIUserInputsAPI cliApi = CLIUserInputsAPI.INSTANCE;
+    @Autowired
+    private ICompanyService service;
+    @Autowired
+    private CLIUserInputsAPI cliApi;
 
     @Override
     public boolean handle() {

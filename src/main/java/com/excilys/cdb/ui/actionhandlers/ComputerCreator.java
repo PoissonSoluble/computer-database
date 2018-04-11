@@ -1,16 +1,22 @@
 package com.excilys.cdb.ui.actionhandlers;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
 import com.excilys.cdb.model.Computer;
-import com.excilys.cdb.service.ComputerService;
+import com.excilys.cdb.service.IComputerService;
 import com.excilys.cdb.validation.exceptions.InvalidDatesException;
 import com.excilys.cdb.validation.exceptions.NotExistingCompanyException;
 import com.excilys.cdb.validation.exceptions.NullNameException;
 import com.excilys.cdb.validation.exceptions.ValidationException;
 
+@Component("computerCreator")
 public class ComputerCreator implements CLIActionHandler {
 
-    ComputerService service = ComputerService.INSTANCE;
-    CLIUserInputsAPI filler = CLIUserInputsAPI.INSTANCE;
+    @Autowired
+    private IComputerService service;
+    @Autowired
+    private CLIUserInputsAPI filler;
 
     @Override
     public boolean handle() {

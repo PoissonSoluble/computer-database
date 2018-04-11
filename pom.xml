@@ -14,12 +14,13 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <java.version>1.8</java.version>
     <!-- test -->
-    <junit.version>4.7</junit.version>
+    <surefire.version>2.21.0</surefire.version>
+    <junit.version>4.12</junit.version>
     <mockito.version>2.0.2-beta</mockito.version>
     <hsqldb.version>2.4.0</hsqldb.version>
     <sqltool.version>2.4.0</sqltool.version>
     <!-- compile -->
-    <javax-servlet.version>2.5</javax-servlet.version>
+    <javax-servlet.version>3.1.0</javax-servlet.version>
     <!-- logs -->
     <slf4j.version>1.7.25</slf4j.version>
     <logback.version>1.2.3</logback.version>
@@ -35,6 +36,8 @@
     <tomcat.url>http://localhost:8080/manager/text</tomcat.url>
     <!-- utils -->
     <common-lang3.version>3.7</common-lang3.version>
+    <!-- spring -->
+    <spring-framework.version>5.0.5.RELEASE</spring-framework.version>
   </properties>
   <dependencies>
     <dependency>
@@ -72,7 +75,7 @@
     <!-- https://mvnrepository.com/artifact/javax.servlet/servlet-api -->
     <dependency>
       <groupId>javax.servlet</groupId>
-      <artifactId>servlet-api</artifactId>
+      <artifactId>javax.servlet-api</artifactId>
       <version>${javax-servlet.version}</version>
       <scope>compile</scope>
     </dependency>
@@ -105,6 +108,33 @@
       <groupId>org.apache.commons</groupId>
       <artifactId>commons-lang3</artifactId>
       <version>${common-lang3.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>jcl-over-slf4j</artifactId>
+      <version>${slf4j.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-context</artifactId>
+      <version>${spring-framework.version}</version>
+      <exclusions>             
+        <exclusion>
+          <groupId>commons-logging</groupId>
+          <artifactId>commons-logging</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-web</artifactId>
+      <version>${spring-framework.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-test</artifactId>
+      <version>${spring-framework.version}</version>
+      <scope>test</scope>
     </dependency>
   </dependencies>
   <build>
@@ -173,6 +203,14 @@
             </reports>
           </reportSet>
         </reportSets>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <version>${surefire.version}</version>
+        <configuration>
+          <junitArtifactName>junit:junit:${junit.version}</junitArtifactName>
+        </configuration>
       </plugin>
     </plugins>
   </reporting>

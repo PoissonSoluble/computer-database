@@ -10,14 +10,15 @@ import java.util.Optional;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Repository;
 
 import com.excilys.cdb.mapper.CompanyMapper;
 import com.excilys.cdb.model.Company;
 import com.excilys.cdb.persistence.DatabaseConnection;
 
-public enum CompanyDAO {
-
-    INSTANCE;
+@Repository("companyDAO")
+public class CompanyDAO implements ICompanyDAO{
 
     private final static Logger LOGGER = LoggerFactory.getLogger(CompanyDAO.class);
     private final static String SELECT_ALL = "SELECT ca_id, ca_name FROM company";
@@ -28,7 +29,8 @@ public enum CompanyDAO {
     private final static String DELETE_COMPANY = "DELETE FROM company WHERE ca_id = ?";
     private DatabaseConnection dbConn = DatabaseConnection.INSTANCE;
     private CompanyMapper mapper = CompanyMapper.INSTANCE;
-    private ComputerDAO computerDao = ComputerDAO.INSTANCE;
+    @Autowired
+    private IComputerDAO computerDAO;
 
     public void deleteCompany(Long id) throws DAOException {
         LOGGER.info("Company DAO : delete");
@@ -117,7 +119,7 @@ public enum CompanyDAO {
 
     private void executeDeleteStatement(Long id, Connection conn) throws SQLException, DAOException {
         try (PreparedStatement stmt = conn.prepareStatement(DELETE_COMPANY);) {
-            computerDao.deleteComputerFromCompany(id, conn);
+            computerDAO.deleteComputerFromCompany(id, conn);
             stmt.setLong(1, id);
             stmt.executeUpdate();
         } catch (SQLException | DAOException e) {

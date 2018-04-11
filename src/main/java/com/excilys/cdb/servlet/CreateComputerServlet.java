@@ -9,10 +9,15 @@ import java.util.List;
 import java.util.Optional;
 
 import javax.servlet.RequestDispatcher;
+import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.context.support.SpringBeanAutowiringSupport;
 
 import com.excilys.cdb.dto.CompanyDTO;
 import com.excilys.cdb.mapper.CompanyDTOMapper;
@@ -26,8 +31,14 @@ import com.excilys.cdb.validation.exceptions.NotExistingCompanyException;
 import com.excilys.cdb.validation.exceptions.NullNameException;
 import com.excilys.cdb.validation.exceptions.ValidationException;
 
+@WebServlet(name = "CreateComputerServlet", urlPatterns = "/createComputer")
 public class CreateComputerServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
+
+    @Autowired
+    ComputerService computerService;
+    @Autowired
+    CompanyService companyService;
 
     /**
      * @see HttpServlet#HttpServlet()
@@ -37,9 +48,15 @@ public class CreateComputerServlet extends HttpServlet {
         // TODO Auto-generated constructor stub
     }
 
+    @Override
+    public void init(ServletConfig config) throws ServletException {
+        super.init(config);
+        SpringBeanAutowiringSupport.processInjectionBasedOnCurrentContext(this);
+    }
+
     private void executeCreation(HttpServletRequest request, Computer computer) {
         try {
-            ComputerService.INSTANCE.createComputer(computer);
+            computerService.createComputer(computer);
         } catch (NullNameException e) {
             request.setAttribute("error", "The name cannot be empty.");
         } catch (NotExistingCompanyException e) {
@@ -77,7 +94,7 @@ public class CreateComputerServlet extends HttpServlet {
         CompanyDTOMapper mapper = new CompanyDTOMapper();
         List<CompanyDTO> companies = new ArrayList<>();
         try {
-            CompanyService.INSTANCE.getCompanies().forEach(company -> companies.add(mapper.createCompanyDTO(company)));
+            companyService.getCompanies().forEach(company -> companies.add(mapper.createCompanyDTO(company)));
         } catch (ServiceException e) {
             throw new ServletException("Error while getting the company DTOs.");
         }

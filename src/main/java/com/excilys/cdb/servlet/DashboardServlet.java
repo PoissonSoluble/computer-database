@@ -6,18 +6,24 @@ import java.util.List;
 import java.util.stream.Stream;
 
 import javax.servlet.RequestDispatcher;
+import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.context.support.SpringBeanAutowiringSupport;
 
 import com.excilys.cdb.dao.ComputerOrdering;
 import com.excilys.cdb.dto.ComputerDTO;
 import com.excilys.cdb.mapper.ComputerDTOMapper;
 import com.excilys.cdb.pagination.ComputerPage;
-import com.excilys.cdb.service.ComputerService;
+import com.excilys.cdb.service.IComputerService;
 import com.excilys.cdb.service.ServiceException;
 
+@WebServlet(name = "DashboardServlet", urlPatterns = "/dashboard")
 public class DashboardServlet extends HttpServlet {
 
     private static final long serialVersionUID = -3346293799223556529L;
@@ -26,8 +32,17 @@ public class DashboardServlet extends HttpServlet {
     private static final ComputerOrdering DEFAULT_ORDER = ComputerOrdering.CU_ID;
     private static final boolean DEFAULT_ASCENDING = true;
 
+    @Autowired
+    private IComputerService computerService;
+
     public DashboardServlet() {
         super();
+    }
+
+    @Override
+    public void init(ServletConfig config) throws ServletException {
+        super.init(config);
+        SpringBeanAutowiringSupport.processInjectionBasedOnServletContext(this, config.getServletContext());
     }
 
     @Override
@@ -37,8 +52,7 @@ public class DashboardServlet extends HttpServlet {
         String search = request.getParameter("search");
         ComputerOrdering order = getOrderingParam(request, "order", DEFAULT_ORDER);
         boolean ascending = getBooleanParam(request, "ascending", DEFAULT_ASCENDING);
-
-        ComputerPage page = new ComputerPage(pageNumber, pageSize, search, order, ascending);
+        ComputerPage page = new ComputerPage(pageNumber, pageSize, search, order, ascending, computerService);
         List<ComputerDTO> dtos = new ArrayList<>();
         getDTOs(page, dtos);
 
@@ -95,7 +109,7 @@ public class DashboardServlet extends HttpServlet {
         }
         request.setAttribute("search", search);
         try {
-            request.setAttribute("computerAmount", ComputerService.INSTANCE.getComputerAmount(search));
+            request.setAttribute("computerAmount", computerService.getComputerAmount(search));
         } catch (ServiceException e) {
             request.setAttribute("computerAmount", 0);
         }

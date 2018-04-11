@@ -10,9 +10,12 @@ import java.util.Optional;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import org.springframework.beans.factory.annotation.Autowired;
 
 import com.excilys.cdb.dto.CompanyDTO;
 import com.excilys.cdb.dto.ComputerDTO;
@@ -20,17 +23,21 @@ import com.excilys.cdb.mapper.CompanyDTOMapper;
 import com.excilys.cdb.mapper.ComputerDTOMapper;
 import com.excilys.cdb.model.Company;
 import com.excilys.cdb.model.Computer;
-import com.excilys.cdb.service.CompanyService;
-import com.excilys.cdb.service.ComputerService;
+import com.excilys.cdb.service.ICompanyService;
+import com.excilys.cdb.service.IComputerService;
 import com.excilys.cdb.service.ServiceException;
 import com.excilys.cdb.validation.exceptions.InvalidDatesException;
 import com.excilys.cdb.validation.exceptions.NotExistingCompanyException;
 import com.excilys.cdb.validation.exceptions.NullNameException;
 import com.excilys.cdb.validation.exceptions.ValidationException;
 
+@WebServlet(name = "EditComputerServlet", urlPatterns = "/editComputer")
 public class EditComputerServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
-    private static final ComputerService COMPUTER_SERVICE = ComputerService.INSTANCE;
+    @Autowired
+    private IComputerService computerService;
+    @Autowired
+    private ICompanyService companyService;
 
     /**
      * @see HttpServlet#HttpServlet()
@@ -41,7 +48,7 @@ public class EditComputerServlet extends HttpServlet {
 
     private void executeUpdate(HttpServletRequest request, Computer computer) {
         try {
-            ComputerService.INSTANCE.updateComputer(computer);
+            computerService.updateComputer(computer);
         } catch (NullNameException e) {
             request.setAttribute("error", "The name cannot be empty.");
         } catch (NotExistingCompanyException e) {
@@ -60,7 +67,7 @@ public class EditComputerServlet extends HttpServlet {
         CompanyDTOMapper companyMapper = new CompanyDTOMapper();
         List<CompanyDTO> companies = new ArrayList<>();
         try {
-            CompanyService.INSTANCE.getCompanies()
+            companyService.getCompanies()
                     .forEach(company -> companies.add(companyMapper.createCompanyDTO(company)));
         } catch (ServiceException e) {
             throw new ServletException("Error while getting the DTOs.");
@@ -98,7 +105,7 @@ public class EditComputerServlet extends HttpServlet {
             response.sendRedirect("/cdb/dashboard");
         } else {
             Long id = Long.parseLong(request.getParameter("computerId"));
-            Optional<Computer> computerOpt = COMPUTER_SERVICE.getComputer(id);
+            Optional<Computer> computerOpt = computerService.getComputer(id);
             if (computerOpt.isPresent()) {
                 generateAndForwardDTOs(request, response, computerOpt);
             } else {

@@ -14,15 +14,15 @@ import java.util.Optional;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Repository;
 
 import com.excilys.cdb.mapper.ComputerMapper;
 import com.excilys.cdb.model.Company;
 import com.excilys.cdb.model.Computer;
 import com.excilys.cdb.persistence.DatabaseConnection;
 
-public enum ComputerDAO {
-
-    INSTANCE;
+@Repository("computerDAO")
+public class ComputerDAO implements IComputerDAO{
 
     private DatabaseConnection dbConn = DatabaseConnection.INSTANCE;
     private ComputerMapper mapper = ComputerMapper.INSTANCE;
@@ -326,7 +326,7 @@ public enum ComputerDAO {
         }
     }
 
-    protected void deleteComputerFromCompany(Long companyId, Connection conn) throws SQLException, DAOException {
+    public void deleteComputerFromCompany(Long companyId, Connection conn) throws SQLException, DAOException {
         try (PreparedStatement stmt = conn.prepareStatement(DELETE_COMPANY);) {
             stmt.setLong(1, companyId);
             stmt.executeUpdate();

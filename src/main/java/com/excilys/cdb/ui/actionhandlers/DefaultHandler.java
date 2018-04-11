@@ -1,6 +1,8 @@
 package com.excilys.cdb.ui.actionhandlers;
 
+import org.springframework.stereotype.Component;
 
+@Component("defaultHandler")
 public class DefaultHandler  implements CLIActionHandler {
 
     @Override

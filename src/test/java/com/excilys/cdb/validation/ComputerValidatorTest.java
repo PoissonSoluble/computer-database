@@ -5,6 +5,10 @@ import java.time.LocalDate;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import com.excilys.cdb.mockdb.MockDataBase;
 import com.excilys.cdb.model.Company;
@@ -14,6 +18,8 @@ import com.excilys.cdb.validation.exceptions.NotExistingCompanyException;
 import com.excilys.cdb.validation.exceptions.NullNameException;
 import com.excilys.cdb.validation.exceptions.ValidationException;
 
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration(locations= {"/applicationContext.xml"})
 public class ComputerValidatorTest {
 
     @AfterClass
@@ -26,9 +32,22 @@ public class ComputerValidatorTest {
         MockDataBase.createDatabase();
     }
 
-    private ComputerValidator validator = ComputerValidator.INSTANCE;
-
+    @Autowired
+    private ComputerValidator validator;
+    
     public ComputerValidatorTest() {
+    }
+
+    @Test(expected = NotExistingCompanyException.class)
+    public void testCompanyInvalidation() throws ValidationException {
+        Computer computer = new Computer.Builder("Computer 1").withCompany(new Company.Builder(50L).build()).build();
+        validator.validateComputer(computer);
+    }
+
+    @Test
+    public void testCompanyValidation() throws ValidationException {
+        Computer computer = new Computer.Builder("Computer 1").withCompany(new Company.Builder(1L).build()).build();
+        validator.validateComputer(computer);
     }
 
     @Test(expected = InvalidDatesException.class)
@@ -59,18 +78,6 @@ public class ComputerValidatorTest {
     public void testNameValidation() throws ValidationException {
         Computer computer = new Computer();
         computer.setName("Test Name");
-        validator.validateComputer(computer);
-    }
-
-    @Test
-    public void testCompanyValidation() throws ValidationException {
-        Computer computer = new Computer.Builder("Computer 1").withCompany(new Company.Builder(1L).build()).build();
-        validator.validateComputer(computer);
-    }
-
-    @Test(expected = NotExistingCompanyException.class)
-    public void testCompanyInvalidation() throws ValidationException {
-        Computer computer = new Computer.Builder("Computer 1").withCompany(new Company.Builder(50L).build()).build();
         validator.validateComputer(computer);
     }
 }

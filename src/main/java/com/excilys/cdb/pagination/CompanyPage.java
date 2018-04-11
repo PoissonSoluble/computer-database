@@ -4,22 +4,24 @@ import java.util.ArrayList;
 import java.util.Optional;
 
 import com.excilys.cdb.model.Company;
-import com.excilys.cdb.service.CompanyService;
+import com.excilys.cdb.service.ICompanyService;
 import com.excilys.cdb.service.ServiceException;
 
 public class CompanyPage extends Page<Company> {
 
-    private static CompanyService service = CompanyService.INSTANCE;
+    private ICompanyService companyService;
 
-    public CompanyPage(int pPageNumber, int pPageSize, String search) {
+    public CompanyPage(int pPageNumber, int pPageSize, String search, ICompanyService pService) {
         super(pPageNumber, pPageSize, Optional.ofNullable(search));
+        companyService = pService;
+        pageTotal = getLastPageNumber();
         refresh();
     }
 
     @Override
     protected int getLastPageNumber() {
         try {
-            return service.getCompanyListPageTotalAmount(pageSize);
+            return companyService.getCompanyListPageTotalAmount(pageSize);
         } catch (ServiceException e) {
             return 1;
         }
@@ -28,7 +30,7 @@ public class CompanyPage extends Page<Company> {
     @Override
     protected void refresh() {
         try {
-            elements = service.getCompanyPage(pageNumber, pageSize, search);
+            elements = companyService.getCompanyPage(pageNumber, pageSize, search);
         } catch (ServiceException e) {
             elements = new ArrayList<>();
         }

@@ -3,19 +3,26 @@ package com.excilys.cdb.ui.actionhandlers;
 import java.util.List;
 import java.util.stream.Stream;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
 import com.excilys.cdb.model.Company;
 import com.excilys.cdb.pagination.CompanyPage;
 import com.excilys.cdb.pagination.Page;
+import com.excilys.cdb.service.ICompanyService;
 import com.excilys.cdb.ui.CommandLineInterface;
 
+@Component("companyLister")
 public class CompanyLister implements CLIActionHandler {
 
+    @Autowired
+    private ICompanyService companyService;
     private final int PAGE_SIZE = 20;
     private Page<Company> page;
 
     @Override
     public boolean handle() {
-        page = new CompanyPage(1, PAGE_SIZE, "");
+        page = new CompanyPage(1, PAGE_SIZE, "", companyService);
         printPages();
         return true;
     }

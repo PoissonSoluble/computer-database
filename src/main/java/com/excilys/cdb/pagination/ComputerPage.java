@@ -5,21 +5,26 @@ import java.util.Optional;
 
 import com.excilys.cdb.dao.ComputerOrdering;
 import com.excilys.cdb.model.Computer;
-import com.excilys.cdb.service.ComputerService;
+import com.excilys.cdb.service.IComputerService;
 import com.excilys.cdb.service.ServiceException;
 
 public class ComputerPage extends Page<Computer> {
 
-    private static ComputerService service = ComputerService.INSTANCE;
+    private IComputerService computerService;
     private ComputerOrdering order;
     private boolean ascending;
 
-    public ComputerPage(int pPageNumber, int pPageSize, String search, ComputerOrdering pOrder, boolean pAscending) {
+    public ComputerPage(int pPageNumber, int pPageSize, String search, ComputerOrdering pOrder, boolean pAscending,
+            IComputerService pService) {
         super(pPageNumber, pPageSize, Optional.ofNullable(search));
         order = pOrder;
         ascending = pAscending;
+        computerService = pService;
+        pageTotal = getLastPageNumber();
         refresh();
+        
     }
+
 
     @Override
     public String toString() {
@@ -34,7 +39,7 @@ public class ComputerPage extends Page<Computer> {
     @Override
     protected int getLastPageNumber() {
         try {
-            return service.getComputerListPageTotalAmount(pageSize, search);
+            return computerService.getComputerListPageTotalAmount(pageSize, search);
         } catch (ServiceException e) {
             return 1;
         }
@@ -43,7 +48,7 @@ public class ComputerPage extends Page<Computer> {
     @Override
     protected void refresh() {
         try {
-            elements = service.getComputerPage(pageNumber, pageSize, search, order, ascending);
+            elements = computerService.getComputerPage(pageNumber, pageSize, search, order, ascending);
         } catch (ServiceException e) {
             elements = new ArrayList<>();
         }

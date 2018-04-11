@@ -5,15 +5,20 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.excilys.cdb.service.ComputerService;
+import org.springframework.beans.factory.annotation.Autowired;
 
+import com.excilys.cdb.service.IComputerService;
+
+@WebServlet(name = "DeleteComputerServlet", urlPatterns = "/deleteComputer")
 public class DeleteComputerServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
-    private static final ComputerService COMPUTER_SERVICE = ComputerService.INSTANCE;
+    @Autowired
+    private IComputerService computerService;
 
     /**
      * @see HttpServlet#HttpServlet()
@@ -55,7 +60,7 @@ public class DeleteComputerServlet extends HttpServlet {
         for (String idString : selection.split(",")) {
             ids.add(Long.parseLong(idString));
         }
-        COMPUTER_SERVICE.deleteComputers(ids);
+        computerService.deleteComputers(ids);
         doGet(request, response);
     }
 }

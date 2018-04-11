@@ -14,7 +14,6 @@ public abstract class Page<T> {
         pageNumber = pPageNumber;
         pageSize = pPageSize;
         search = pSearch.orElse("");
-        pageTotal = getLastPageNumber();
     }
 
     public List<T> first() {

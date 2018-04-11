@@ -10,13 +10,21 @@ import java.util.Optional;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import com.excilys.cdb.mockdb.MockDataBase;
 import com.excilys.cdb.model.Company;
 
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration(locations= {"/applicationContext.xml"})
 public class CompanyDAOTest {
-    CompanyDAO companyDao = CompanyDAO.INSTANCE;
-    ComputerDAO computerDao = ComputerDAO.INSTANCE;
+    @Autowired
+    private ICompanyDAO companyDAO;
+    @Autowired
+    private IComputerDAO computerDAO;
 
     @After
     public void destroy() {
@@ -30,22 +38,22 @@ public class CompanyDAOTest {
 
     @Test
     public void testListCompanies() throws DAOException {
-        assertEquals(companyDao.listCompanies().size(), 20);
+        assertEquals(companyDAO.listCompanies().size(), 20);
     }
 
     @Test
     public void testPage() throws PageOutOfBoundsException, DAOException {
-        assertEquals(companyDao.listCompaniesByPage(1, 10).size(), 10);
+        assertEquals(companyDAO.listCompaniesByPage(1, 10).size(), 10);
     }
 
     @Test(expected = PageOutOfBoundsException.class)
     public void testPageOutOfBounds() throws PageOutOfBoundsException, DAOException {
-        companyDao.listCompaniesByPage(3, 10);
+        companyDAO.listCompaniesByPage(3, 10);
     }
 
     @Test
     public void testGetCompany() throws NoSuchElementException, DAOException{
-        Optional<Company> companyOpt = companyDao.getCompany(2L);
+        Optional<Company> companyOpt = companyDAO.getCompany(2L);
         assertTrue(companyOpt.isPresent());
         assertEquals(companyOpt.get().getId().get(), new Long(2));
         assertEquals(companyOpt.get().getName().get(), "Company 2");
@@ -53,8 +61,8 @@ public class CompanyDAOTest {
     
     @Test
     public void testDelete() throws NoSuchElementException, DAOException{
-        companyDao.deleteCompany(2L);
-        assertFalse(companyDao.getCompany(2L).isPresent());
-        assertFalse(computerDao.getComputer(2L).isPresent());
+        companyDAO.deleteCompany(2L);
+        assertFalse(companyDAO.getCompany(2L).isPresent());
+        assertFalse(computerDAO.getComputer(2L).isPresent());
     }
 }

@@ -6,6 +6,8 @@ import java.util.Optional;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import com.excilys.cdb.dao.ComputerDAO;
 import com.excilys.cdb.dao.ComputerOrdering;
@@ -15,13 +17,16 @@ import com.excilys.cdb.model.Computer;
 import com.excilys.cdb.validation.ComputerValidator;
 import com.excilys.cdb.validation.exceptions.ValidationException;
 
-public enum ComputerService {
-    INSTANCE;
+@Service("computerService")
+public class ComputerService implements IComputerService {
 
-    private ComputerDAO dao = ComputerDAO.INSTANCE;
-    private ComputerValidator validator = ComputerValidator.INSTANCE;
+    @Autowired
+    private ComputerDAO dao;
+    @Autowired
+    private ComputerValidator validator;
     private final Logger LOGGER = LoggerFactory.getLogger(ComputerService.class);
 
+    @Override
     public void createComputer(Computer computer) throws ValidationException {
         validator.validateComputer(computer);
         try {
@@ -32,6 +37,7 @@ public enum ComputerService {
         }
     }
 
+    @Override
     public void deleteComputer(Long id) {
         try {
             dao.deleteComputer(id);
@@ -41,6 +47,7 @@ public enum ComputerService {
         }
     }
 
+    @Override
     public void deleteComputers(List<Long> ids) {
         try {
             dao.deleteComputers(ids);
@@ -50,6 +57,7 @@ public enum ComputerService {
         }
     }
 
+    @Override
     public boolean exists(Long id) {
         try {
             return dao.getComputer(id).isPresent();
@@ -59,6 +67,7 @@ public enum ComputerService {
         }
     }
 
+    @Override
     public Optional<Computer> getComputer(Long id) {
         try {
             return dao.getComputer(id);
@@ -68,6 +77,7 @@ public enum ComputerService {
         }
     }
 
+    @Override
     public int getComputerAmount(String search) throws ServiceException {
         try {
             return dao.getComputerAmount(search);
@@ -77,6 +87,7 @@ public enum ComputerService {
         }
     }
 
+    @Override
     public int getComputerListPageTotalAmount(int pageSize, String search) throws ServiceException {
         try {
             return dao.getComputerListPageTotalAmount(pageSize, search);
@@ -86,6 +97,7 @@ public enum ComputerService {
         }
     }
 
+    @Override
     public List<Computer> getComputerPage(int page, int pageSize, String search) throws ServiceException {
         try {
             return dao.listComputersByPage(page, pageSize, search, ComputerOrdering.CU_ID, true);
@@ -97,6 +109,7 @@ public enum ComputerService {
         }
     }
 
+    @Override
     public List<Computer> getComputerPage(int page, int pageSize, String search, ComputerOrdering order,
             boolean ascending) throws ServiceException {
         try {
@@ -109,6 +122,7 @@ public enum ComputerService {
         }
     }
 
+    @Override
     public void updateComputer(Computer computer) throws ValidationException {
         validator.validateComputer(computer);
         try {

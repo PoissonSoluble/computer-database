@@ -3,20 +3,27 @@ package com.excilys.cdb.ui.actionhandlers;
 import java.util.List;
 import java.util.stream.Stream;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
 import com.excilys.cdb.dao.ComputerOrdering;
 import com.excilys.cdb.model.Computer;
 import com.excilys.cdb.pagination.ComputerPage;
 import com.excilys.cdb.pagination.Page;
+import com.excilys.cdb.service.IComputerService;
 import com.excilys.cdb.ui.CommandLineInterface;
 
+@Component("computerLister")
 public class ComputerLister implements CLIActionHandler {
 
+    @Autowired
+    private IComputerService computerService;
     private final int PAGE_SIZE = 20;
     private Page<Computer> page;
 
     @Override
     public boolean handle() {
-        page = new ComputerPage(1, PAGE_SIZE, "", ComputerOrdering.CU_ID, true);
+        page = new ComputerPage(1, PAGE_SIZE, "", ComputerOrdering.CU_ID, true, computerService);
         printPages();
         return true;
     }

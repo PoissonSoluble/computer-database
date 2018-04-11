@@ -1,11 +1,17 @@
 package com.excilys.cdb.ui.actionhandlers;
 
-import com.excilys.cdb.service.ComputerService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
+import com.excilys.cdb.service.IComputerService;
+
+@Component("computerRemover")
 public class ComputerRemover implements CLIActionHandler {
 
-    private ComputerService service = ComputerService.INSTANCE;
-    private CLIUserInputsAPI cliApi = CLIUserInputsAPI.INSTANCE;
+    @Autowired
+    private IComputerService service;
+    @Autowired
+    private CLIUserInputsAPI cliApi;
 
     @Override
     public boolean handle() {
