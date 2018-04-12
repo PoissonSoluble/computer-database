@@ -36,7 +36,7 @@ public class ComputerValidatorTest {
     }
 
     @Autowired
-    private ComputerValidator validator;
+    private IComputerValidator validator;
     
     public ComputerValidatorTest() {
     }

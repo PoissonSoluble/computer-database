@@ -16,11 +16,15 @@ import com.excilys.cdb.ui.CommandLineInterface;
 @Component("computerLister")
 public class ComputerLister implements CLIActionHandler {
 
-    @Autowired
     private IComputerService computerService;
     private final int PAGE_SIZE = 20;
     private Page<Computer> page;
 
+    @Autowired
+    public ComputerLister(IComputerService pComputerService) {
+        computerService = pComputerService;
+    }
+    
     @Override
     public boolean handle() {
         page = new ComputerPage(1, PAGE_SIZE, "", ComputerOrdering.CU_ID, true, computerService);

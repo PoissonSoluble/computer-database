@@ -13,14 +13,18 @@ import com.excilys.cdb.validation.exceptions.ValidationException;
 @Component("computerCreator")
 public class ComputerCreator implements CLIActionHandler {
 
-    @Autowired
-    private IComputerService service;
-    @Autowired
-    private CLIUserInputsAPI filler;
+    private IComputerService computerService;
+    private CLIUserInputsAPI cliApi;
 
+    @Autowired
+    public ComputerCreator(IComputerService pComputerService, CLIUserInputsAPI pCliApi) {
+        computerService = pComputerService;
+        cliApi = pCliApi;
+    }
+    
     @Override
     public boolean handle() {
-        Computer computer = filler.askParametersForComputer();
+        Computer computer = cliApi.askParametersForComputer();
         if (computer != null) {
             createComputer(computer);
         }
@@ -29,7 +33,7 @@ public class ComputerCreator implements CLIActionHandler {
 
     private void createComputer(Computer computer) {
         try {
-            service.createComputer(computer);
+            computerService.createComputer(computer);
             System.out.println("Creation completed.\n");
         } catch (NullNameException e) {
             System.out.println("The name is null.");

@@ -15,23 +15,27 @@ import com.excilys.cdb.dao.DAOException;
 import com.excilys.cdb.dao.IComputerDAO;
 import com.excilys.cdb.dao.PageOutOfBoundsException;
 import com.excilys.cdb.model.Computer;
-import com.excilys.cdb.validation.ComputerValidator;
+import com.excilys.cdb.validation.IComputerValidator;
 import com.excilys.cdb.validation.exceptions.ValidationException;
 
 @Service("computerService")
 public class ComputerService implements IComputerService {
 
-    @Autowired
-    private IComputerDAO dao;
-    @Autowired
-    private ComputerValidator validator;
+    private IComputerDAO computerDAO;
+    private IComputerValidator computerValidator;
     private final Logger LOGGER = LoggerFactory.getLogger(ComputerService.class);
 
+    @Autowired
+    public ComputerService(IComputerDAO pComputerDAO, IComputerValidator pComputerValidator) {
+        computerDAO = pComputerDAO;
+        computerValidator = pComputerValidator;
+    }
+    
     @Override
     public void createComputer(Computer computer) throws ValidationException {
-        validator.validateComputer(computer);
+        computerValidator.validateComputer(computer);
         try {
-            dao.createComputer(computer);
+            computerDAO.createComputer(computer);
             LOGGER.info(new StringBuilder("Computer creation : ").append(computer).toString());
         } catch (DAOException e) {
             LOGGER.debug("createComputer : {}", e);
@@ -41,7 +45,7 @@ public class ComputerService implements IComputerService {
     @Override
     public void deleteComputer(Long id) {
         try {
-            dao.deleteComputer(id);
+            computerDAO.deleteComputer(id);
             LOGGER.info(new StringBuilder("Computer removal : ").append(id).toString());
         } catch (DAOException e) {
             LOGGER.debug("deleteComputer : {}", e);
@@ -52,7 +56,7 @@ public class ComputerService implements IComputerService {
     @Transactional(rollbackFor=Exception.class)
     public void deleteComputers(List<Long> ids) {
         try {
-            dao.deleteComputers(ids);
+            computerDAO.deleteComputers(ids);
             LOGGER.info(new StringBuilder("Computers removal : ").append(ids).toString());
         } catch (DAOException e) {
             LOGGER.debug("deleteComputer : {}", e);
@@ -62,7 +66,7 @@ public class ComputerService implements IComputerService {
     @Override
     public boolean exists(Long id) {
         try {
-            return dao.getComputer(id).isPresent();
+            return computerDAO.getComputer(id).isPresent();
         } catch (DAOException e) {
             LOGGER.debug("exists : {}", e);
             return false;
@@ -72,7 +76,7 @@ public class ComputerService implements IComputerService {
     @Override
     public Optional<Computer> getComputer(Long id) {
         try {
-            return dao.getComputer(id);
+            return computerDAO.getComputer(id);
         } catch (DAOException e) {
             LOGGER.debug("detailComputer : {}", e);
             return Optional.empty();
@@ -82,7 +86,7 @@ public class ComputerService implements IComputerService {
     @Override
     public int getComputerAmount(String search) throws ServiceException {
         try {
-            return dao.getComputerAmount(search);
+            return computerDAO.getComputerAmount(search);
         } catch (DAOException e) {
             LOGGER.debug("getComputerAmount : {}", e);
             throw new ServiceException("Error while getting the computer count.");
@@ -92,7 +96,7 @@ public class ComputerService implements IComputerService {
     @Override
     public int getComputerListPageTotalAmount(int pageSize, String search) throws ServiceException {
         try {
-            return dao.getComputerListPageTotalAmount(pageSize, search);
+            return computerDAO.getComputerListPageTotalAmount(pageSize, search);
         } catch (DAOException e) {
             LOGGER.debug("getComputerListPageTotalAmount : {}", e);
             throw new ServiceException("Error while getting the total page amount.");
@@ -102,7 +106,7 @@ public class ComputerService implements IComputerService {
     @Override
     public List<Computer> getComputerPage(int page, int pageSize, String search) throws ServiceException {
         try {
-            return dao.listComputersByPage(page, pageSize, search, ComputerOrdering.CU_ID, true);
+            return computerDAO.listComputersByPage(page, pageSize, search, ComputerOrdering.CU_ID, true);
         } catch (PageOutOfBoundsException e) {
             return new ArrayList<>();
         } catch (DAOException e) {
@@ -115,7 +119,7 @@ public class ComputerService implements IComputerService {
     public List<Computer> getComputerPage(int page, int pageSize, String search, ComputerOrdering order,
             boolean ascending) throws ServiceException {
         try {
-            return dao.listComputersByPage(page, pageSize, search, order, ascending);
+            return computerDAO.listComputersByPage(page, pageSize, search, order, ascending);
         } catch (PageOutOfBoundsException e) {
             return new ArrayList<>();
         } catch (DAOException e) {
@@ -126,9 +130,9 @@ public class ComputerService implements IComputerService {
 
     @Override
     public void updateComputer(Computer computer) throws ValidationException {
-        validator.validateComputer(computer);
+        computerValidator.validateComputer(computer);
         try {
-            dao.updateComputer(computer);
+            computerDAO.updateComputer(computer);
             LOGGER.info(new StringBuilder("Computer update : ").append(computer).toString());
         } catch (DAOException e) {
             LOGGER.debug("updateComputer : {}", e);

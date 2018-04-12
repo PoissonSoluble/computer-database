@@ -17,10 +17,14 @@ import com.excilys.cdb.model.Company;
 @Service("companyService")
 public class CompanyService implements ICompanyService {
 
-    @Autowired
     private ICompanyDAO companyDAO;
     private final Logger LOGGER = LoggerFactory.getLogger(CompanyService.class);
 
+    @Autowired
+    public CompanyService(ICompanyDAO pCompanyDAO) {
+        companyDAO = pCompanyDAO;
+    }
+    
     @Override
     @Transactional(rollbackFor=Exception.class)
     public void deleteCompany(Long id) {

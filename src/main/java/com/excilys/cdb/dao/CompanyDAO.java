@@ -22,11 +22,8 @@ import com.excilys.cdb.model.Company;
 @Repository("companyDAO")
 public class CompanyDAO implements ICompanyDAO{
 
-    @Autowired
     private DataSource dataSource;
-    @Autowired
     private ICompanyMapper companyMapper;
-    @Autowired
     private IComputerDAO computerDAO;
     
     private final static Logger LOGGER = LoggerFactory.getLogger(CompanyDAO.class);
@@ -36,6 +33,13 @@ public class CompanyDAO implements ICompanyDAO{
     private final static String SELECT_A_PAGE = "SELECT ca_id, ca_name FROM company ORDER BY ca_id LIMIT ? OFFSET ?";
     private final static String DELETE_COMPANY = "DELETE FROM company WHERE ca_id = ?";
 
+    @Autowired
+    public CompanyDAO(DataSource pDataSource, ICompanyMapper pCompanyMapper, IComputerDAO pComputerDAO) {
+        dataSource = pDataSource;
+        companyMapper = pCompanyMapper;
+        computerDAO = pComputerDAO;
+    }
+    
     public void deleteCompany(Long id) throws DAOException {
         LOGGER.info("Company DAO : delete");
         Connection conn = getConnection();

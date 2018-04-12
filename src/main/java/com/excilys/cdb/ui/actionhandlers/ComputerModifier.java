@@ -13,16 +13,20 @@ import com.excilys.cdb.validation.exceptions.ValidationException;
 @Component("computerModifier")
 public class ComputerModifier implements CLIActionHandler {
 
-    @Autowired
-    private IComputerService service;
-    @Autowired
+    private IComputerService computerService;
     private CLIUserInputsAPI cliApi;
 
+    @Autowired
+    public ComputerModifier(IComputerService pComputerService, CLIUserInputsAPI pCliApi) {
+        computerService = pComputerService;
+        cliApi = pCliApi;
+    }
+    
     @Override
     public boolean handle() {
         try {
             Long id = cliApi.askID("computer");
-            if (!service.exists(id)) {
+            if (!computerService.exists(id)) {
                 System.out.println("This computer does not exists.");
                 return true;
             }
@@ -43,7 +47,7 @@ public class ComputerModifier implements CLIActionHandler {
 
     private void updateComputer(Computer computer) {
         try {
-            service.updateComputer(computer);
+            computerService.updateComputer(computer);
             System.out.println("Update completed.\n");
         } catch (NullNameException e) {
             System.out.println("The name is null.");

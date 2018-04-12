@@ -27,9 +27,7 @@ import com.excilys.cdb.model.Computer;
 @Repository("computerDAO")
 public class ComputerDAO implements IComputerDAO{
 
-    @Autowired
     private DataSource dataSource;
-    @Autowired
     private IComputerMapper computerMapper;
     private final static Logger LOGGER = LoggerFactory.getLogger(ComputerDAO.class);
 
@@ -44,6 +42,12 @@ public class ComputerDAO implements IComputerDAO{
     private final static String DELETE_COMPANY = "DELETE FROM computer WHERE ca_id = ?";
     private final static String UPDATE = "UPDATE computer SET cu_name = ?, cu_introduced = ?, cu_discontinued = ?, ca_id = ? WHERE cu_id = ?";
 
+    @Autowired
+    public ComputerDAO(DataSource pDataSource, IComputerMapper pComputerMapper) {
+        dataSource = pDataSource;
+        computerMapper = pComputerMapper;
+    }
+    
     public Optional<Long> createComputer(Computer computer) throws DAOException {
         LOGGER.info("Computer DAO : creation");
         try (Connection conn = getConnection();

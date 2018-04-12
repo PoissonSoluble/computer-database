@@ -16,11 +16,15 @@ import com.excilys.cdb.validation.exceptions.NullNameException;
 import com.excilys.cdb.validation.exceptions.ValidationException;
 
 @Component("computerValidator")
-public class ComputerValidator {
+public class ComputerValidator implements IComputerValidator {
 
     @Autowired
     private ICompanyDAO companyDAO;
 
+    /* (non-Javadoc)
+     * @see com.excilys.cdb.validation.IComputerValidator#validateComputer(com.excilys.cdb.model.Computer)
+     */
+    @Override
     public void validateComputer(Computer computer) throws ValidationException {
         validateName(computer.getName());
         validateDates(computer.getIntroduced(), computer.getDiscontinued());

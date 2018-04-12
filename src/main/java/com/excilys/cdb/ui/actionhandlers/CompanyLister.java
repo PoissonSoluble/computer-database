@@ -15,10 +15,14 @@ import com.excilys.cdb.ui.CommandLineInterface;
 @Component("companyLister")
 public class CompanyLister implements CLIActionHandler {
 
-    @Autowired
     private ICompanyService companyService;
     private final int PAGE_SIZE = 20;
     private Page<Company> page;
+
+    @Autowired
+    public CompanyLister(ICompanyService pCompanyService) {
+        companyService = pCompanyService;
+    }
 
     @Override
     public boolean handle() {

@@ -8,20 +8,24 @@ import com.excilys.cdb.service.IComputerService;
 @Component("computerRemover")
 public class ComputerRemover implements CLIActionHandler {
 
-    @Autowired
-    private IComputerService service;
-    @Autowired
+    private IComputerService computerService;
     private CLIUserInputsAPI cliApi;
 
+    @Autowired
+    public ComputerRemover(IComputerService pComputerService, CLIUserInputsAPI pCliApi) {
+        computerService = pComputerService;
+        cliApi = pCliApi;
+    }
+    
     @Override
     public boolean handle() {
         try {
             Long id = cliApi.askID("computer");
-            if (!service.exists(id)) {
+            if (!computerService.exists(id)) {
                 System.out.println("This computer does not exists.");
                 return true;
             }
-            service.deleteComputer(id);
+            computerService.deleteComputer(id);
             System.out.println("The computer was successfuly deleted.\n");
         } catch (NumberFormatException e) {
             System.out.println("This is not a proper ID format. (an integer)");
