@@ -8,6 +8,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import javax.sql.DataSource;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,26 +17,26 @@ import org.springframework.stereotype.Repository;
 
 import com.excilys.cdb.mapper.CompanyMapper;
 import com.excilys.cdb.model.Company;
-import com.excilys.cdb.persistence.DatabaseConnection;
 
 @Repository("companyDAO")
 public class CompanyDAO implements ICompanyDAO{
 
+    @Autowired
+    private DataSource dataSource;
+    private CompanyMapper mapper = CompanyMapper.INSTANCE;
+    @Autowired
+    private IComputerDAO computerDAO;
+    
     private final static Logger LOGGER = LoggerFactory.getLogger(CompanyDAO.class);
     private final static String SELECT_ALL = "SELECT ca_id, ca_name FROM company";
     private final static String SELECT_FROM_ID = "SELECT ca_id, ca_name FROM company WHERE ca_id = ?";
     private final static String SELECT_COUNT = "SELECT count(ca_id) as count FROM company";
-
     private final static String SELECT_A_PAGE = "SELECT ca_id, ca_name FROM company ORDER BY ca_id LIMIT ? OFFSET ?";
     private final static String DELETE_COMPANY = "DELETE FROM company WHERE ca_id = ?";
-    private DatabaseConnection dbConn = DatabaseConnection.INSTANCE;
-    private CompanyMapper mapper = CompanyMapper.INSTANCE;
-    @Autowired
-    private IComputerDAO computerDAO;
 
     public void deleteCompany(Long id) throws DAOException {
         LOGGER.info("Company DAO : delete");
-        try (Connection conn = dbConn.getConnection();) {
+        try (Connection conn = getConnection();) {
             conn.setAutoCommit(false);
             executeDeleteStatement(id, conn);
             conn.commit();
@@ -51,7 +53,7 @@ public class CompanyDAO implements ICompanyDAO{
     public Optional<Company> getCompany(Long id) throws DAOException {
         LOGGER.info("Company DAO : get");
         Company company = null;
-        try (Connection conn = dbConn.getConnection();
+        try (Connection conn =getConnection();
                 PreparedStatement stmt = conn.prepareStatement(SELECT_FROM_ID);) {
             stmt.setLong(1, id);
             company = retrieveCompanyFromQuery(stmt);
@@ -65,7 +67,7 @@ public class CompanyDAO implements ICompanyDAO{
     public int getCompanyListPageTotalAmount(int pageSize) throws DAOException {
         LOGGER.info("Company DAO : page number");
         int pages = 0;
-        try (Connection conn = dbConn.getConnection();
+        try (Connection conn = getConnection();
                 PreparedStatement stmt = conn.prepareStatement(SELECT_COUNT);
                 ResultSet rs = stmt.executeQuery();) {
             rs.next();
@@ -80,7 +82,7 @@ public class CompanyDAO implements ICompanyDAO{
     public List<Company> listCompanies() throws DAOException {
         LOGGER.info("Company DAO : list");
         ArrayList<Company> companies = new ArrayList<>();
-        try (Connection conn = dbConn.getConnection();
+        try (Connection conn = getConnection();
                 PreparedStatement stmt = conn.prepareStatement(SELECT_ALL);
                 ResultSet rs = stmt.executeQuery();) {
             while (rs.next()) {
@@ -98,7 +100,7 @@ public class CompanyDAO implements ICompanyDAO{
         LOGGER.info(new StringBuilder("Company DAO : page (").append(pageNumber).append(",").append(pageSize)
                 .append(")").toString());
         ArrayList<Company> companies = new ArrayList<>();
-        try (Connection conn = dbConn.getConnection(); PreparedStatement stmt = conn.prepareStatement(SELECT_A_PAGE);) {
+        try (Connection conn = getConnection(); PreparedStatement stmt = conn.prepareStatement(SELECT_A_PAGE);) {
             retrieveParametersForComputerPage(pageNumber, pageSize, stmt);
             retrievePageContentFromQueryResult(stmt, companies);
         } catch (SQLException e) {
@@ -154,5 +156,9 @@ public class CompanyDAO implements ICompanyDAO{
             throws SQLException {
         stmt.setInt(1, pageSize);
         stmt.setInt(2, pageSize * (pageNumber - 1));
+    }
+    
+    private Connection getConnection() throws SQLException {
+        return dataSource.getConnection();
     }
 }

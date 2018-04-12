@@ -25,15 +25,17 @@ public class CompanyDAOTest {
     private ICompanyDAO companyDAO;
     @Autowired
     private IComputerDAO computerDAO;
+    @Autowired
+    private MockDataBase mockDataBase;
 
     @After
     public void destroy() {
-        MockDataBase.removeDataBase();
+        mockDataBase.removeDataBase();
     }
 
     @Before
     public void setUp() {
-        MockDataBase.createDatabase();
+        mockDataBase.createDatabase();
     }
 
     @Test

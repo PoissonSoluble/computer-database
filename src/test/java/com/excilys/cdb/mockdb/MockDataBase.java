@@ -8,14 +8,20 @@ import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
+import javax.sql.DataSource;
+
 import org.hsqldb.cmdline.SqlFile;
 import org.hsqldb.cmdline.SqlToolError;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
-import com.excilys.cdb.persistence.DatabaseConnection;
 import com.excilys.cdb.validation.ComputerValidatorTest;
 
+@Component("mockDataBase")
 public class MockDataBase {
-    private static DatabaseConnection dbConn = DatabaseConnection.INSTANCE;
+    @Autowired
+    private DataSource dataSource;
+    
     private static final String INSERT_COMPANY = "INSERT INTO company (ca_name) VALUES(?);";
     private static final String INSERT_COMPUTER_SIMPLE = "INSERT INTO computer (cu_name) VALUES(?);";
     private static final String INSERT_COMPUTER_DATES = "INSERT INTO computer (cu_name, cu_introduced, cu_discontinued) VALUES(?,?,?);";
@@ -26,7 +32,7 @@ public class MockDataBase {
     private static final String dateIntroduced = "1969-7-21";
     private static final String dateDiscontinued = "1995-7-21";
 
-    public static void createDatabase() {
+    public void createDatabase() {
         initDataBase();
         for (int i = 1; i <= 20; i++) {
             createCompanyLine("Company " + i);
@@ -42,8 +48,8 @@ public class MockDataBase {
         }
     }
 
-    private static void createCompanyLine(String name) {
-        try (Connection conn = dbConn.getConnection();
+    private void createCompanyLine(String name) {
+        try (Connection conn = getConnection();
                 PreparedStatement stmt = conn.prepareStatement(INSERT_COMPANY);) {
             stmt.setString(1, name);
             stmt.executeUpdate();
@@ -51,8 +57,8 @@ public class MockDataBase {
         }
     }
 
-    private static void createComputerLine(String name) {
-        try (Connection conn = dbConn.getConnection();
+    private void createComputerLine(String name) {
+        try (Connection conn = getConnection();
                 PreparedStatement stmt = conn.prepareStatement(INSERT_COMPUTER_SIMPLE);) {
             stmt.setString(1, name);
             stmt.executeUpdate();
@@ -60,8 +66,8 @@ public class MockDataBase {
         }
     }
 
-    private static void createComputerLine(String name, Date introduced, Date discontinued) {
-        try (Connection conn = dbConn.getConnection();
+    private void createComputerLine(String name, Date introduced, Date discontinued) {
+        try (Connection conn = getConnection();
                 PreparedStatement stmt = conn.prepareStatement(INSERT_COMPUTER_DATES);) {
             stmt.setString(1, name);
             stmt.setDate(2, introduced);
@@ -71,8 +77,8 @@ public class MockDataBase {
         }
     }
 
-    private static void createComputerLine(String name, Long companyId) {
-        try (Connection conn = dbConn.getConnection();
+    private void createComputerLine(String name, Long companyId) {
+        try (Connection conn = getConnection();
                 PreparedStatement stmt = conn.prepareStatement(INSERT_COMPUTER_COMPANY);) {
             stmt.setString(1, name);
             stmt.setLong(2, companyId);
@@ -81,8 +87,8 @@ public class MockDataBase {
         }
     }
 
-    private static void initDataBase() {
-        try (Connection conn = dbConn.getConnection();) {
+    private void initDataBase() {
+        try (Connection conn = getConnection();) {
             SqlFile sqlFile = new SqlFile(
                     new File(ComputerValidatorTest.class.getClassLoader().getResource("db/1-SCHEMA.sql").toURI()));
             sqlFile.setConnection(conn);
@@ -91,13 +97,17 @@ public class MockDataBase {
         }
     }
 
-    public static void removeDataBase() {
-        try (Connection conn = dbConn.getConnection();
+    public void removeDataBase() {
+        try (Connection conn = getConnection();
                 PreparedStatement dropCompany = conn.prepareStatement(DROP_COMPANY);
                 PreparedStatement dropComputer = conn.prepareStatement(DROP_COMPUTER);) {
             dropCompany.executeUpdate();
             dropComputer.executeQuery();
         } catch (SQLException e) {
         }
+    }
+    
+    private Connection getConnection() throws SQLException {
+        return dataSource.getConnection();
     }
 }

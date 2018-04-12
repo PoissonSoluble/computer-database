@@ -2,8 +2,8 @@ package com.excilys.cdb.validation;
 
 import java.time.LocalDate;
 
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,15 +21,18 @@ import com.excilys.cdb.validation.exceptions.ValidationException;
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations= {"/applicationContext.xml"})
 public class ComputerValidatorTest {
+    
+    @Autowired
+    private MockDataBase mockDataBase;
 
-    @AfterClass
-    public static void destroy() {
-        MockDataBase.removeDataBase();
+    @After
+    public void destroy() {
+        mockDataBase.removeDataBase();
     }
 
-    @BeforeClass
-    public static void setUp() {
-        MockDataBase.createDatabase();
+    @Before
+    public void setUp() {
+        mockDataBase.createDatabase();
     }
 
     @Autowired

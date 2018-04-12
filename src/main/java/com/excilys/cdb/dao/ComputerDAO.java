@@ -11,20 +11,23 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import javax.sql.DataSource;
+
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import com.excilys.cdb.mapper.ComputerMapper;
 import com.excilys.cdb.model.Company;
 import com.excilys.cdb.model.Computer;
-import com.excilys.cdb.persistence.DatabaseConnection;
 
 @Repository("computerDAO")
 public class ComputerDAO implements IComputerDAO{
 
-    private DatabaseConnection dbConn = DatabaseConnection.INSTANCE;
+    @Autowired
+    private DataSource dataSource;
     private ComputerMapper mapper = ComputerMapper.INSTANCE;
     private final static Logger LOGGER = LoggerFactory.getLogger(ComputerDAO.class);
 
@@ -41,7 +44,7 @@ public class ComputerDAO implements IComputerDAO{
 
     public Optional<Long> createComputer(Computer computer) throws DAOException {
         LOGGER.info("Computer DAO : creation");
-        try (Connection conn = dbConn.getConnection();
+        try (Connection conn = getConnection();
                 PreparedStatement stmt = conn.prepareStatement(INSERT, Statement.RETURN_GENERATED_KEYS);) {
             setParameters(computer, stmt);
             stmt.executeUpdate();
@@ -55,7 +58,7 @@ public class ComputerDAO implements IComputerDAO{
 
     public void deleteComputer(Long id) throws DAOException {
         LOGGER.info("Computer DAO : deletion");
-        try (Connection conn = dbConn.getConnection(); PreparedStatement stmt = conn.prepareStatement(DELETE);) {
+        try (Connection conn = getConnection(); PreparedStatement stmt = conn.prepareStatement(DELETE);) {
             stmt.setLong(1, id);
             stmt.executeUpdate();
         } catch (SQLException e) {
@@ -66,7 +69,7 @@ public class ComputerDAO implements IComputerDAO{
 
     public void deleteComputers(List<Long> ids) throws DAOException {
         LOGGER.info("Computer DAO : deletion (multiple)");
-        try (Connection conn = dbConn.getConnection();) {
+        try (Connection conn = getConnection();) {
             conn.setAutoCommit(false);
             applyDeletionOnList(ids, conn);
             conn.commit();
@@ -79,7 +82,7 @@ public class ComputerDAO implements IComputerDAO{
     public Optional<Computer> getComputer(Long id) throws DAOException {
         LOGGER.info("Computer DAO : get");
         Computer computer = null;
-        try (Connection conn = dbConn.getConnection();
+        try (Connection conn = getConnection();
                 PreparedStatement stmt = conn.prepareStatement(SELECT_FROM_ID);) {
             stmt.setLong(1, id);
             try (ResultSet rs = stmt.executeQuery();) {
@@ -95,7 +98,7 @@ public class ComputerDAO implements IComputerDAO{
     public int getComputerAmount() throws DAOException {
         LOGGER.info("Computer DAO : count");
         int count = 0;
-        try (Connection conn = dbConn.getConnection();
+        try (Connection conn = getConnection();
                 PreparedStatement stmt = conn.prepareStatement(SELECT_COUNT);
                 ResultSet rs = stmt.executeQuery();) {
             rs.next();
@@ -113,7 +116,7 @@ public class ComputerDAO implements IComputerDAO{
         if (StringUtils.isBlank(search)) {
             return getComputerAmount();
         }
-        try (Connection conn = dbConn.getConnection();
+        try (Connection conn = getConnection();
                 PreparedStatement stmt = conn.prepareStatement(SELECT_COUNT_SEARCH);) {
             count = prepareAndRetrieveComputerCount(stmt, search);
         } catch (SQLException e) {
@@ -130,7 +133,7 @@ public class ComputerDAO implements IComputerDAO{
     public int getComputerListPageTotalAmount(int pageSize, String search) throws DAOException {
         LOGGER.info("Computer DAO : page number");
         int pages = 0;
-        try (Connection conn = dbConn.getConnection();
+        try (Connection conn = getConnection();
                 PreparedStatement stmt = conn.prepareStatement(SELECT_COUNT_SEARCH);) {
             pages = prepareAndExecutedPageNumberQuery(pageSize, stmt, search);
         } catch (SQLException e) {
@@ -143,7 +146,7 @@ public class ComputerDAO implements IComputerDAO{
     public List<Computer> listComputers() throws DAOException {
         LOGGER.info("Computer DAO : list");
         ArrayList<Computer> computers = new ArrayList<>();
-        try (Connection conn = dbConn.getConnection();
+        try (Connection conn = getConnection();
                 PreparedStatement stmt = conn.prepareStatement(SELECT_ALL);
                 ResultSet rs = stmt.executeQuery();) {
             retrieveComputersFromQuery(computers, rs);
@@ -159,7 +162,7 @@ public class ComputerDAO implements IComputerDAO{
         LOGGER.info(new StringBuilder("Computer DAO : page (").append(pageNumber).append(",").append(pageSize)
                 .append(")").toString());
         ArrayList<Computer> computers = new ArrayList<>();
-        try (Connection conn = dbConn.getConnection();
+        try (Connection conn = getConnection();
                 PreparedStatement stmt = conn.prepareStatement(constructPageRequest(order, ascending, SELECT_PAGE));) {
             retrieveParametersForComputerPage(pageNumber, pageSize, stmt);
             retrievePageContentFromQueryResult(stmt, computers);
@@ -178,7 +181,7 @@ public class ComputerDAO implements IComputerDAO{
             return listComputersByPage(pageNumber, pageSize, order, ascending);
         }
         ArrayList<Computer> computers = new ArrayList<>();
-        try (Connection conn = dbConn.getConnection();
+        try (Connection conn = getConnection();
                 PreparedStatement stmt = conn
                         .prepareStatement(constructPageRequest(order, ascending, SELECT_PAGE_SEARCH));) {
             retrieveParametersForComputerPageWithSearch(pageNumber, pageSize, search, stmt);
@@ -192,7 +195,7 @@ public class ComputerDAO implements IComputerDAO{
 
     public void updateComputer(Computer computer) throws DAOException {
         LOGGER.info("Computer DAO : update");
-        try (Connection conn = dbConn.getConnection(); PreparedStatement stmt = conn.prepareStatement(UPDATE);) {
+        try (Connection conn = getConnection(); PreparedStatement stmt = conn.prepareStatement(UPDATE);) {
             setParameters(computer, stmt);
             stmt.setLong(5, computer.getId().orElseThrow(() -> new DAOException("Id is null.")));
             stmt.executeUpdate();
@@ -331,5 +334,9 @@ public class ComputerDAO implements IComputerDAO{
             stmt.setLong(1, companyId);
             stmt.executeUpdate();
         }
+    }
+    
+    private Connection getConnection() throws SQLException {
+        return dataSource.getConnection();
     }
 }
