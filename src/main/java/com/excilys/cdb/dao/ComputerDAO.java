@@ -17,6 +17,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.DataSourceUtils;
 import org.springframework.stereotype.Repository;
 
@@ -25,10 +27,11 @@ import com.excilys.cdb.model.Company;
 import com.excilys.cdb.model.Computer;
 
 @Repository("computerDAO")
-public class ComputerDAO implements IComputerDAO{
+public class ComputerDAO implements IComputerDAO {
 
     private DataSource dataSource;
     private IComputerMapper computerMapper;
+    private JdbcTemplate jdbcTemplate;
     private final static Logger LOGGER = LoggerFactory.getLogger(ComputerDAO.class);
 
     private final static String SELECT_ALL = "SELECT cu_id, cu_name, cu_introduced, cu_discontinued, ca_id, ca_name FROM computer LEFT JOIN company USING(ca_id)";
@@ -47,7 +50,12 @@ public class ComputerDAO implements IComputerDAO{
         dataSource = pDataSource;
         computerMapper = pComputerMapper;
     }
-    
+
+    @Autowired
+    public void setDataSource(DataSource dataSource) {
+        jdbcTemplate = new JdbcTemplate(dataSource);
+    }
+
     public Optional<Long> createComputer(Computer computer) throws DAOException {
         LOGGER.info("Computer DAO : creation");
         try (Connection conn = getConnection();
@@ -87,8 +95,7 @@ public class ComputerDAO implements IComputerDAO{
     public Optional<Computer> getComputer(Long id) throws DAOException {
         LOGGER.info("Computer DAO : get");
         Computer computer = null;
-        try (Connection conn = getConnection();
-                PreparedStatement stmt = conn.prepareStatement(SELECT_FROM_ID);) {
+        try (Connection conn = getConnection(); PreparedStatement stmt = conn.prepareStatement(SELECT_FROM_ID);) {
             stmt.setLong(1, id);
             try (ResultSet rs = stmt.executeQuery();) {
                 computer = retrieveComputerFromQuery(stmt);
@@ -121,8 +128,7 @@ public class ComputerDAO implements IComputerDAO{
         if (StringUtils.isBlank(search)) {
             return getComputerAmount();
         }
-        try (Connection conn = getConnection();
-                PreparedStatement stmt = conn.prepareStatement(SELECT_COUNT_SEARCH);) {
+        try (Connection conn = getConnection(); PreparedStatement stmt = conn.prepareStatement(SELECT_COUNT_SEARCH);) {
             count = prepareAndRetrieveComputerCount(stmt, search);
         } catch (SQLException e) {
             LOGGER.error("getComputerListPageTotalAmount(int): {}", e);
@@ -137,45 +143,32 @@ public class ComputerDAO implements IComputerDAO{
 
     public int getComputerListPageTotalAmount(int pageSize, String search) throws DAOException {
         LOGGER.info("Computer DAO : page number");
-        int pages = 0;
-        try (Connection conn = getConnection();
-                PreparedStatement stmt = conn.prepareStatement(SELECT_COUNT_SEARCH);) {
-            pages = prepareAndExecutedPageNumberQuery(pageSize, stmt, search);
-        } catch (SQLException e) {
-            LOGGER.error("getComputerListPageTotalAmount(int): {}", e);
-            throw new DAOException("Error while getting total page number.");
-        }
-        return pages;
+        return (Integer) jdbcTemplate.queryForObject(SELECT_COUNT_SEARCH, new Object[] { search },
+                (resultSet, rowNum) -> {
+                    return Integer.valueOf(computePageAmountFromQuery(pageSize, resultSet));
+                });
     }
 
     public List<Computer> listComputers() throws DAOException {
         LOGGER.info("Computer DAO : list");
-        ArrayList<Computer> computers = new ArrayList<>();
-        try (Connection conn = getConnection();
-                PreparedStatement stmt = conn.prepareStatement(SELECT_ALL);
-                ResultSet rs = stmt.executeQuery();) {
-            retrieveComputersFromQuery(computers, rs);
-        } catch (SQLException e) {
-            LOGGER.error("listComputers(): {}", e);
-            throw new DAOException("Error while listing the computers.");
-        }
-        return computers;
+        return (List<Computer>) jdbcTemplate.queryForObject(SELECT_ALL, (resultSet, rowNum) -> {
+            return retrieveComputersFromQuery(resultSet);
+        });
     }
 
     public List<Computer> listComputersByPage(int pageNumber, int pageSize, ComputerOrdering order, boolean ascending)
             throws PageOutOfBoundsException, DAOException {
         LOGGER.info(new StringBuilder("Computer DAO : page (").append(pageNumber).append(",").append(pageSize)
                 .append(")").toString());
-        ArrayList<Computer> computers = new ArrayList<>();
-        try (Connection conn = getConnection();
-                PreparedStatement stmt = conn.prepareStatement(constructPageRequest(order, ascending, SELECT_PAGE));) {
-            retrieveParametersForComputerPage(pageNumber, pageSize, stmt);
-            retrievePageContentFromQueryResult(stmt, computers);
-        } catch (SQLException e) {
-            LOGGER.error("listComputersByPage(int,int): {}", e);
-            throw new DAOException("Error while returning the page.");
+        try {
+            return (List<Computer>) jdbcTemplate.queryForObject(constructPageRequest(order, ascending, SELECT_PAGE),
+                    new Object[] { Integer.valueOf(pageSize), Integer.valueOf(pageSize * (pageNumber - 1)) },
+                    (resultSet, rowNum) -> {
+                        return retrieveComputersFromQuery(resultSet);
+                    });
+        } catch (EmptyResultDataAccessException e) {
+            throw new PageOutOfBoundsException();
         }
-        return computers;
     }
 
     public List<Computer> listComputersByPage(int pageNumber, int pageSize, String search, ComputerOrdering order,
@@ -185,17 +178,17 @@ public class ComputerDAO implements IComputerDAO{
         if (StringUtils.isBlank(search)) {
             return listComputersByPage(pageNumber, pageSize, order, ascending);
         }
-        ArrayList<Computer> computers = new ArrayList<>();
-        try (Connection conn = getConnection();
-                PreparedStatement stmt = conn
-                        .prepareStatement(constructPageRequest(order, ascending, SELECT_PAGE_SEARCH));) {
-            retrieveParametersForComputerPageWithSearch(pageNumber, pageSize, search, stmt);
-            retrievePageContentFromQueryResult(stmt, computers);
-        } catch (SQLException e) {
-            LOGGER.error("listComputersByPage(int,int): {}", e);
-            throw new DAOException("Error while returning the page.");
+        try {
+            return (List<Computer>) jdbcTemplate.queryForObject(
+                    constructPageRequest(order, ascending, SELECT_PAGE_SEARCH),
+                    new Object[] { new StringBuilder("%").append(search).append("%").toString(),
+                            Integer.valueOf(pageSize), Integer.valueOf(pageSize * (pageNumber - 1)) },
+                    (resultSet, rowNum) -> {
+                        return retrieveComputersFromQuery(resultSet);
+                    });
+        } catch (EmptyResultDataAccessException e) {
+            throw new PageOutOfBoundsException();
         }
-        return computers;
     }
 
     public void updateComputer(Computer computer) throws DAOException {
@@ -231,7 +224,7 @@ public class ComputerDAO implements IComputerDAO{
         }
     }
 
-    private int computePageAmountFromQuery(int pageSize, ResultSet rs) throws SQLException{
+    private int computePageAmountFromQuery(int pageSize, ResultSet rs) throws SQLException {
         int pages;
         int count;
         count = rs.getInt("count");
@@ -249,16 +242,6 @@ public class ComputerDAO implements IComputerDAO{
 
     }
 
-    private int prepareAndExecutedPageNumberQuery(int pageSize, PreparedStatement stmt, String search)
-            throws SQLException {
-        int pages;
-        stmt.setString(1, new StringBuilder("%").append(search).append("%").toString());
-        try (ResultSet rs = stmt.executeQuery();) {
-            rs.next();
-            pages = computePageAmountFromQuery(pageSize, rs);
-        }
-        return pages;
-    }
 
     private int prepareAndRetrieveComputerCount(PreparedStatement stmt, String search) throws SQLException {
         int count;
@@ -291,34 +274,14 @@ public class ComputerDAO implements IComputerDAO{
         }
     }
 
-    private void retrieveComputersFromQuery(ArrayList<Computer> computers, ResultSet rs) throws SQLException {
-        while (rs.next()) {
+    private List<Computer> retrieveComputersFromQuery(ResultSet rs) throws SQLException {
+
+        List<Computer> computers = new ArrayList<>();
+        do {
             computers.add(computerMapper.createComputer(rs.getLong(1), rs.getString(2), rs.getDate(3), rs.getDate(4),
                     rs.getLong(5), rs.getString(6)));
-        }
-    }
-
-    private void retrievePageContentFromQueryResult(PreparedStatement stmt, ArrayList<Computer> computers)
-            throws SQLException, PageOutOfBoundsException {
-        try (ResultSet rs = stmt.executeQuery();) {
-            retrieveComputersFromQuery(computers, rs);
-            if (computers.isEmpty()) {
-                throw new PageOutOfBoundsException();
-            }
-        }
-    }
-
-    private void retrieveParametersForComputerPage(int pageNumber, int pageSize, PreparedStatement stmt)
-            throws SQLException {
-        stmt.setInt(1, pageSize);
-        stmt.setInt(2, pageSize * (pageNumber - 1));
-    }
-
-    private void retrieveParametersForComputerPageWithSearch(int pageNumber, int pageSize, String search,
-            PreparedStatement stmt) throws SQLException {
-        stmt.setString(1, new StringBuilder("%").append(search).append("%").toString());
-        stmt.setInt(2, pageSize);
-        stmt.setInt(3, pageSize * (pageNumber - 1));
+        } while (rs.next());
+        return computers;
     }
 
     private void setParameters(Computer computer, PreparedStatement stmt) throws SQLException {
@@ -339,7 +302,7 @@ public class ComputerDAO implements IComputerDAO{
             stmt.executeUpdate();
         }
     }
-    
+
     private Connection getConnection() {
         return DataSourceUtils.getConnection(dataSource);
     }
