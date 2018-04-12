@@ -18,7 +18,7 @@ import org.springframework.web.context.support.SpringBeanAutowiringSupport;
 
 import com.excilys.cdb.dao.ComputerOrdering;
 import com.excilys.cdb.dto.ComputerDTO;
-import com.excilys.cdb.mapper.ComputerDTOMapper;
+import com.excilys.cdb.mapper.IComputerDTOMapper;
 import com.excilys.cdb.pagination.ComputerPage;
 import com.excilys.cdb.service.IComputerService;
 import com.excilys.cdb.service.ServiceException;
@@ -34,6 +34,8 @@ public class DashboardServlet extends HttpServlet {
 
     @Autowired
     private IComputerService computerService;
+    @Autowired
+    private IComputerDTOMapper computerMapper;
 
     public DashboardServlet() {
         super();
@@ -53,10 +55,8 @@ public class DashboardServlet extends HttpServlet {
         ComputerOrdering order = getOrderingParam(request, "order", DEFAULT_ORDER);
         boolean ascending = getBooleanParam(request, "ascending", DEFAULT_ASCENDING);
         ComputerPage page = new ComputerPage(pageNumber, pageSize, search, order, ascending, computerService);
-        List<ComputerDTO> dtos = new ArrayList<>();
-        getDTOs(page, dtos);
-
-        setRequestAttributes(request, pageSize, search, page, dtos, order, ascending);
+        List<ComputerDTO> computerDTOs = getDTOsFromPage(page);
+        setRequestAttributes(request, pageSize, search, page, computerDTOs, order, ascending);
         RequestDispatcher view = request.getRequestDispatcher("WEB-INF/views/dashboard.jsp");
         view.forward(request, response);
     }
@@ -73,9 +73,10 @@ public class DashboardServlet extends HttpServlet {
         return defaultValue;
     }
 
-    private void getDTOs(ComputerPage page, List<ComputerDTO> dtos) {
-        ComputerDTOMapper mapper = new ComputerDTOMapper();
-        page.get().forEach(computer -> dtos.add(mapper.createComputerDTO(computer)));
+    private List<ComputerDTO> getDTOsFromPage(ComputerPage page) {
+        List<ComputerDTO> computerDTOs = new ArrayList<>();
+        page.get().forEach(computer -> computerDTOs.add(computerMapper.createComputerDTO(computer)));
+        return computerDTOs;
     }
 
     private int getIntParam(HttpServletRequest request, String param, int defaultValue) {
@@ -100,8 +101,8 @@ public class DashboardServlet extends HttpServlet {
     }
 
     private void setRequestAttributes(HttpServletRequest request, int pageSize, String search, ComputerPage page,
-            List<ComputerDTO> dtos, ComputerOrdering order, boolean ascending) {
-        request.setAttribute("computers", dtos);
+            List<ComputerDTO> computerDtos, ComputerOrdering order, boolean ascending) {
+        request.setAttribute("computers", computerDtos);
         request.setAttribute("pageNumber", page.getPageNumber());
         request.setAttribute("totalPage", page.getPageTotal());
         if (search == null) {

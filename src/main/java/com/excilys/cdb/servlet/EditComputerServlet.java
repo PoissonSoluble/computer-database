@@ -21,8 +21,8 @@ import org.springframework.web.context.support.SpringBeanAutowiringSupport;
 
 import com.excilys.cdb.dto.CompanyDTO;
 import com.excilys.cdb.dto.ComputerDTO;
-import com.excilys.cdb.mapper.CompanyDTOMapper;
-import com.excilys.cdb.mapper.ComputerDTOMapper;
+import com.excilys.cdb.mapper.ICompanyDTOMapper;
+import com.excilys.cdb.mapper.IComputerDTOMapper;
 import com.excilys.cdb.model.Company;
 import com.excilys.cdb.model.Computer;
 import com.excilys.cdb.service.ICompanyService;
@@ -40,6 +40,10 @@ public class EditComputerServlet extends HttpServlet {
     private IComputerService computerService;
     @Autowired
     private ICompanyService companyService;
+    @Autowired
+    private IComputerDTOMapper computerMapper;
+    @Autowired
+    private ICompanyDTOMapper companyMapper;
 
     /**
      * @see HttpServlet#HttpServlet()
@@ -47,7 +51,7 @@ public class EditComputerServlet extends HttpServlet {
     public EditComputerServlet() {
         super();
     }
-    
+
     @Override
     public void init(ServletConfig config) throws ServletException {
         super.init(config);
@@ -70,13 +74,10 @@ public class EditComputerServlet extends HttpServlet {
 
     private void generateAndForwardDTOs(HttpServletRequest request, HttpServletResponse response,
             Optional<Computer> computerOpt) throws ServletException, IOException {
-        ComputerDTOMapper computerMapper = new ComputerDTOMapper();
         ComputerDTO computer = computerMapper.createComputerDTO(computerOpt.get());
-        CompanyDTOMapper companyMapper = new CompanyDTOMapper();
         List<CompanyDTO> companies = new ArrayList<>();
         try {
-            companyService.getCompanies()
-                    .forEach(company -> companies.add(companyMapper.createCompanyDTO(company)));
+            companyService.getCompanies().forEach(company -> companies.add(companyMapper.createCompanyDTO(company)));
         } catch (ServiceException e) {
             throw new ServletException("Error while getting the DTOs.");
         }

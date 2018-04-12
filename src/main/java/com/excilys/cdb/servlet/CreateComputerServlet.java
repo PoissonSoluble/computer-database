@@ -20,25 +20,27 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.context.support.SpringBeanAutowiringSupport;
 
 import com.excilys.cdb.dto.CompanyDTO;
-import com.excilys.cdb.mapper.CompanyDTOMapper;
+import com.excilys.cdb.mapper.ICompanyDTOMapper;
 import com.excilys.cdb.model.Company;
 import com.excilys.cdb.model.Computer;
-import com.excilys.cdb.service.CompanyService;
-import com.excilys.cdb.service.ComputerService;
+import com.excilys.cdb.service.ICompanyService;
+import com.excilys.cdb.service.IComputerService;
 import com.excilys.cdb.service.ServiceException;
 import com.excilys.cdb.validation.exceptions.InvalidDatesException;
 import com.excilys.cdb.validation.exceptions.NotExistingCompanyException;
 import com.excilys.cdb.validation.exceptions.NullNameException;
 import com.excilys.cdb.validation.exceptions.ValidationException;
 
-@WebServlet(name = "CreateComputerServlet", urlPatterns = "/createComputer")
+@WebServlet(name = "CreateComputerServlet", urlPatterns = "/addComputer")
 public class CreateComputerServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
 
     @Autowired
-    ComputerService computerService;
+    private IComputerService computerService;
     @Autowired
-    CompanyService companyService;
+    private ICompanyService companyService;
+    @Autowired
+    private ICompanyDTOMapper companyMapper;
 
     /**
      * @see HttpServlet#HttpServlet()
@@ -91,10 +93,9 @@ public class CreateComputerServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        CompanyDTOMapper mapper = new CompanyDTOMapper();
         List<CompanyDTO> companies = new ArrayList<>();
         try {
-            companyService.getCompanies().forEach(company -> companies.add(mapper.createCompanyDTO(company)));
+            companyService.getCompanies().forEach(company -> companies.add(companyMapper.createCompanyDTO(company)));
         } catch (ServiceException e) {
             throw new ServletException("Error while getting the company DTOs.");
         }

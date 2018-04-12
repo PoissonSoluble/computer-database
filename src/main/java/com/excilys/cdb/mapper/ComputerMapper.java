@@ -2,14 +2,18 @@ package com.excilys.cdb.mapper;
 
 import java.sql.Date;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
 import com.excilys.cdb.model.Computer;
 
-public enum ComputerMapper {
+@Component("computerMapper")
+public class ComputerMapper implements IComputerMapper {
+    
+    @Autowired
+    private ICompanyMapper companyMapper;
 
-    INSTANCE;
-
-    private CompanyMapper companyMapper = CompanyMapper.INSTANCE;
-
+    @Override
     public Computer createComputer(long id, String name, Date introduced, Date discontinued, long companyId,
             String companyName) {
         if ((id == 0) && (name == null)) {

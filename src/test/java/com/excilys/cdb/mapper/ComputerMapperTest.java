@@ -7,12 +7,14 @@ import java.time.LocalDate;
 import java.util.Optional;
 
 import org.junit.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import com.excilys.cdb.model.Computer;
 
 public class ComputerMapperTest {
     
-    ComputerMapper mapper = ComputerMapper.INSTANCE;
+    @Autowired
+    private IComputerMapper mapper;
 
     @Test
     public void testCreation() {

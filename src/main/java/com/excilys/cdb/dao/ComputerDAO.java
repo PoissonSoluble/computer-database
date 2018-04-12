@@ -20,7 +20,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.datasource.DataSourceUtils;
 import org.springframework.stereotype.Repository;
 
-import com.excilys.cdb.mapper.ComputerMapper;
+import com.excilys.cdb.mapper.IComputerMapper;
 import com.excilys.cdb.model.Company;
 import com.excilys.cdb.model.Computer;
 
@@ -29,7 +29,8 @@ public class ComputerDAO implements IComputerDAO{
 
     @Autowired
     private DataSource dataSource;
-    private ComputerMapper mapper = ComputerMapper.INSTANCE;
+    @Autowired
+    private IComputerMapper computerMapper;
     private final static Logger LOGGER = LoggerFactory.getLogger(ComputerDAO.class);
 
     private final static String SELECT_ALL = "SELECT cu_id, cu_name, cu_introduced, cu_discontinued, ca_id, ca_name FROM computer LEFT JOIN company USING(ca_id)";
@@ -268,7 +269,7 @@ public class ComputerDAO implements IComputerDAO{
     private Computer retrieveComputerFromQuery(PreparedStatement stmt) throws SQLException {
         try (ResultSet rs = stmt.executeQuery();) {
             if (rs.next()) {
-                return mapper.createComputer(rs.getLong(1), rs.getString(2), rs.getDate(3), rs.getDate(4),
+                return computerMapper.createComputer(rs.getLong(1), rs.getString(2), rs.getDate(3), rs.getDate(4),
                         rs.getLong(5), rs.getString(6));
             }
         }
@@ -288,7 +289,7 @@ public class ComputerDAO implements IComputerDAO{
 
     private void retrieveComputersFromQuery(ArrayList<Computer> computers, ResultSet rs) throws SQLException {
         while (rs.next()) {
-            computers.add(mapper.createComputer(rs.getLong(1), rs.getString(2), rs.getDate(3), rs.getDate(4),
+            computers.add(computerMapper.createComputer(rs.getLong(1), rs.getString(2), rs.getDate(3), rs.getDate(4),
                     rs.getLong(5), rs.getString(6)));
         }
     }

@@ -1,11 +1,13 @@
 package com.excilys.cdb.mapper;
 
+import org.springframework.stereotype.Component;
+
 import com.excilys.cdb.model.Company;
 
-public enum CompanyMapper {
+@Component("companyMapper")
+public class CompanyMapper implements ICompanyMapper {
 
-    INSTANCE;
-
+    @Override
     public Company createCompany(Long id) {
         if (id == null) {
             return null;
@@ -13,6 +15,7 @@ public enum CompanyMapper {
         return new Company.Builder(id).build();
     }
 
+    @Override
     public Company createCompany(Long id, String name) {
         if ((id == null) && (name == null)) {
             return null;
@@ -20,6 +23,7 @@ public enum CompanyMapper {
         return new Company.Builder(id).withName(name).build();
     }
 
+    @Override
     public Company createCompany(String name) {
         if (name == null) {
             return null;

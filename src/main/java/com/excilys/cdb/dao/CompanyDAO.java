@@ -16,7 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.datasource.DataSourceUtils;
 import org.springframework.stereotype.Repository;
 
-import com.excilys.cdb.mapper.CompanyMapper;
+import com.excilys.cdb.mapper.ICompanyMapper;
 import com.excilys.cdb.model.Company;
 
 @Repository("companyDAO")
@@ -24,7 +24,8 @@ public class CompanyDAO implements ICompanyDAO{
 
     @Autowired
     private DataSource dataSource;
-    private CompanyMapper mapper = CompanyMapper.INSTANCE;
+    @Autowired
+    private ICompanyMapper companyMapper;
     @Autowired
     private IComputerDAO computerDAO;
     
@@ -86,7 +87,7 @@ public class CompanyDAO implements ICompanyDAO{
                 PreparedStatement stmt = conn.prepareStatement(SELECT_ALL);
                 ResultSet rs = stmt.executeQuery();) {
             while (rs.next()) {
-                companies.add(mapper.createCompany(rs.getLong(1), rs.getString(2)));
+                companies.add(companyMapper.createCompany(rs.getLong(1), rs.getString(2)));
             }
         } catch (SQLException e) {
             LOGGER.debug(new StringBuilder("listCompanies(): ").append(e.getMessage()).toString());
@@ -133,7 +134,7 @@ public class CompanyDAO implements ICompanyDAO{
     private Company retrieveCompanyFromQuery(PreparedStatement stmt) throws SQLException {
         try (ResultSet rs = stmt.executeQuery();) {
             if (rs.next()) {
-                return mapper.createCompany(rs.getLong(1), rs.getString(2));
+                return companyMapper.createCompany(rs.getLong(1), rs.getString(2));
             }
         }
         return null;
@@ -143,7 +144,7 @@ public class CompanyDAO implements ICompanyDAO{
             throws SQLException, PageOutOfBoundsException {
         try (ResultSet rs = stmt.executeQuery();) {
             while (rs.next()) {
-                companies.add(mapper.createCompany(rs.getLong(1), rs.getString(2)));
+                companies.add(companyMapper.createCompany(rs.getLong(1), rs.getString(2)));
             }
             if (companies.isEmpty()) {
                 throw new PageOutOfBoundsException();
