@@ -8,10 +8,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import com.excilys.cdb.dao.ComputerDAO;
 import com.excilys.cdb.dao.ComputerOrdering;
 import com.excilys.cdb.dao.DAOException;
+import com.excilys.cdb.dao.IComputerDAO;
 import com.excilys.cdb.dao.PageOutOfBoundsException;
 import com.excilys.cdb.model.Computer;
 import com.excilys.cdb.validation.ComputerValidator;
@@ -21,7 +22,7 @@ import com.excilys.cdb.validation.exceptions.ValidationException;
 public class ComputerService implements IComputerService {
 
     @Autowired
-    private ComputerDAO dao;
+    private IComputerDAO dao;
     @Autowired
     private ComputerValidator validator;
     private final Logger LOGGER = LoggerFactory.getLogger(ComputerService.class);
@@ -48,6 +49,7 @@ public class ComputerService implements IComputerService {
     }
 
     @Override
+    @Transactional(rollbackFor=Exception.class)
     public void deleteComputers(List<Long> ids) {
         try {
             dao.deleteComputers(ids);

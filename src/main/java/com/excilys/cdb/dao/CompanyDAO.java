@@ -13,6 +13,7 @@ import javax.sql.DataSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.datasource.DataSourceUtils;
 import org.springframework.stereotype.Repository;
 
 import com.excilys.cdb.mapper.CompanyMapper;
@@ -36,11 +37,10 @@ public class CompanyDAO implements ICompanyDAO{
 
     public void deleteCompany(Long id) throws DAOException {
         LOGGER.info("Company DAO : delete");
-        try (Connection conn = getConnection();) {
-            conn.setAutoCommit(false);
+        Connection conn = getConnection();
+        try {
             executeDeleteStatement(id, conn);
-            conn.commit();
-        } catch (SQLException e) {
+        } catch (SQLException | DAOException e) {
             LOGGER.debug(new StringBuilder("deleteCompany(): ").append(e.getMessage()).toString());
             throw new DAOException("Error while deleting the company.");
         }
@@ -125,7 +125,6 @@ public class CompanyDAO implements ICompanyDAO{
             stmt.setLong(1, id);
             stmt.executeUpdate();
         } catch (SQLException | DAOException e) {
-            conn.rollback();
             LOGGER.error("deleteCompany : {}");
             throw new DAOException("Error while deleting the company.");
         }
@@ -158,7 +157,7 @@ public class CompanyDAO implements ICompanyDAO{
         stmt.setInt(2, pageSize * (pageNumber - 1));
     }
     
-    private Connection getConnection() throws SQLException {
-        return dataSource.getConnection();
+    private Connection getConnection(){
+        return DataSourceUtils.getConnection(dataSource);
     }
 }

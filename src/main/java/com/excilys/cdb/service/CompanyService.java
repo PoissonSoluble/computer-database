@@ -7,6 +7,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.excilys.cdb.dao.DAOException;
 import com.excilys.cdb.dao.ICompanyDAO;
@@ -21,6 +22,7 @@ public class CompanyService implements ICompanyService {
     private final Logger LOGGER = LoggerFactory.getLogger(CompanyService.class);
 
     @Override
+    @Transactional(rollbackFor=Exception.class)
     public void deleteCompany(Long id) {
         try {
             companyDAO.deleteCompany(id);

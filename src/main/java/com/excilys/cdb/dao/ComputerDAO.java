@@ -17,6 +17,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.datasource.DataSourceUtils;
 import org.springframework.stereotype.Repository;
 
 import com.excilys.cdb.mapper.ComputerMapper;
@@ -69,10 +70,9 @@ public class ComputerDAO implements IComputerDAO{
 
     public void deleteComputers(List<Long> ids) throws DAOException {
         LOGGER.info("Computer DAO : deletion (multiple)");
-        try (Connection conn = getConnection();) {
-            conn.setAutoCommit(false);
+        Connection conn = getConnection();
+        try {
             applyDeletionOnList(ids, conn);
-            conn.commit();
         } catch (SQLException e) {
             LOGGER.error("deleteComputers(): {}", e);
             throw new DAOException("Error while initiating the connection.");
@@ -220,14 +220,13 @@ public class ComputerDAO implements IComputerDAO{
                 stmt.setLong(1, id);
                 stmt.executeUpdate();
             } catch (SQLException e) {
-                conn.rollback();
                 LOGGER.error("deleteComputers(): {}", e);
                 throw new DAOException("Error while deleting a row.");
             }
         }
     }
 
-    private int computePageAmountFromQuery(int pageSize, ResultSet rs) throws SQLException {
+    private int computePageAmountFromQuery(int pageSize, ResultSet rs) throws SQLException{
         int pages;
         int count;
         count = rs.getInt("count");
@@ -336,7 +335,7 @@ public class ComputerDAO implements IComputerDAO{
         }
     }
     
-    private Connection getConnection() throws SQLException {
-        return dataSource.getConnection();
+    private Connection getConnection() {
+        return DataSourceUtils.getConnection(dataSource);
     }
 }
