@@ -143,8 +143,8 @@ public class ComputerDAO implements IComputerDAO {
 
     public int getComputerListPageTotalAmount(int pageSize, String search) throws DAOException {
         LOGGER.info("Computer DAO : page number");
-        return (Integer) jdbcTemplate.queryForObject(SELECT_COUNT_SEARCH, new Object[] { search },
-                (resultSet, rowNum) -> {
+        return (Integer) jdbcTemplate.queryForObject(SELECT_COUNT_SEARCH,
+                new Object[] { new StringBuilder("%").append(search).append("%").toString() }, (resultSet, rowNum) -> {
                     return Integer.valueOf(computePageAmountFromQuery(pageSize, resultSet));
                 });
     }
@@ -241,7 +241,6 @@ public class ComputerDAO implements IComputerDAO {
         return String.format(originalRequest, request);
 
     }
-
 
     private int prepareAndRetrieveComputerCount(PreparedStatement stmt, String search) throws SQLException {
         int count;

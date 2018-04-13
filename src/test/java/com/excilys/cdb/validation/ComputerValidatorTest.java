@@ -25,20 +25,20 @@ public class ComputerValidatorTest {
     @Autowired
     private MockDataBase mockDataBase;
 
+    @Autowired
+    private IComputerValidator validator;
+
+    public ComputerValidatorTest() {
+    }
+
     @After
     public void destroy() {
         mockDataBase.removeDataBase();
     }
-
+    
     @Before
     public void setUp() {
         mockDataBase.createDatabase();
-    }
-
-    @Autowired
-    private IComputerValidator validator;
-    
-    public ComputerValidatorTest() {
     }
 
     @Test(expected = NotExistingCompanyException.class)
