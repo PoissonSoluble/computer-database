@@ -1,9 +1,9 @@
 package com.excilys.cdb.dao;
 
-import java.sql.Connection;
-import java.sql.SQLException;
 import java.util.List;
 import java.util.Optional;
+
+import org.springframework.dao.DataAccessException;
 
 import com.excilys.cdb.model.Computer;
 
@@ -34,5 +34,5 @@ public interface IComputerDAO {
 
     public void updateComputer(Computer computer) throws DAOException;
     
-    public void deleteComputerFromCompany(Long companyId, Connection conn) throws SQLException, DAOException;
+    public void deleteComputerFromCompany(Long companyId) throws DataAccessException;
 }
