@@ -91,6 +91,18 @@ public class ComputerDAOTest {
         assertEquals(computerDAO.getComputerListPageTotalAmount(10), 10);
     }
 
+
+    @Test
+    public void testComputerAmount() throws DAOException {
+        assertEquals(computerDAO.getComputerAmount(), 100);
+    }
+    
+
+    @Test
+    public void testComputerAmountSearch() throws DAOException {
+        assertEquals(computerDAO.getComputerAmount("Computer 1"), 12);
+    }
+    
     @Test
     public void testMultipleDelete() throws DAOException {
         List<Long> ids = new ArrayList<>();

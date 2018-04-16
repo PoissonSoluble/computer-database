@@ -5,7 +5,6 @@ import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -17,9 +16,10 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.datasource.DataSourceUtils;
 import org.springframework.stereotype.Repository;
 
 import com.excilys.cdb.mapper.IComputerMapper;
@@ -29,7 +29,6 @@ import com.excilys.cdb.model.Computer;
 @Repository("computerDAO")
 public class ComputerDAO implements IComputerDAO {
 
-    private DataSource dataSource;
     private IComputerMapper computerMapper;
     private JdbcTemplate jdbcTemplate;
     private final static Logger LOGGER = LoggerFactory.getLogger(ComputerDAO.class);
@@ -47,35 +46,28 @@ public class ComputerDAO implements IComputerDAO {
 
     @Autowired
     public ComputerDAO(DataSource pDataSource, IComputerMapper pComputerMapper) {
-        dataSource = pDataSource;
         computerMapper = pComputerMapper;
-    }
-
-    @Autowired
-    public void setDataSource(DataSource dataSource) {
-        jdbcTemplate = new JdbcTemplate(dataSource);
+        jdbcTemplate = new JdbcTemplate(pDataSource);
     }
 
     public Optional<Long> createComputer(Computer computer) throws DAOException {
         LOGGER.info("Computer DAO : creation");
-        try (Connection conn = getConnection();
-                PreparedStatement stmt = conn.prepareStatement(INSERT, Statement.RETURN_GENERATED_KEYS);) {
-            setParameters(computer, stmt);
-            stmt.executeUpdate();
-            retrieveComputerIDFromUpdate(computer, stmt);
-        } catch (SQLException e) {
-            LOGGER.error("createComputer(): {}", e);
-            throw new DAOException("Error while creating the computer.");
+        try {
+            return Optional.ofNullable(Integer.toUnsignedLong(jdbcTemplate.update(INSERT, preparedStatement -> {
+                setParameters(computer, preparedStatement);
+            })));
+        } catch (DataAccessException e) {
+            LOGGER.error("createComputer(Computer): {}", e);
+            e.printStackTrace();
+            throw new DAOException("Error while inserting the computer.");
         }
-        return computer.getId();
     }
 
     public void deleteComputer(Long id) throws DAOException {
         LOGGER.info("Computer DAO : deletion");
-        try (Connection conn = getConnection(); PreparedStatement stmt = conn.prepareStatement(DELETE);) {
-            stmt.setLong(1, id);
-            stmt.executeUpdate();
-        } catch (SQLException e) {
+        try {
+            jdbcTemplate.update(DELETE, new Object[] { id });
+        } catch (DataAccessException e) {
             LOGGER.error("deleteComputer(): {}", e);
             throw new DAOException("Error while removing the computer.");
         }
@@ -83,77 +75,99 @@ public class ComputerDAO implements IComputerDAO {
 
     public void deleteComputers(List<Long> ids) throws DAOException {
         LOGGER.info("Computer DAO : deletion (multiple)");
-        Connection conn = getConnection();
         try {
-            applyDeletionOnList(ids, conn);
-        } catch (SQLException e) {
+            jdbcTemplate.batchUpdate(DELETE, new BatchPreparedStatementSetter() {
+                public void setValues(PreparedStatement ps, int i) throws SQLException {
+                    ps.setLong(1, ids.get(i));
+                }
+
+                public int getBatchSize() {
+                    return ids.size();
+                }
+            });
+        } catch (DataAccessException e) {
             LOGGER.error("deleteComputers(): {}", e);
-            throw new DAOException("Error while initiating the connection.");
+            throw new DAOException("Error while deleting a row.");
         }
     }
 
     public Optional<Computer> getComputer(Long id) throws DAOException {
         LOGGER.info("Computer DAO : get");
-        Computer computer = null;
-        try (Connection conn = getConnection(); PreparedStatement stmt = conn.prepareStatement(SELECT_FROM_ID);) {
-            stmt.setLong(1, id);
-            try (ResultSet rs = stmt.executeQuery();) {
-                computer = retrieveComputerFromQuery(stmt);
-            }
-        } catch (SQLException e) {
+        try {
+            return jdbcTemplate.queryForObject(SELECT_FROM_ID, new Object[] { id },
+                    (resultSet, rowNum) -> retrieveComputerFromQuery(resultSet));
+        } catch (EmptyResultDataAccessException e) {
+            return Optional.empty();
+        } catch (DataAccessException e) {
             LOGGER.error("getComputer(Long): {}", e);
             throw new DAOException("Error while getting the computer.");
         }
-        return Optional.ofNullable(computer);
     }
 
     public int getComputerAmount() throws DAOException {
         LOGGER.info("Computer DAO : count");
-        int count = 0;
-        try (Connection conn = getConnection();
-                PreparedStatement stmt = conn.prepareStatement(SELECT_COUNT);
-                ResultSet rs = stmt.executeQuery();) {
-            rs.next();
-            count = rs.getInt("count");
-        } catch (SQLException e) {
-            LOGGER.error("getComputerListPageTotalAmount(int): {}", e);
-            throw new DAOException("Error while getting the number of computers.");
+        try {
+            return jdbcTemplate.query(SELECT_COUNT, (resultSet, rowNum) -> resultSet.getInt("count")).get(0);
+        } catch (DataAccessException e) {
+            LOGGER.error("getComputerAmount(): {}", e);
+            throw new DAOException("Error while getting computer count.");
         }
-        return count;
     }
 
     public int getComputerAmount(String search) throws DAOException {
-        LOGGER.info("Computer DAO : count");
-        int count = 0;
         if (StringUtils.isBlank(search)) {
             return getComputerAmount();
         }
-        try (Connection conn = getConnection(); PreparedStatement stmt = conn.prepareStatement(SELECT_COUNT_SEARCH);) {
-            count = prepareAndRetrieveComputerCount(stmt, search);
-        } catch (SQLException e) {
-            LOGGER.error("getComputerListPageTotalAmount(int): {}", e);
-            throw new DAOException("Error while getting the number of computers.");
+        LOGGER.info("Computer DAO : count");
+        try {
+            return jdbcTemplate.queryForObject(SELECT_COUNT_SEARCH,
+                    new Object[] { new StringBuilder("%").append(search).append("%").toString() },
+                    (resultSet, rowNum) -> resultSet.getInt("count"));
+        } catch (DataAccessException e) {
+            LOGGER.error("getComputerAmount(String): {}", e);
+            throw new DAOException("Error while getting computer count whith search.");
         }
-        return count;
     }
 
     public int getComputerListPageTotalAmount(int pageSize) throws DAOException {
-        return getComputerListPageTotalAmount(pageSize, "");
+        LOGGER.info("Computer DAO : page number");
+        try {
+            return jdbcTemplate.query(SELECT_COUNT, (resultSet, rowNum) -> {
+                return Integer.valueOf(computePageAmountFromQuery(pageSize, resultSet));
+            }).get(0);
+        } catch (DataAccessException e) {
+            LOGGER.error("getComputerListPageTotalAmount(int): {}", e);
+            throw new DAOException("Error while getting computer page count.");
+        }
     }
 
     public int getComputerListPageTotalAmount(int pageSize, String search) throws DAOException {
+        if (StringUtils.isBlank(search)) {
+            return getComputerListPageTotalAmount(pageSize);
+        }
         LOGGER.info("Computer DAO : page number");
-        return (Integer) jdbcTemplate.queryForObject(SELECT_COUNT_SEARCH,
-                new Object[] { new StringBuilder("%").append(search).append("%").toString() }, (resultSet, rowNum) -> {
-                    return Integer.valueOf(computePageAmountFromQuery(pageSize, resultSet));
-                });
+        try {
+            return (Integer) jdbcTemplate.queryForObject(SELECT_COUNT_SEARCH,
+                    new Object[] { new StringBuilder("%").append(search).append("%").toString() },
+                    (resultSet, rowNum) -> {
+                        return Integer.valueOf(computePageAmountFromQuery(pageSize, resultSet));
+                    });
+        } catch (DataAccessException e) {
+            LOGGER.error("getComputerListPageTotalAmount(int, String): {}", e);
+            throw new DAOException("Error while getting computer page count whith search.");
+        }
     }
 
     public List<Computer> listComputers() throws DAOException {
         LOGGER.info("Computer DAO : list");
-        return (List<Computer>) jdbcTemplate.queryForObject(SELECT_ALL, (resultSet, rowNum) -> {
-            return retrieveComputersFromQuery(resultSet);
-        });
+        try {
+            return (List<Computer>) jdbcTemplate.queryForObject(SELECT_ALL, (resultSet, rowNum) -> {
+                return retrieveComputersFromQuery(resultSet);
+            });
+        } catch (DataAccessException e) {
+            LOGGER.error("listComputers(): {}", e);
+            throw new DAOException("Error while listing computers.");
+        }
     }
 
     public List<Computer> listComputersByPage(int pageNumber, int pageSize, ComputerOrdering order, boolean ascending)
@@ -168,16 +182,19 @@ public class ComputerDAO implements IComputerDAO {
                     });
         } catch (EmptyResultDataAccessException e) {
             throw new PageOutOfBoundsException();
+        } catch (DataAccessException e) {
+            LOGGER.error("listComputersByPage(int, int, ComputerOrdering, boolean): {}", e);
+            throw new DAOException("Error while listing computer page.");
         }
     }
 
     public List<Computer> listComputersByPage(int pageNumber, int pageSize, String search, ComputerOrdering order,
             boolean ascending) throws PageOutOfBoundsException, DAOException {
-        LOGGER.info(new StringBuilder("Computer DAO : page (").append(pageNumber).append(",").append(pageSize)
-                .append(")").toString());
         if (StringUtils.isBlank(search)) {
             return listComputersByPage(pageNumber, pageSize, order, ascending);
         }
+        LOGGER.info(new StringBuilder("Computer DAO : page (").append(pageNumber).append(",").append(pageSize)
+                .append(")").toString());
         try {
             return (List<Computer>) jdbcTemplate.queryForObject(
                     constructPageRequest(order, ascending, SELECT_PAGE_SEARCH),
@@ -188,18 +205,22 @@ public class ComputerDAO implements IComputerDAO {
                     });
         } catch (EmptyResultDataAccessException e) {
             throw new PageOutOfBoundsException();
+        } catch (DataAccessException e) {
+            LOGGER.error("listComputersByPage(int, int, search, ComputerOrdering, boolean): {}", e);
+            throw new DAOException("Error while listing computer page with search.");
         }
     }
 
     public void updateComputer(Computer computer) throws DAOException {
         LOGGER.info("Computer DAO : update");
-        try (Connection conn = getConnection(); PreparedStatement stmt = conn.prepareStatement(UPDATE);) {
-            setParameters(computer, stmt);
-            stmt.setLong(5, computer.getId().orElseThrow(() -> new DAOException("Id is null.")));
-            stmt.executeUpdate();
-        } catch (SQLException e) {
+        try {
+            jdbcTemplate.update(UPDATE, preparedStatement -> {
+                setParameters(computer, preparedStatement);
+                preparedStatement.setLong(5, computer.getId().orElseThrow(() -> new SQLException()));
+            });
+        } catch (DataAccessException e) {
             LOGGER.error("updateComputer(Computer): {}", e);
-            throw new DAOException("Error while updating the computer.");
+            throw new DAOException("Error while updating computer.");
         }
     }
 
@@ -209,18 +230,6 @@ public class ComputerDAO implements IComputerDAO {
             stmt.setDate(parameterIndex, Date.valueOf(date.get()));
         } else {
             stmt.setNull(parameterIndex, java.sql.Types.DATE);
-        }
-    }
-
-    private void applyDeletionOnList(List<Long> ids, Connection conn) throws SQLException, DAOException {
-        for (Long id : ids) {
-            try (PreparedStatement stmt = conn.prepareStatement(DELETE)) {
-                stmt.setLong(1, id);
-                stmt.executeUpdate();
-            } catch (SQLException e) {
-                LOGGER.error("deleteComputers(): {}", e);
-                throw new DAOException("Error while deleting a row.");
-            }
         }
     }
 
@@ -242,34 +251,12 @@ public class ComputerDAO implements IComputerDAO {
 
     }
 
-    private int prepareAndRetrieveComputerCount(PreparedStatement stmt, String search) throws SQLException {
-        int count;
-        stmt.setString(1, new StringBuilder("%").append(search).append("%").toString());
-        try (ResultSet rs = stmt.executeQuery();) {
-            rs.next();
-            count = rs.getInt("count");
-        }
-        return count;
-    }
-
-    private Computer retrieveComputerFromQuery(PreparedStatement stmt) throws SQLException {
-        try (ResultSet rs = stmt.executeQuery();) {
-            if (rs.next()) {
-                return computerMapper.createComputer(rs.getLong(1), rs.getString(2), rs.getDate(3), rs.getDate(4),
-                        rs.getLong(5), rs.getString(6));
-            }
-        }
-        return null;
-    }
-
-    private void retrieveComputerIDFromUpdate(Computer computer, PreparedStatement stmt) throws SQLException {
-        try (ResultSet generatedKeys = stmt.getGeneratedKeys()) {
-            if (generatedKeys.next()) {
-                computer.setId(generatedKeys.getLong(1));
-            } else {
-                computer.setId(null);
-                throw new SQLException("Creating user failed, no ID obtained.");
-            }
+    private Optional<Computer> retrieveComputerFromQuery(ResultSet rs) throws SQLException {
+        try {
+            return Optional.ofNullable(computerMapper.createComputer(rs.getLong(1), rs.getString(2), rs.getDate(3),
+                    rs.getDate(4), rs.getLong(5), rs.getString(6)));
+        } catch (SQLException e) {
+            return Optional.empty();
         }
     }
 
@@ -300,9 +287,5 @@ public class ComputerDAO implements IComputerDAO {
             stmt.setLong(1, companyId);
             stmt.executeUpdate();
         }
-    }
-
-    private Connection getConnection() {
-        return DataSourceUtils.getConnection(dataSource);
     }
 }
