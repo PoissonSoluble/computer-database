@@ -19,7 +19,7 @@ import com.excilys.cdb.mockdb.MockDataBase;
 import com.excilys.cdb.model.Company;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations= {"/applicationContext.xml"})
+@ContextConfiguration(locations = { "/applicationContext.xml" })
 public class CompanyDAOTest {
     @Autowired
     private ICompanyDAO companyDAO;
@@ -39,30 +39,30 @@ public class CompanyDAOTest {
     }
 
     @Test
-    public void testListCompanies() throws DAOException {
+    public void testListCompanies() {
         assertEquals(companyDAO.listCompanies().size(), 20);
     }
 
     @Test
-    public void testPage() throws PageOutOfBoundsException, DAOException {
+    public void testPage() throws PageOutOfBoundsException {
         assertEquals(companyDAO.listCompaniesByPage(1, 10).size(), 10);
     }
 
     @Test(expected = PageOutOfBoundsException.class)
-    public void testPageOutOfBounds() throws PageOutOfBoundsException, DAOException {
+    public void testPageOutOfBounds() throws PageOutOfBoundsException {
         companyDAO.listCompaniesByPage(3, 10);
     }
 
     @Test
-    public void testGetCompany() throws NoSuchElementException, DAOException{
+    public void testGetCompany() throws NoSuchElementException {
         Optional<Company> companyOpt = companyDAO.getCompany(2L);
         assertTrue(companyOpt.isPresent());
         assertEquals(companyOpt.get().getId().get(), new Long(2));
         assertEquals(companyOpt.get().getName().get(), "Company 2");
     }
-    
+
     @Test
-    public void testDelete() throws NoSuchElementException, DAOException{
+    public void testDelete() throws NoSuchElementException {
         companyDAO.deleteCompany(2L);
         assertFalse(companyDAO.getCompany(2L).isPresent());
         assertFalse(computerDAO.getComputer(2L).isPresent());

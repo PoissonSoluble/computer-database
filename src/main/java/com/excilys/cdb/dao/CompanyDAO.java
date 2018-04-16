@@ -11,7 +11,6 @@ import javax.sql.DataSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
@@ -41,24 +40,14 @@ public class CompanyDAO implements ICompanyDAO {
     }
 
     @Override
-    public void deleteCompany(Long id) throws DAOException {
+    public void deleteCompany(Long id) {
         LOGGER.info("Company DAO : delete");
-        try {
-            computerDAO.deleteComputerFromCompany(id);
-            jdbcTemplate.update(DELETE_COMPANY, new Object[] { id });
-        } catch (DataAccessException e) {
-            LOGGER.error("deleteCompany : {}", e);
-            throw new DAOException("Error while deleting the company.");
-        }
+        computerDAO.deleteComputerFromCompany(id);
+        jdbcTemplate.update(DELETE_COMPANY, new Object[] { id });
     }
 
     @Override
-    public Optional<Company> getCompany(Company company) throws DAOException {
-        return getCompany(company.getId().orElseThrow(() -> new DAOException("The id is null.")));
-    }
-
-    @Override
-    public Optional<Company> getCompany(Long id) throws DAOException {
+    public Optional<Company> getCompany(Long id) {
         LOGGER.info("Company DAO : get");
         try {
             return jdbcTemplate.queryForObject(SELECT_FROM_ID, new Object[] { id },
@@ -69,7 +58,7 @@ public class CompanyDAO implements ICompanyDAO {
     }
 
     @Override
-    public int getCompanyListPageTotalAmount(int pageSize) throws DAOException {
+    public int getCompanyListPageTotalAmount(int pageSize) {
         LOGGER.info("Company DAO : page number");
         return jdbcTemplate.query(SELECT_COUNT, (resultSet, rowNum) -> {
             return Integer.valueOf(computePageAmountFromQuery(pageSize, resultSet));
@@ -77,7 +66,7 @@ public class CompanyDAO implements ICompanyDAO {
     }
 
     @Override
-    public List<Company> listCompanies() throws DAOException {
+    public List<Company> listCompanies() {
         LOGGER.info("Company DAO : list");
         return jdbcTemplate.query(SELECT_ALL, (resultSet, rowNum) -> {
             return retrieveCompanyFromQuery(resultSet).orElse(new Company());
@@ -85,8 +74,7 @@ public class CompanyDAO implements ICompanyDAO {
     }
 
     @Override
-    public List<Company> listCompaniesByPage(int pageNumber, int pageSize)
-            throws PageOutOfBoundsException, DAOException {
+    public List<Company> listCompaniesByPage(int pageNumber, int pageSize) throws PageOutOfBoundsException {
         LOGGER.info(new StringBuilder("Company DAO : page (").append(pageNumber).append(",").append(pageSize)
                 .append(")").toString());
         List<Company> companies = jdbcTemplate.query(SELECT_A_PAGE, preparedStatement -> {
@@ -94,8 +82,8 @@ public class CompanyDAO implements ICompanyDAO {
         }, (resultSet, rowNum) -> {
             return retrieveCompanyFromQuery(resultSet).orElse(new Company());
         });
-        
-        if(companies.isEmpty()) {
+
+        if (companies.isEmpty()) {
             throw new PageOutOfBoundsException();
         }
         return companies;

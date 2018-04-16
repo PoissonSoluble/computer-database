@@ -9,7 +9,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.excilys.cdb.dao.DAOException;
 import com.excilys.cdb.dao.ICompanyDAO;
 import com.excilys.cdb.dao.PageOutOfBoundsException;
 import com.excilys.cdb.model.Company;
@@ -24,58 +23,37 @@ public class CompanyService implements ICompanyService {
     public CompanyService(ICompanyDAO pCompanyDAO) {
         companyDAO = pCompanyDAO;
     }
-    
+
     @Override
-    @Transactional(rollbackFor=Exception.class)
+    @Transactional(rollbackFor = Exception.class)
     public void deleteCompany(Long id) {
-        try {
-            companyDAO.deleteCompany(id);
-            LOGGER.info(new StringBuilder("Company removal : ").append(id).toString());
-        } catch (DAOException e) {
-            LOGGER.debug("deleteCompany : {}", e);
-        }
+        companyDAO.deleteCompany(id);
+        LOGGER.info(new StringBuilder("Company removal : ").append(id).toString());
+
     }
 
     @Override
     public boolean exists(Long id) {
-        try {
-            return companyDAO.getCompany(id).isPresent();
-        } catch (DAOException e) {
-            LOGGER.debug("exists : {}", e);
-            return false;
-        }
+        return companyDAO.getCompany(id).isPresent();
     }
 
     @Override
-    public List<Company> getCompanies() throws ServiceException {
-        try {
-            return companyDAO.listCompanies();
-        } catch (DAOException e) {
-            LOGGER.debug("getCompanies : {}", e);
-            throw new ServiceException("Error while retrieving the companies.");
-        }
+    public List<Company> getCompanies() {
+        return companyDAO.listCompanies();
     }
 
     @Override
-    public int getCompanyListPageTotalAmount(int pageSize) throws ServiceException {
-        try {
-            return companyDAO.getCompanyListPageTotalAmount(pageSize);
-        } catch (DAOException e) {
-            LOGGER.debug("getCompanyListPageTotalAmount : {}", e);
-            throw new ServiceException("Error while retrieving total page number.");
-        }
+    public int getCompanyListPageTotalAmount(int pageSize) {
+        return companyDAO.getCompanyListPageTotalAmount(pageSize);
     }
 
     @Override
-    public List<Company> getCompanyPage(int page, int pageSize, String search) throws ServiceException {
+    public List<Company> getCompanyPage(int page, int pageSize, String search) {
         try {
             /* TODO : implement search */
             return companyDAO.listCompaniesByPage(page, pageSize);
         } catch (PageOutOfBoundsException e) {
             return new ArrayList<>();
-        } catch (DAOException e) {
-            LOGGER.debug("getCompanyPage : {}", e);
-            throw new ServiceException("Error while retrieving page.");
         }
     }
 }

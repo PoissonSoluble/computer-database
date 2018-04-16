@@ -15,7 +15,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -52,7 +51,7 @@ public class ComputerDAO implements IComputerDAO {
     }
 
     @Override
-    public Optional<Long> createComputer(Computer computer) throws DAOException {
+    public Optional<Long> createComputer(Computer computer){
         LOGGER.info("Computer DAO : creation");
         KeyHolder keyHolder = new GeneratedKeyHolder();
         jdbcTemplate.update(connection -> {
@@ -64,18 +63,18 @@ public class ComputerDAO implements IComputerDAO {
     }
 
     @Override
-    public void deleteComputer(Long id) throws DAOException {
+    public void deleteComputer(Long id){
         LOGGER.info("Computer DAO : deletion");
         jdbcTemplate.update(DELETE, new Object[] { id });
     }
 
     @Override
-    public void deleteComputerFromCompany(Long companyId) throws DataAccessException {
+    public void deleteComputerFromCompany(Long companyId){
         jdbcTemplate.update(DELETE_COMPANY, new Object[] { companyId });
     }
 
     @Override
-    public void deleteComputers(List<Long> ids) throws DAOException {
+    public void deleteComputers(List<Long> ids){
         LOGGER.info("Computer DAO : deletion (multiple)");
         jdbcTemplate.batchUpdate(DELETE, new BatchPreparedStatementSetter() {
             public int getBatchSize() {
@@ -89,7 +88,7 @@ public class ComputerDAO implements IComputerDAO {
     }
 
     @Override
-    public Optional<Computer> getComputer(Long id) throws DAOException {
+    public Optional<Computer> getComputer(Long id){
         LOGGER.info("Computer DAO : get");
         try {
             return jdbcTemplate.queryForObject(SELECT_FROM_ID, new Object[] { id },
@@ -100,13 +99,13 @@ public class ComputerDAO implements IComputerDAO {
     }
 
     @Override
-    public int getComputerAmount() throws DAOException {
+    public int getComputerAmount() {
         LOGGER.info("Computer DAO : count");
         return jdbcTemplate.query(SELECT_COUNT, (resultSet, rowNum) -> resultSet.getInt("count")).get(0);
     }
 
     @Override
-    public int getComputerAmount(String search) throws DAOException {
+    public int getComputerAmount(String search){
         if (StringUtils.isBlank(search)) {
             return getComputerAmount();
         }
@@ -118,7 +117,7 @@ public class ComputerDAO implements IComputerDAO {
     }
 
     @Override
-    public int getComputerListPageTotalAmount(int pageSize) throws DAOException {
+    public int getComputerListPageTotalAmount(int pageSize){
         LOGGER.info("Computer DAO : page number");
         return jdbcTemplate.query(SELECT_COUNT, (resultSet, rowNum) -> {
             return Integer.valueOf(computePageAmountFromQuery(pageSize, resultSet));
@@ -126,7 +125,7 @@ public class ComputerDAO implements IComputerDAO {
     }
 
     @Override
-    public int getComputerListPageTotalAmount(int pageSize, String search) throws DAOException {
+    public int getComputerListPageTotalAmount(int pageSize, String search){
         if (StringUtils.isBlank(search)) {
             return getComputerListPageTotalAmount(pageSize);
         }
@@ -138,7 +137,7 @@ public class ComputerDAO implements IComputerDAO {
     }
 
     @Override
-    public List<Computer> listComputers() throws DAOException {
+    public List<Computer> listComputers(){
         LOGGER.info("Computer DAO : list");
         return jdbcTemplate.query(SELECT_ALL, (resultSet, rowNum) -> {
             return retrieveComputerFromQuery(resultSet);
@@ -147,7 +146,7 @@ public class ComputerDAO implements IComputerDAO {
 
     @Override
     public List<Computer> listComputersByPage(int pageNumber, int pageSize, ComputerOrdering order, boolean ascending)
-            throws PageOutOfBoundsException, DAOException {
+            throws PageOutOfBoundsException {
         LOGGER.info(new StringBuilder("Computer DAO : page (").append(pageNumber).append(",").append(pageSize)
                 .append(")").toString());
         List<Computer> computers = jdbcTemplate.query(constructPageRequest(order, ascending, SELECT_PAGE),
@@ -166,7 +165,7 @@ public class ComputerDAO implements IComputerDAO {
 
     @Override
     public List<Computer> listComputersByPage(int pageNumber, int pageSize, String search, ComputerOrdering order,
-            boolean ascending) throws PageOutOfBoundsException, DAOException {
+            boolean ascending) throws PageOutOfBoundsException {
         if (StringUtils.isBlank(search)) {
             return listComputersByPage(pageNumber, pageSize, order, ascending);
         }
@@ -189,7 +188,7 @@ public class ComputerDAO implements IComputerDAO {
     }
 
     @Override
-    public void updateComputer(Computer computer) throws DAOException {
+    public void updateComputer(Computer computer) {
         LOGGER.info("Computer DAO : update");
         jdbcTemplate.update(UPDATE, preparedStatement -> {
             setParameters(computer, preparedStatement);

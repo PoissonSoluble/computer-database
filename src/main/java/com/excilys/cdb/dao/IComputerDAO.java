@@ -3,36 +3,34 @@ package com.excilys.cdb.dao;
 import java.util.List;
 import java.util.Optional;
 
-import org.springframework.dao.DataAccessException;
-
 import com.excilys.cdb.model.Computer;
 
 public interface IComputerDAO {
-    public Optional<Long> createComputer(Computer computer) throws DAOException;
+    public Optional<Long> createComputer(Computer computer);
 
-    public void deleteComputer(Long id) throws DAOException;
+    public void deleteComputer(Long id);
 
-    public void deleteComputers(List<Long> ids) throws DAOException;
+    public void deleteComputers(List<Long> ids);
 
-    public Optional<Computer> getComputer(Long id) throws DAOException;
+    public Optional<Computer> getComputer(Long id);
 
-    public int getComputerAmount() throws DAOException;
+    public int getComputerAmount();
 
-    public int getComputerAmount(String search) throws DAOException;
+    public int getComputerAmount(String search);
 
-    public int getComputerListPageTotalAmount(int pageSize) throws DAOException;
+    public int getComputerListPageTotalAmount(int pageSize);
 
-    public int getComputerListPageTotalAmount(int pageSize, String search) throws DAOException;
+    public int getComputerListPageTotalAmount(int pageSize, String search);
 
-    public List<Computer> listComputers() throws DAOException;
+    public List<Computer> listComputers();
 
     public List<Computer> listComputersByPage(int pageNumber, int pageSize, ComputerOrdering order, boolean ascending)
-            throws PageOutOfBoundsException, DAOException;
+            throws PageOutOfBoundsException;
 
     public List<Computer> listComputersByPage(int pageNumber, int pageSize, String search, ComputerOrdering order,
-            boolean ascending) throws PageOutOfBoundsException, DAOException;
+            boolean ascending) throws PageOutOfBoundsException;
 
-    public void updateComputer(Computer computer) throws DAOException;
+    public void updateComputer(Computer computer);
     
-    public void deleteComputerFromCompany(Long companyId) throws DataAccessException;
+    public void deleteComputerFromCompany(Long companyId);
 }
