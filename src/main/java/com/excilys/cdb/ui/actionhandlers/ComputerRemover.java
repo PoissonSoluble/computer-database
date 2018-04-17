@@ -11,7 +11,6 @@ public class ComputerRemover implements CLIActionHandler {
     private IComputerService computerService;
     private CLIUserInputsAPI cliApi;
 
-    @Autowired
     public ComputerRemover(IComputerService pComputerService, CLIUserInputsAPI pCliApi) {
         computerService = pComputerService;
         cliApi = pCliApi;

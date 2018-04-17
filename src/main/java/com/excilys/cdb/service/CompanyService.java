@@ -5,11 +5,11 @@ import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.excilys.cdb.dao.ICompanyDAO;
+import com.excilys.cdb.dao.IComputerDAO;
 import com.excilys.cdb.dao.PageOutOfBoundsException;
 import com.excilys.cdb.model.Company;
 
@@ -17,19 +17,20 @@ import com.excilys.cdb.model.Company;
 public class CompanyService implements ICompanyService {
 
     private ICompanyDAO companyDAO;
+    private IComputerDAO computerDAO;
     private final Logger LOGGER = LoggerFactory.getLogger(CompanyService.class);
 
-    @Autowired
-    public CompanyService(ICompanyDAO pCompanyDAO) {
+    public CompanyService(ICompanyDAO pCompanyDAO, IComputerDAO pComputerDAO) {
         companyDAO = pCompanyDAO;
+        computerDAO = pComputerDAO;
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void deleteCompany(Long id) {
+        computerDAO.deleteComputerFromCompany(id);
         companyDAO.deleteCompany(id);
         LOGGER.info(new StringBuilder("Company removal : ").append(id).toString());
-
     }
 
     @Override

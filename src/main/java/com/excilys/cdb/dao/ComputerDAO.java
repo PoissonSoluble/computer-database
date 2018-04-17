@@ -15,6 +15,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -44,7 +45,6 @@ public class ComputerDAO implements IComputerDAO {
     private IComputerMapper computerMapper;
     private JdbcTemplate jdbcTemplate;
 
-    @Autowired
     public ComputerDAO(DataSource pDataSource, IComputerMapper pComputerMapper) {
         computerMapper = pComputerMapper;
         jdbcTemplate = new JdbcTemplate(pDataSource);

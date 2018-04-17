@@ -25,7 +25,7 @@ import org.springframework.web.servlet.view.JstlView;
 @ComponentScan(basePackages = "com.excilys.cdb")
 public class WebConfig implements WebMvcConfigurer {
 
-    private final Logger LOGGER = LoggerFactory.getLogger(WebMvcConfigurer.class);
+    private final Logger LOGGER = LoggerFactory.getLogger(WebConfig.class);
     
     @Bean
     public ViewResolver viewResolver() {
@@ -39,9 +39,9 @@ public class WebConfig implements WebMvcConfigurer {
     @Bean
     public DataSource dataSource() {
         Properties properties = new Properties();
+        DriverManagerDataSource dataSource = new DriverManagerDataSource();
         try {
             properties.load(getClass().getClassLoader().getResourceAsStream("config.properties"));
-            DriverManagerDataSource dataSource = new DriverManagerDataSource();
             dataSource.setDriverClassName(properties.getProperty("dbdriver"));
             dataSource.setUrl(properties.getProperty("dburl"));
             dataSource.setUsername(properties.getProperty("dbid"));
@@ -49,7 +49,7 @@ public class WebConfig implements WebMvcConfigurer {
             return dataSource;
         } catch (IOException e) {
             LOGGER.error("dataSource() {}", e);
-            return null;
+            return dataSource;
         }
     }
 

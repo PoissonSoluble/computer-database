@@ -22,7 +22,6 @@ import com.excilys.cdb.model.Company;
 public class CompanyDAO implements ICompanyDAO {
 
     private ICompanyMapper companyMapper;
-    private IComputerDAO computerDAO;
     private JdbcTemplate jdbcTemplate;
 
     private final static Logger LOGGER = LoggerFactory.getLogger(CompanyDAO.class);
@@ -32,17 +31,14 @@ public class CompanyDAO implements ICompanyDAO {
     private final static String SELECT_A_PAGE = "SELECT ca_id, ca_name FROM company ORDER BY ca_id LIMIT ? OFFSET ?";
     private final static String DELETE_COMPANY = "DELETE FROM company WHERE ca_id = ?";
 
-    @Autowired
-    public CompanyDAO(DataSource pDataSource, ICompanyMapper pCompanyMapper, IComputerDAO pComputerDAO) {
+    public CompanyDAO(DataSource pDataSource, ICompanyMapper pCompanyMapper) {
         companyMapper = pCompanyMapper;
-        computerDAO = pComputerDAO;
         jdbcTemplate = new JdbcTemplate(pDataSource);
     }
 
     @Override
     public void deleteCompany(Long id) {
         LOGGER.info("Company DAO : delete");
-        computerDAO.deleteComputerFromCompany(id);
         jdbcTemplate.update(DELETE_COMPANY, new Object[] { id });
     }
 

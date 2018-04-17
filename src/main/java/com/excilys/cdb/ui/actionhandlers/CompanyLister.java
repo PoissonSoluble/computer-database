@@ -19,7 +19,6 @@ public class CompanyLister implements CLIActionHandler {
     private final int PAGE_SIZE = 20;
     private Page<Company> page;
 
-    @Autowired
     public CompanyLister(ICompanyService pCompanyService) {
         companyService = pCompanyService;
     }

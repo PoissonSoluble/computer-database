@@ -12,22 +12,26 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.support.AnnotationConfigContextLoader;
 
+import com.excilys.cdb.config.AppConfig;
 import com.excilys.cdb.mockdb.MockDataBase;
 import com.excilys.cdb.model.Company;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = { "/applicationContext.xml" })
+@ContextConfiguration(classes=AppConfig.class, loader=AnnotationConfigContextLoader.class)
+@ActiveProfiles("cli")
 public class CompanyDAOTest {
     @Autowired
     private ICompanyDAO companyDAO;
     @Autowired
     private IComputerDAO computerDAO;
     @Autowired
-    private MockDataBase mockDataBase;
-
+    private MockDataBase mockDataBase;   
+    
     @After
     public void destroy() {
         mockDataBase.removeDataBase();
@@ -63,6 +67,7 @@ public class CompanyDAOTest {
 
     @Test
     public void testDelete() throws NoSuchElementException {
+        computerDAO.deleteComputerFromCompany(2L);
         companyDAO.deleteCompany(2L);
         assertFalse(companyDAO.getCompany(2L).isPresent());
         assertFalse(computerDAO.getComputer(2L).isPresent());

@@ -5,9 +5,10 @@ import java.util.stream.Stream;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.stereotype.Controller;
 
+import com.excilys.cdb.config.AppConfig;
 import com.excilys.cdb.ui.actionhandlers.CompanyLister;
 import com.excilys.cdb.ui.actionhandlers.CompanyRemover;
 import com.excilys.cdb.ui.actionhandlers.ComputerCreator;
@@ -22,24 +23,31 @@ import com.excilys.cdb.ui.actionhandlers.ExitHandler;
 public class CommandLineInterface {
 
     private static Scanner sc;
-    @Autowired
+
     private ComputerLister computerLister;
-    @Autowired
     private CompanyLister companyLister;
-    @Autowired
     private ComputerCreator computerCreator;
-    @Autowired
     private ComputerItemizer computerItemizer;
-    @Autowired
     private ComputerModifier computerModifier;
-    @Autowired
     private ComputerRemover computerRemover;
-    @Autowired
     private CompanyRemover companyRemover;
-    @Autowired
     private DefaultHandler defautlHandler;
-    @Autowired
     private ExitHandler exitHandler;
+
+    public CommandLineInterface(ComputerLister pComputerLister, CompanyLister pCompanyLister,
+            ComputerCreator pComputerCreator, ComputerItemizer pComputerItemizer, ComputerModifier pComputerModifier,
+            ComputerRemover pComputerRemover, CompanyRemover pCompanyRemover, DefaultHandler pDefaultHandler,
+            ExitHandler pExitHandler) {
+        computerLister = pComputerLister;
+        companyLister = pCompanyLister;
+        computerCreator = pComputerCreator;
+        computerItemizer = pComputerItemizer;
+        computerModifier = pComputerModifier;
+        computerRemover = pComputerRemover;
+        companyRemover = pCompanyRemover;
+        defautlHandler = pDefaultHandler;
+        exitHandler = pExitHandler;
+    }
 
     public static String getUserInput() {
         return sc.nextLine();
@@ -47,7 +55,7 @@ public class CommandLineInterface {
 
     public static void main(String[] args) {
         @SuppressWarnings("resource")
-        ApplicationContext context = new ClassPathXmlApplicationContext("applicationContext.xml");
+        ApplicationContext context = new AnnotationConfigApplicationContext(AppConfig.class);
         context.getBean(CommandLineInterface.class).start();
     }
 
@@ -64,7 +72,7 @@ public class CommandLineInterface {
                 .handleChoice();
 
     }
-    
+
     public void setHandlers() {
         UserChoice.LIST_COMPUTERS.setHandler(computerLister);
         UserChoice.LIST_COMPANIES.setHandler(companyLister);

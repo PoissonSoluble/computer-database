@@ -16,7 +16,6 @@ public class ComputerCreator implements CLIActionHandler {
     private IComputerService computerService;
     private CLIUserInputsAPI cliApi;
 
-    @Autowired
     public ComputerCreator(IComputerService pComputerService, CLIUserInputsAPI pCliApi) {
         computerService = pComputerService;
         cliApi = pCliApi;

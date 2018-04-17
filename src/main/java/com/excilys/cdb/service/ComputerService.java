@@ -24,7 +24,6 @@ public class ComputerService implements IComputerService {
     private IComputerValidator computerValidator;
     private final Logger LOGGER = LoggerFactory.getLogger(ComputerService.class);
 
-    @Autowired
     public ComputerService(IComputerDAO pComputerDAO, IComputerValidator pComputerValidator) {
         computerDAO = pComputerDAO;
         computerValidator = pComputerValidator;

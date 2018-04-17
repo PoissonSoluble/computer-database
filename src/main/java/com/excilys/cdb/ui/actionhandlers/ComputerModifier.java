@@ -16,7 +16,6 @@ public class ComputerModifier implements CLIActionHandler {
     private IComputerService computerService;
     private CLIUserInputsAPI cliApi;
 
-    @Autowired
     public ComputerModifier(IComputerService pComputerService, CLIUserInputsAPI pCliApi) {
         computerService = pComputerService;
         cliApi = pCliApi;

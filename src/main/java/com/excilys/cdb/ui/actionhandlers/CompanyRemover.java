@@ -11,7 +11,6 @@ public class CompanyRemover implements CLIActionHandler {
     private ICompanyService companyService;
     private CLIUserInputsAPI cliApi;
 
-    @Autowired
     public CompanyRemover(ICompanyService pCompanyService, CLIUserInputsAPI pCliApi) {
         companyService = pCompanyService;
         cliApi = pCliApi;

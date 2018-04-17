@@ -20,7 +20,6 @@ public class ComputerLister implements CLIActionHandler {
     private final int PAGE_SIZE = 20;
     private Page<Computer> page;
 
-    @Autowired
     public ComputerLister(IComputerService pComputerService) {
         computerService = pComputerService;
     }

@@ -7,9 +7,12 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.support.AnnotationConfigContextLoader;
 
+import com.excilys.cdb.config.AppConfig;
 import com.excilys.cdb.mockdb.MockDataBase;
 import com.excilys.cdb.model.Company;
 import com.excilys.cdb.model.Computer;
@@ -19,7 +22,8 @@ import com.excilys.cdb.validation.exceptions.NullNameException;
 import com.excilys.cdb.validation.exceptions.ValidationException;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations= {"/applicationContext.xml"})
+@ContextConfiguration(classes=AppConfig.class, loader=AnnotationConfigContextLoader.class)
+@ActiveProfiles("cli")
 public class ComputerValidatorTest {
     
     @Autowired

@@ -19,7 +19,6 @@ public class ComputerItemizer implements CLIActionHandler {
     private IComputerService computerService;
     private CLIUserInputsAPI cliApi;
 
-    @Autowired
     public ComputerItemizer(IComputerService pComputerService, CLIUserInputsAPI pCliApi) {
         computerService = pComputerService;
         cliApi = pCliApi;
