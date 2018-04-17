@@ -20,14 +20,14 @@
     <hsqldb.version>2.4.0</hsqldb.version>
     <sqltool.version>2.4.0</sqltool.version>
     <!-- compile -->
-    <javax-servlet.version>3.1.0</javax-servlet.version>
+    <javax-servlet.version>4.0.0</javax-servlet.version>
     <!-- logs -->
     <slf4j.version>1.7.25</slf4j.version>
     <logback.version>1.2.3</logback.version>
     <!-- runtime -->
     <mysql.version>5.1.6</mysql.version>
     <mysql-jdbc.version>8.0.8-dmr</mysql-jdbc.version>
-    <mojo.version>1.2.1</mojo.version>
+    <mojo.version>1.6.0</mojo.version>
     <hikaricp.version>2.7.8</hikaricp.version>
     <!-- server -->
     <tomcat7-maven.version>2.2</tomcat7-maven.version>
@@ -128,6 +128,11 @@
     <dependency>
       <groupId>org.springframework</groupId>
       <artifactId>spring-web</artifactId>
+      <version>${spring-framework.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-webmvc</artifactId>
       <version>${spring-framework.version}</version>
     </dependency>
     <dependency>

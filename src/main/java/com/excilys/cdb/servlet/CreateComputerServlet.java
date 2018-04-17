@@ -31,7 +31,7 @@ import com.excilys.cdb.validation.exceptions.NotExistingCompanyException;
 import com.excilys.cdb.validation.exceptions.NullNameException;
 import com.excilys.cdb.validation.exceptions.ValidationException;
 
-@WebServlet(name = "CreateComputerServlet", urlPatterns = "/addComputer")
+//@WebServlet(name = "CreateComputerServlet", urlPatterns = "/addComputer")
 public class CreateComputerServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
 

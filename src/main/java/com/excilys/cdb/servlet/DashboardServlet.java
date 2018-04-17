@@ -23,7 +23,7 @@ import com.excilys.cdb.pagination.ComputerPage;
 import com.excilys.cdb.service.IComputerService;
 import com.excilys.cdb.service.ServiceException;
 
-@WebServlet(name = "DashboardServlet", urlPatterns = "/dashboard")
+//@WebServlet(name = "DashboardServlet", urlPatterns = "/dashboard")
 public class DashboardServlet extends HttpServlet {
 
     private static final long serialVersionUID = -3346293799223556529L;
@@ -109,11 +109,7 @@ public class DashboardServlet extends HttpServlet {
             search = "";
         }
         request.setAttribute("search", search);
-        try {
-            request.setAttribute("computerAmount", computerService.getComputerAmount(search));
-        } catch (ServiceException e) {
-            request.setAttribute("computerAmount", 0);
-        }
+        request.setAttribute("computerAmount", computerService.getComputerAmount(search));
         request.setAttribute("pageSize", pageSize);
         request.setAttribute("order", order.toString());
         request.setAttribute("ascending", ascending);

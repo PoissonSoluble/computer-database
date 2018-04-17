@@ -19,7 +19,7 @@ public interface IComputerService {
 
     Optional<Computer> getComputer(Long id);
 
-    int getComputerAmount(String search) throws ServiceException;
+    int getComputerAmount(String search);
 
     int getComputerListPageTotalAmount(int pageSize, String search) throws ServiceException;
 

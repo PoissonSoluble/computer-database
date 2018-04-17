@@ -16,7 +16,7 @@ import org.springframework.web.context.support.SpringBeanAutowiringSupport;
 
 import com.excilys.cdb.service.IComputerService;
 
-@WebServlet(name = "DeleteComputerServlet", urlPatterns = "/deleteComputer")
+//@WebServlet(name = "DeleteComputerServlet", urlPatterns = "/deleteComputer")
 public class DeleteComputerServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
     @Autowired

@@ -61,7 +61,7 @@ public class ComputerService implements IComputerService {
     }
 
     @Override
-    public int getComputerAmount(String search) throws ServiceException {
+    public int getComputerAmount(String search) {
         return computerDAO.getComputerAmount(search);
     }
 
