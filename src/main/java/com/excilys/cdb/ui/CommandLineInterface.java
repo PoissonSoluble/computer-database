@@ -24,29 +24,19 @@ public class CommandLineInterface {
 
     private static Scanner sc;
 
-    private ComputerLister computerLister;
-    private CompanyLister companyLister;
-    private ComputerCreator computerCreator;
-    private ComputerItemizer computerItemizer;
-    private ComputerModifier computerModifier;
-    private ComputerRemover computerRemover;
-    private CompanyRemover companyRemover;
-    private DefaultHandler defautlHandler;
-    private ExitHandler exitHandler;
-
-    public CommandLineInterface(ComputerLister pComputerLister, CompanyLister pCompanyLister,
-            ComputerCreator pComputerCreator, ComputerItemizer pComputerItemizer, ComputerModifier pComputerModifier,
-            ComputerRemover pComputerRemover, CompanyRemover pCompanyRemover, DefaultHandler pDefaultHandler,
-            ExitHandler pExitHandler) {
-        computerLister = pComputerLister;
-        companyLister = pCompanyLister;
-        computerCreator = pComputerCreator;
-        computerItemizer = pComputerItemizer;
-        computerModifier = pComputerModifier;
-        computerRemover = pComputerRemover;
-        companyRemover = pCompanyRemover;
-        defautlHandler = pDefaultHandler;
-        exitHandler = pExitHandler;
+    public CommandLineInterface(ComputerLister computerLister, CompanyLister companyLister,
+            ComputerCreator computerCreator, ComputerItemizer computerItemizer, ComputerModifier computerModifier,
+            ComputerRemover computerRemover, CompanyRemover companyRemover, DefaultHandler defaultHandler,
+            ExitHandler exitHandler) {
+        UserChoice.LIST_COMPUTERS.setHandler(computerLister);
+        UserChoice.LIST_COMPANIES.setHandler(companyLister);
+        UserChoice.CREATE_COMPUTER.setHandler(computerCreator);
+        UserChoice.DETAIL_COMPUTER.setHandler(computerItemizer);
+        UserChoice.UPDATE_COMPUTER.setHandler(computerModifier);
+        UserChoice.REMOVE_COMPUTER.setHandler(computerRemover);
+        UserChoice.REMOVE_COMPANY.setHandler(companyRemover);
+        UserChoice.EXIT.setHandler(exitHandler);
+        UserChoice.ANY.setHandler(defaultHandler);
     }
 
     public static String getUserInput() {
@@ -70,23 +60,9 @@ public class CommandLineInterface {
     public boolean handleChoice(String userInput) {
         return Stream.of(UserChoice.values()).filter(v -> v.accept(userInput)).findFirst().orElse(UserChoice.ANY)
                 .handleChoice();
-
-    }
-
-    public void setHandlers() {
-        UserChoice.LIST_COMPUTERS.setHandler(computerLister);
-        UserChoice.LIST_COMPANIES.setHandler(companyLister);
-        UserChoice.CREATE_COMPUTER.setHandler(computerCreator);
-        UserChoice.DETAIL_COMPUTER.setHandler(computerItemizer);
-        UserChoice.UPDATE_COMPUTER.setHandler(computerModifier);
-        UserChoice.REMOVE_COMPUTER.setHandler(computerRemover);
-        UserChoice.REMOVE_COMPANY.setHandler(companyRemover);
-        UserChoice.EXIT.setHandler(exitHandler);
-        UserChoice.ANY.setHandler(defautlHandler);
     }
 
     public void start() {
-        setHandlers();
         CommandLineInterface.sc = new Scanner(System.in);
         do {
             System.out.print(getMenu());

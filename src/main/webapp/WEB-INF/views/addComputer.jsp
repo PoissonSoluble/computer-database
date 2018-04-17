@@ -23,6 +23,8 @@
 		</div>
 	</header>
 
+	<tag:addError />
+
 	<section id="main">
 		<div class="container">
 			<div class="row">

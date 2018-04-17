@@ -10,7 +10,7 @@ public interface ICompanyService {
 
     boolean exists(Long id);
 
-    List<Company> getCompanies() throws ServiceException;
+    List<Company> getCompanies();
 
     int getCompanyListPageTotalAmount(int pageSize) throws ServiceException;
 

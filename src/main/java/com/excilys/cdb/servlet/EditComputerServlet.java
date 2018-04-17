@@ -76,11 +76,7 @@ public class EditComputerServlet extends HttpServlet {
             Optional<Computer> computerOpt) throws ServletException, IOException {
         ComputerDTO computer = computerMapper.createComputerDTO(computerOpt.get());
         List<CompanyDTO> companies = new ArrayList<>();
-        try {
-            companyService.getCompanies().forEach(company -> companies.add(companyMapper.createCompanyDTO(company)));
-        } catch (ServiceException e) {
-            throw new ServletException("Error while getting the DTOs.");
-        }
+        companyService.getCompanies().forEach(company -> companies.add(companyMapper.createCompanyDTO(company)));
         request.setAttribute("companies", companies);
         request.setAttribute("computer", computer);
         RequestDispatcher view = request.getRequestDispatcher("WEB-INF/views/editComputer.jsp");

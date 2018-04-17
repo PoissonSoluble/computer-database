@@ -175,8 +175,8 @@ public class ComputerDAO implements IComputerDAO {
         List<Computer> computers = jdbcTemplate.query(constructPageRequest(order, ascending, SELECT_PAGE_SEARCH),
                 preparedStatement -> {
                     preparedStatement.setString(1, new StringBuilder("%").append(search).append("%").toString());
-                    preparedStatement.setInt(1, pageSize);
-                    preparedStatement.setInt(2, pageSize * (pageNumber - 1));
+                    preparedStatement.setInt(2, pageSize);
+                    preparedStatement.setInt(3, pageSize * (pageNumber - 1));
                 }, (resultSet, rowNum) -> {
                     return retrieveComputerFromQuery(resultSet);
                 });
