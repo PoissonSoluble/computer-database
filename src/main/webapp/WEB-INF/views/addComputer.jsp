@@ -23,12 +23,11 @@
 		</div>
 	</header>
 
-	<tag:addError />
-
 	<section id="main">
 		<div class="container">
 			<div class="row">
 				<div class="col-xs-8 col-xs-offset-2 box">
+					<tag:addError />
 					<h1>Add Computer</h1>
 					<form action="<tag:links linkTo="addComputer"/>" method="POST">
 						<fieldset>

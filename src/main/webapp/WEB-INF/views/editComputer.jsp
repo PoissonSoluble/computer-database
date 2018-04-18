@@ -21,10 +21,12 @@
             <a class="navbar-brand" href="<tag:links linkTo="dashboard"/>"> Application - Computer Database </a>
         </div>
     </header>
+
     <section id="main">
         <div class="container">
             <div class="row">
                 <div class="col-xs-8 col-xs-offset-2 box">
+					<tag:addError />
                     <div class="label label-default pull-right">
                         id: ${computer.id}
                     </div>

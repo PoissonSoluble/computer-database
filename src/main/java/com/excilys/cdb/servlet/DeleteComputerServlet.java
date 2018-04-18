@@ -50,7 +50,6 @@ public class DeleteComputerServlet extends HttpServlet {
         } catch (NumberFormatException e) {
             pageNumber = 1;
             pageSize = 10;
-
         }
         response.sendRedirect(new StringBuilder("/cdb/dashboard?pageNumber=").append(pageNumber).append("&pageSize=")
                 .append(pageSize).toString());

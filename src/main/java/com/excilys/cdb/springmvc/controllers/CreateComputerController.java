@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -48,12 +49,10 @@ public class CreateComputerController {
 
     @PostMapping
     public ModelAndView handlePost(@RequestParam(value = "name", required = true) String name,
-            @RequestParam(value = "introduced", defaultValue = "") String introducedString,
-            @RequestParam(value = "discontinued", defaultValue = "") String discontinuedString,
+            @RequestParam(value = "introduced", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate introduced,
+            @RequestParam(value = "discontinued", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate discontinued,
             @RequestParam(value = "companyId", defaultValue = "-1") Long companyId) {
         ModelAndView modelAndView = new ModelAndView();
-        LocalDate introduced = getDate(introducedString);
-        LocalDate discontinued = getDate(discontinuedString);
         Company company = null;
         if (companyId > 0) {
             company = new Company.Builder(companyId).build();
@@ -67,13 +66,4 @@ public class CreateComputerController {
         }
         return handleGet(modelAndView);
     }
-
-    private LocalDate getDate(String dateString) {
-        try {
-            return LocalDate.parse(dateString, DateTimeFormatter.ofPattern("yyyy-MM-dd"));
-        } catch (DateTimeException e) {
-            return null;
-        }
-    }
-
 }
