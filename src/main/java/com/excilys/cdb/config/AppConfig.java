@@ -17,16 +17,16 @@ import org.springframework.jdbc.datasource.DriverManagerDataSource;
         "com.excilys.cdb.validation", "com.excilys.cdb.service", "com.excilys.cdb.ui", "com.excilys.cdb.mockdb" })
 public class AppConfig {
 
-    @Value("${dbdriver}")
+    @Value("${db.driver}")
     private String dbDriver;
 
-    @Value("${dburl}")
+    @Value("${db.url}")
     private String dbUrl;
 
-    @Value("${dbid}")
+    @Value("${db.id}")
     private String dbId;
 
-    @Value("${dbpassword}")
+    @Value("${db.password}")
     private String dbPassword;
 
     @Bean

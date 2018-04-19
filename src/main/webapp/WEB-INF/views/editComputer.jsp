@@ -1,6 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 <%@ taglib prefix="tag" tagdir="/WEB-INF/tags"%>
 <!DOCTYPE html>
 <html>
@@ -30,33 +31,26 @@
                     <div class="label label-default pull-right">
                         id: ${computer.id}
                     </div>
-                    <h1>Edit Computer</h1>
+                    <h1><spring:message code="editComputer.title"/></h1>
 
                     <form action="<tag:links linkTo="editComputer"/>" method="POST">
                         <input type="hidden" value="${computer.id}" name="id" id="id"/>
                         <fieldset>
                             <div class="form-group">
-								<label for="computerName">Computer name</label> <input
+								<label for="computerName"><spring:message code="computer.computerName"/></label> <input
 									type="text" data-validation="alphanumeric"
 									data-validation-allowing="-_ " class="form-control" name="name"
 									id="name" value="${computer.name}" required>
 							</div>
 							<div class="form-group">
-								<label for="introduced">Introduced date</label> <input
+								<label for="introduced"><spring:message code="computer.introduced"/></label> <input
 									type="date" data-validation="date"
 									data-validation-format="yyyy-mm-dd"
 									data-validation-optional="true" class="form-control"
 									name="introduced" id="introduced" value="${computer.introduced}">
 							</div>
 							<div class="form-group">
-						
-	<script src="<c:url value="/static/js/jquery.min.js" />"></script>
-	<script src="<c:url value="/static/js/jquery.form-validator.min.js" />"></script>
-	<script src="<c:url value="/static/js/bootstrap.min.js" />"></script>
-	<script src="<c:url value="/static/js/dashboard.js" />"></script>
-	<script>
-		$.validate();
-	</script>		<label for="discontinued">Discontinued date</label> <input
+								<label for="discontinued"><spring:message code="computer.discontinued"/></label> <input
 									type="date" type="date" data-validation="date"
 									data-validation-format="yyyy-mm-dd"
 									data-validation-optional="true" class="form-control"
@@ -64,9 +58,9 @@
 									value="${computer.discontinued}">
 							</div>
 							<div class="form-group">
-								<label for="companyId">Company</label> <select
+								<label for="companyId"><spring:message code="computer.company"/></label> <select
 									class="form-control" id="companyId" name="companyId">
-									<option value="">None</option>
+									<option value=""><spring:message code="computer.companyNone"/></option>
 									<c:forEach items="${companies}" var="company">
 										<option value="${company.id}"
                                         <c:if test="${company.id == computer.company.id}">
@@ -78,9 +72,9 @@
 							</div>          
                         </fieldset>
                         <div class="actions pull-right">
-                            <input type="submit" value="Edit" class="btn btn-primary">
-                            or
-                            <a href="dashboard.html" class="btn btn-default">Cancel</a>
+                            <input type="submit" value="<spring:message code="computer.editButton"/>" class="btn btn-primary">
+                            <spring:message code="computer.or"/>
+                            <a href="dashboard.html" class="btn btn-default"><spring:message code="computer.cancelButton"/></a>
                         </div>
                     </form>
                 </div>

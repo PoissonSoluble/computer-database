@@ -31,7 +31,7 @@
 		<div class="container">
 			<h1 id="homeTitle">
 				<c:out value="${ computerAmount }" />
-				Computers found
+				<spring:message code="dashboard.title"/>
 			</h1>
 			<div id="actions" class="form-horizontal">
 				<div class="pull-left">
@@ -40,15 +40,15 @@
 						<input type="hidden" name="pageNumber" value="${pageNumber}" /> <input
 							type="hidden" name="pageSize" value="${pageSize}" /> <input
 							type="search" id="searchbox" name="search" class="form-control"
-							placeholder="Search name" /> <input type="submit"
-							id="searchsubmit" value="Filter by name" class="btn btn-primary" />
+							placeholder="<spring:message code="dashboard.search"/>" /> <input type="submit"
+							id="searchsubmit" value="<spring:message code="dashboard.searchButton"/>" class="btn btn-primary" />
 					</form>
 				</div>
 				<div class="pull-right">
 					<a class="btn btn-success" id="addComputer"
-						href="<tag:links linkTo="addComputer"/>"> Add Computer </a> <a
+						href="<tag:links linkTo="addComputer"/>"> <spring:message code="dashboard.addButton"/> </a> <a
 						class="btn btn-default" id="editComputer" href="#"
-						onclick="$.fn.toggleEditMode();">Edit</a>
+						onclick="$.fn.toggleEditMode();"><spring:message code="dashboard.editButton"/></a>
 				</div>
 			</div>
 		</div>
@@ -78,14 +78,14 @@
 							<a 
 							href="<tag:links linkTo="dashboard" pageNumberAtt="${pageNumber}" 
 							pageSizeAtt="${pageSize}" orderAtt="CU_NAME" searchAtt="${search}"/>">
-								Computer name
+								<spring:message code="dashboard.computerName"/>
 							</a>
 						</th>
 						<th>
 							<a 
 							href="<tag:links linkTo="dashboard" pageNumberAtt="${pageNumber}" 
 							pageSizeAtt="${pageSize}" orderAtt="CU_INTRODUCED" searchAtt="${search}"/>">
-								Introduced date
+								<spring:message code="dashboard.introduced"/>
 							</a>
 						</th>
 						<!-- Table header for Discontinued Date -->
@@ -93,7 +93,7 @@
 							<a 
 							href="<tag:links linkTo="dashboard" pageNumberAtt="${pageNumber}" 
 							pageSizeAtt="${pageSize}" orderAtt="CU_DISCONTINUED" searchAtt="${search}"/>">
-								Discontinued date
+								<spring:message code="dashboard.discontinued"/>
 							</a>
 						</th>
 						<!-- Table header for Company -->
@@ -101,7 +101,7 @@
 							<a 
 							href="<tag:links linkTo="dashboard" pageNumberAtt="${pageNumber}" 
 							pageSizeAtt="${pageSize}" orderAtt="CA_NAME" searchAtt="${search}"/>">
-								Company
+								<spring:message code="dashboard.company"/>
 							</a>
 						</th>
 

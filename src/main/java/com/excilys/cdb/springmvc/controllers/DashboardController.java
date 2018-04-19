@@ -2,9 +2,11 @@ package com.excilys.cdb.springmvc.controllers;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.stream.Stream;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -23,6 +25,7 @@ public class DashboardController {
 
     private IComputerService computerService;
     private IComputerDTOMapper computerDTOMapper;
+    private MessageSource messageSource;
 
     private static final String DEFAULT_PAGE = "1";
     private static final String DEFAULT_SIZE = "10";
@@ -31,9 +34,11 @@ public class DashboardController {
     private static final String DEFAULT_SEARCH = "";
 
     @Autowired
-    public DashboardController(IComputerService pComputerService, IComputerDTOMapper pComputerDTOMapper) {
+    public DashboardController(IComputerService pComputerService, IComputerDTOMapper pComputerDTOMapper,
+            MessageSource pMessageSource) {
         computerService = pComputerService;
-        computerDTOMapper = pComputerDTOMapper;        
+        computerDTOMapper = pComputerDTOMapper;
+        messageSource = pMessageSource;
     }
 
     @GetMapping
@@ -41,7 +46,7 @@ public class DashboardController {
             @RequestParam(value = "pageSize", defaultValue = DEFAULT_SIZE) int pageSize,
             @RequestParam(value = "ascending", defaultValue = DEFAULT_ASCENDING) boolean ascending,
             @RequestParam(value = "order", defaultValue = DEFAULT_ORDER) String order,
-            @RequestParam(value = "search", defaultValue = DEFAULT_SEARCH) String search) {
+            @RequestParam(value = "search", defaultValue = DEFAULT_SEARCH) String search, Locale locale) {
 
         ComputerOrdering computerOrder = Stream.of(ComputerOrdering.values()).filter(v -> v.accept(order)).findFirst()
                 .orElse(ComputerOrdering.CU_ID);
