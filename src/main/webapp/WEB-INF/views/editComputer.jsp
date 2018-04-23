@@ -3,6 +3,7 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 <%@ taglib prefix="tag" tagdir="/WEB-INF/tags"%>
+<%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
 <!DOCTYPE html>
 <html>
 <head>
@@ -32,51 +33,53 @@
                         id: ${computer.id}
                     </div>
                     <h1><spring:message code="editComputer.title"/></h1>
-
-                    <form action="<tag:links linkTo="editComputer"/>" method="POST">
-                        <input type="hidden" value="${computer.id}" name="id" id="id"/>
+				
+					<form:form action="/cdb/editComputer" method="POST"
+						modelAttribute="computer" id="editComputerForm"
+						name="editComputerForm">
+                        <form:input type="hidden" path="id" value="${computer.id}" name="id" id="id"/>
                         <fieldset>
                             <div class="form-group">
-								<label for="computerName"><spring:message code="computer.computerName"/></label> <input
-									type="text" data-validation="alphanumeric"
-									data-validation-allowing="-_ " class="form-control" name="name"
-									id="name" value="${computer.name}" required>
+								<form:label for="name" path="name"><spring:message code="computer.computerName"/></form:label>
+								<form:input type="text" path="name"
+									name="name" id="name" data-validation="alphanumeric"
+									placeholder="${computerName}"
+									data-validation-allowing="-_ " class="form-control"
+									value="${computer.name}"
+									required="true" />
 							</div>
 							<div class="form-group">
-								<label for="introduced"><spring:message code="computer.introduced"/></label> <input
-									type="date" data-validation="date"
-									data-validation-format="yyyy-mm-dd"
-									data-validation-optional="true" class="form-control"
-									name="introduced" id="introduced" value="${computer.introduced}">
+								<form:label for="introduced" path="introduced"><spring:message code="computer.introduced"/></form:label>
+								<form:input type="date" class="form-control" path="introduced"
+									name="introduced" data-validation-optional="true"
+									data-validation="date" data-validation-format="yyyy-mm-dd"
+									value="${computer.introduced}"
+									id="introduced" />
 							</div>
 							<div class="form-group">
-								<label for="discontinued"><spring:message code="computer.discontinued"/></label> <input
-									type="date" type="date" data-validation="date"
-									data-validation-format="yyyy-mm-dd"
-									data-validation-optional="true" class="form-control"
-									name="discontinued" id="discontinued"
-									value="${computer.discontinued}">
+								<form:label for="discontinued" path="discontinued"><spring:message code="computer.discontinued"/></form:label>
+								<form:input type="date" class="form-control" path="discontinued"
+									name="discontinued" data-validation-optional="true"
+									data-validation="date" data-validation-format="yyyy-mm-dd"
+									value="${computer.discontinued}"
+									id="discontinued" />
 							</div>
 							<div class="form-group">
-								<label for="companyId"><spring:message code="computer.company"/></label> <select
-									class="form-control" id="companyId" name="companyId">
-									<option value=""><spring:message code="computer.companyNone"/></option>
-									<c:forEach items="${companies}" var="company">
-										<option value="${company.id}"
-                                        <c:if test="${company.id == computer.company.id}">
-                                            <c:out value="selected"/>
-                                        </c:if>>
-                                        ${company.name}</option>
-									</c:forEach>
-								</select>
-							</div>          
+								<form:label for="companyId" path="company"><spring:message code="computer.company"/></form:label>
+								<form:select class="form-control" name="companyId"
+									id="companyId" path="company.id">
+									<spring:message code="computer.companyNone" var="companyNone"/>
+									<form:option value="0" label="${companyNone}" />
+									<form:options items="${companies}" itemValue="id"/>
+								</form:select>
+							</div>         
                         </fieldset>
                         <div class="actions pull-right">
                             <input type="submit" value="<spring:message code="computer.editButton"/>" class="btn btn-primary">
                             <spring:message code="computer.or"/>
                             <a href="dashboard.html" class="btn btn-default"><spring:message code="computer.cancelButton"/></a>
                         </div>
-                    </form>
+                    </form:form>
                 </div>
             </div>
         </div>

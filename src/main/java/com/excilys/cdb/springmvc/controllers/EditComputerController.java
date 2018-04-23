@@ -55,24 +55,16 @@ public class EditComputerController {
     }
 
     @PostMapping
-    public ModelAndView handlePost(@RequestParam(value = "id", required = true) Long computerId,
-            @RequestParam(value = "name", required = true) String name,
-            @RequestParam(value = "introduced", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate introduced,
-            @RequestParam(value = "discontinued", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate discontinued,
-            @RequestParam(value = "companyId", defaultValue = "-1") Long companyId) {
+    public ModelAndView handlePost(ComputerDTO dto) {
         ModelAndView modelAndView = new ModelAndView();
-        Company company = null;
-        if (companyId > 0) {
-            company = new Company.Builder(companyId).build();
-        }
-        Computer computer = new Computer.Builder(computerId).withName(name).withIntroduced(introduced)
-                .withDiscontinued(discontinued).withCompany(company).build();
+        Computer computer = computerDTOMapper.createComputerFromDTO(dto);
+        
         try {
             computerService.updateComputer(computer);
         } catch (ValidationException e) {
             modelAndView.addObject("error", e.getMessage());
         }
-        return handleGet(computerId, modelAndView);
+        return handleGet(computer.getId().orElse(0L), modelAndView);
     }
 
     private ModelAndView generateAndForwardDTOs(ModelAndView modelAndView, Optional<Computer> computerOpt) {

@@ -1,10 +1,10 @@
 package com.excilys.cdb.dto;
 
 public class CompanyDTO {
-    private long id;
+    private Long id;
     private String name;
 
-    public long getId() {
+    public Long getId() {
         return id;
     }
 
@@ -22,6 +22,6 @@ public class CompanyDTO {
 
     @Override
     public String toString() {
-        return new StringBuilder().append(id).append(" ").append(name).toString();
+        return name;
     }
 }

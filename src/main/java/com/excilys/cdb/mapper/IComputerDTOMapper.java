@@ -7,4 +7,6 @@ public interface IComputerDTOMapper {
 
     ComputerDTO createComputerDTO(Computer computer);
 
+    Computer createComputerFromDTO(ComputerDTO dto);
+
 }

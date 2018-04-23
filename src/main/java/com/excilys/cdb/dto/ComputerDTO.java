@@ -1,7 +1,7 @@
 package com.excilys.cdb.dto;
 
 public class ComputerDTO {
-    private long id;
+    private Long id;
     private String name;
     private String introduced;
     private String discontinued;
@@ -15,7 +15,7 @@ public class ComputerDTO {
         return discontinued;
     }
 
-    public long getId() {
+    public Long getId() {
         return id;
     }
 
