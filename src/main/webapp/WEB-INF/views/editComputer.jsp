@@ -9,12 +9,13 @@
 <head>
 <title>Computer Database</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="utf-8">
 <!-- Bootstrap -->
-<link href="<c:url value="static/css/bootstrap.min.css" />"
+<link href="<spring:url value="/static/css/bootstrap.min.css" />"
 	rel="stylesheet" media="screen">
-<link href="<c:url value="static/css/font-awesome.css" />"
+<link href="<spring:url value="/static/css/font-awesome.css" />"
 	rel="stylesheet" media="screen">
-<link href="<c:url value="static/css/main.css" />" rel="stylesheet"
+<link href="<spring:url value="/static/css/main.css" />" rel="stylesheet"
 	media="screen">
 </head>
 <body>
@@ -34,7 +35,7 @@
                     </div>
                     <h1><spring:message code="editComputer.title"/></h1>
 				
-					<form:form action="/cdb/editComputer" method="POST"
+					<form:form action="/cdb/computer/edit" method="POST"
 						modelAttribute="computer" id="editComputerForm"
 						name="editComputerForm">
                         <form:input type="hidden" path="id" value="${computer.id}" name="id" id="id"/>
