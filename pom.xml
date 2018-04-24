@@ -5,14 +5,23 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.excilys.cdb</groupId>
   <artifactId>computer-database</artifactId>
-  <version>0.0.1-SNAPSHOT</version>
+  <version>0.3.1-SNAPSHOT</version>
   <name>computer-database</name>
   <description>computer-database</description>
-  <packaging>war</packaging>
+  <packaging>pom</packaging>
+  <modules>
+    <module>cdb-core</module>
+    <module>cdb-binding</module>
+    <module>cdb-persistence</module>
+    <module>cdb-service</module>
+    <module>cdb-webapp</module>
+    <module>cdb-cli</module>
+  </modules>
   <properties>
     <!-- sets the projects encoding to UTF-8 -->
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <java.version>1.8</java.version>
+    <project.version>0.3.1-SNAPSHOT</project.version>
     <!-- test -->
     <surefire.version>2.21.0</surefire.version>
     <junit.version>4.12</junit.version>
@@ -20,6 +29,7 @@
     <hsqldb.version>2.4.0</hsqldb.version>
     <sqltool.version>2.4.0</sqltool.version>
     <!-- compile -->
+    <maven-compiler.version>3.7.0</maven-compiler.version>
     <javax-servlet.version>4.0.0</javax-servlet.version>
     <!-- logs -->
     <slf4j.version>1.7.25</slf4j.version>
@@ -38,6 +48,85 @@
     <!-- spring -->
     <spring-framework.version>5.0.5.RELEASE</spring-framework.version>
   </properties>
+  <dependencyManagement>
+    <dependencies>
+      <dependency>
+        <groupId>com.excilys.cdb</groupId>
+        <artifactId>cdb-core</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>com.excilys.cdb</groupId>
+        <artifactId>cdb-binding</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>com.excilys.cdb</groupId>
+        <artifactId>cdb-persistence</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>com.excilys.cdb</groupId>
+        <artifactId>cdb-service</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>com.excilys.cdb</groupId>
+        <artifactId>cdb-cli</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>com.excilys.cdb</groupId>
+        <artifactId>cdb-webapp</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>mysql</groupId>
+        <artifactId>mysql-connector-java</artifactId>
+        <version>${mysql-jdbc.version}</version>
+      </dependency>
+      <!-- https://mvnrepository.com/artifact/javax.servlet/servlet-api -->
+      <dependency>
+        <groupId>javax.servlet</groupId>
+        <artifactId>javax.servlet-api</artifactId>
+        <version>${javax-servlet.version}</version>
+        <scope>compile</scope>
+      </dependency>
+      <!-- https://mvnrepository.com/artifact/jstl/jstl -->
+      <dependency>
+        <groupId>jstl</groupId>
+        <artifactId>jstl</artifactId>
+        <version>${jstl.version}</version>
+      </dependency>
+      <!-- https://mvnrepository.com/artifact/org.apache.commons/commons-lang3 -->
+      <dependency>
+        <groupId>org.apache.commons</groupId>
+        <artifactId>commons-lang3</artifactId>
+        <version>${common-lang3.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.springframework</groupId>
+        <artifactId>spring-context</artifactId>
+        <version>${spring-framework.version}</version>
+        <exclusions>
+          <exclusion>
+            <groupId>commons-logging</groupId>
+            <artifactId>commons-logging</artifactId>
+          </exclusion>
+        </exclusions>
+      </dependency>
+      <dependency>
+        <groupId>org.springframework</groupId>
+        <artifactId>spring-webmvc</artifactId>
+        <version>${spring-framework.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.springframework</groupId>
+        <artifactId>spring-orm</artifactId>
+        <version>${spring-framework.version}</version>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
   <dependencies>
     <dependency>
       <groupId>org.slf4j</groupId>
@@ -52,37 +141,17 @@
       <version>${logback.version}</version>
       <scope>compile</scope>
     </dependency>
-    <!-- https://mvnrepository.com/artifact/mysql/mysql-connector-java -->
-    <dependency>
-      <groupId>mysql</groupId>
-      <artifactId>mysql-connector-java</artifactId>
-      <version>${mysql-jdbc.version}</version>
-    </dependency>
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
       <version>${junit.version}</version>
       <scope>test</scope>
     </dependency>
-    <!-- https://mvnrepository.com/artifact/org.mockito/mockito-all -->
     <dependency>
-      <groupId>org.mockito</groupId>
-      <artifactId>mockito-all</artifactId>
-      <version>${mockito.version}</version>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-test</artifactId>
+      <version>${spring-framework.version}</version>
       <scope>test</scope>
-    </dependency>
-    <!-- https://mvnrepository.com/artifact/javax.servlet/servlet-api -->
-    <dependency>
-      <groupId>javax.servlet</groupId>
-      <artifactId>javax.servlet-api</artifactId>
-      <version>${javax-servlet.version}</version>
-      <scope>compile</scope>
-    </dependency>
-    <!-- https://mvnrepository.com/artifact/jstl/jstl -->
-    <dependency>
-      <groupId>jstl</groupId>
-      <artifactId>jstl</artifactId>
-      <version>${jstl.version}</version>
     </dependency>
     <dependency>
       <groupId>org.hsqldb</groupId>
@@ -96,55 +165,24 @@
       <version>${hsqldb.version}</version>
       <scope>test</scope>
     </dependency>
-    <!-- https://mvnrepository.com/artifact/org.apache.commons/commons-lang3 -->
+    <!-- https://mvnrepository.com/artifact/org.mockito/mockito-all -->
     <dependency>
-      <groupId>org.apache.commons</groupId>
-      <artifactId>commons-lang3</artifactId>
-      <version>${common-lang3.version}</version>
+      <groupId>org.mockito</groupId>
+      <artifactId>mockito-all</artifactId>
+      <version>${mockito.version}</version>
+      <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>jcl-over-slf4j</artifactId>
       <version>${slf4j.version}</version>
     </dependency>
-    <dependency>
-      <groupId>org.springframework</groupId>
-      <artifactId>spring-context</artifactId>
-      <version>${spring-framework.version}</version>
-      <exclusions>
-        <exclusion>
-          <groupId>commons-logging</groupId>
-          <artifactId>commons-logging</artifactId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>org.springframework</groupId>
-      <artifactId>spring-web</artifactId>
-      <version>${spring-framework.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.springframework</groupId>
-      <artifactId>spring-webmvc</artifactId>
-      <version>${spring-framework.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.springframework</groupId>
-      <artifactId>spring-test</artifactId>
-      <version>${spring-framework.version}</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.springframework</groupId>
-      <artifactId>spring-orm</artifactId>
-      <version>${spring-framework.version}</version>
-    </dependency>
   </dependencies>
   <build>
     <plugins>
       <plugin>
         <artifactId>maven-compiler-plugin</artifactId>
-        <version>3.7.0</version>
+        <version>${maven-compiler.version}</version>
         <configuration>
           <source>${java.version}</source>
           <target>${java.version}</target>
@@ -174,7 +212,6 @@
           <url>${tomcat.url}</url>
           <server>TomcatServer</server>
           <path>/cdb</path>
-          <ignorePackaging>true</ignorePackaging>
         </configuration>
       </plugin>
       <plugin>
