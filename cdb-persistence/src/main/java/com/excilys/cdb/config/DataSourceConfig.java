@@ -6,16 +6,15 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Profile;
+import org.springframework.context.annotation.Import;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
 
 @Configuration
-@Profile("cli")
+@Import(BindingConfig.class)
 @PropertySource("classpath:config.properties")
-@ComponentScan({ "com.excilys.cdb.config", "com.excilys.cdb.mapper", "com.excilys.cdb.dao",
-        "com.excilys.cdb.validation", "com.excilys.cdb.service", "com.excilys.cdb.ui", "com.excilys.cdb.mockdb" })
-public class AppConfig {
+@ComponentScan({"com.excilys.cdb.dao", "com.excilys.cdb.mockdb"})
+public class DataSourceConfig {
 
     @Value("${db.driver}")
     private String dbDriver;

@@ -3,7 +3,6 @@ package com.excilys.cdb.ui.actionhandlers;
 import java.util.List;
 import java.util.stream.Stream;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.excilys.cdb.model.Company;

@@ -3,12 +3,11 @@ package com.excilys.cdb.ui;
 import java.util.Scanner;
 import java.util.stream.Stream;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.stereotype.Controller;
 
-import com.excilys.cdb.config.AppConfig;
+import com.excilys.cdb.config.CLIConfig;
 import com.excilys.cdb.ui.actionhandlers.CompanyLister;
 import com.excilys.cdb.ui.actionhandlers.CompanyRemover;
 import com.excilys.cdb.ui.actionhandlers.ComputerCreator;
@@ -45,7 +44,7 @@ public class CommandLineInterface {
 
     public static void main(String[] args) {
         @SuppressWarnings("resource")
-        ApplicationContext context = new AnnotationConfigApplicationContext(AppConfig.class);
+        ApplicationContext context = new AnnotationConfigApplicationContext(CLIConfig.class);
         context.getBean(CommandLineInterface.class).start();
     }
 

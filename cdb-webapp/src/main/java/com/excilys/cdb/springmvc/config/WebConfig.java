@@ -2,18 +2,14 @@ package com.excilys.cdb.springmvc.config;
 
 import java.util.Locale;
 
-import javax.sql.DataSource;
-
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Import;
 import org.springframework.context.annotation.Profile;
-import org.springframework.context.annotation.PropertySource;
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 import org.springframework.context.support.ReloadableResourceBundleMessageSource;
-import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import org.springframework.web.servlet.LocaleResolver;
 import org.springframework.web.servlet.ViewResolver;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
@@ -25,11 +21,13 @@ import org.springframework.web.servlet.i18n.LocaleChangeInterceptor;
 import org.springframework.web.servlet.view.InternalResourceViewResolver;
 import org.springframework.web.servlet.view.JstlView;
 
+import com.excilys.cdb.config.ServiceConfig;
+
 @Configuration
+@Import(ServiceConfig.class)
 @EnableWebMvc
 @Profile("webmvc")
-@PropertySource("classpath:config.properties")
-@ComponentScan(basePackages = "com.excilys.cdb")
+@ComponentScan("com.excilys.cdb.springmvc")
 public class WebConfig implements WebMvcConfigurer {
 
     @Bean
@@ -37,17 +35,6 @@ public class WebConfig implements WebMvcConfigurer {
         return new PropertySourcesPlaceholderConfigurer();
     }
 
-    @Value("${db.driver}")
-    private String dbDriver;
-
-    @Value("${db.url}")
-    private String dbUrl;
-
-    @Value("${db.id}")
-    private String dbId;
-
-    @Value("${db.password}")
-    private String dbPassword;
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
@@ -57,16 +44,6 @@ public class WebConfig implements WebMvcConfigurer {
     @Override
     public void addResourceHandlers(final ResourceHandlerRegistry registry) {
         registry.addResourceHandler("/static/**").addResourceLocations("/static/");
-    }
-
-    @Bean
-    public DataSource dataSource() {
-        DriverManagerDataSource dataSource = new DriverManagerDataSource();
-        dataSource.setDriverClassName(dbDriver);
-        dataSource.setUrl(dbUrl);
-        dataSource.setUsername(dbId);
-        dataSource.setPassword(dbPassword);
-        return dataSource;
     }
 
     @Bean

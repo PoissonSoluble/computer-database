@@ -14,11 +14,11 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.support.AnnotationConfigContextLoader;
 
-import com.excilys.cdb.config.AppConfig;
+import com.excilys.cdb.config.BindingConfig;
 import com.excilys.cdb.model.Computer;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes=AppConfig.class, loader=AnnotationConfigContextLoader.class)
+@ContextConfiguration(classes=BindingConfig.class, loader=AnnotationConfigContextLoader.class)
 @ActiveProfiles("cli")
 public class ComputerMapperTest {
     
