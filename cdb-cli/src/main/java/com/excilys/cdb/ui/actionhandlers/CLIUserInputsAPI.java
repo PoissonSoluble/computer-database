@@ -19,8 +19,7 @@ public class CLIUserInputsAPI {
         return Long.parseLong(stringId);
     }
 
-    public Computer askParametersForComputer() {
-        Computer computer = new Computer();
+    public Computer askParametersForComputer(Computer computer) {
         if (!readName(computer) || !readDates(computer) || !readCompany(computer)) {
             return null;
         }

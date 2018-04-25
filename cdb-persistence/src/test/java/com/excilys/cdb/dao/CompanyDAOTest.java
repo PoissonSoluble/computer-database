@@ -12,10 +12,13 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.support.AnnotationConfigContextLoader;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.excilys.cdb.config.DataSourceConfig;
 import com.excilys.cdb.mockdb.MockDataBase;
@@ -26,9 +29,9 @@ import com.excilys.cdb.model.Company;
 @ActiveProfiles("cli")
 public class CompanyDAOTest {
     @Autowired
-    private ICompanyDAO companyDAO;
+    private CompanyDAO companyDAO;
     @Autowired
-    private IComputerDAO computerDAO;
+    private ComputerDAO computerDAO;
     @Autowired
     private MockDataBase mockDataBase;   
     
@@ -44,32 +47,38 @@ public class CompanyDAOTest {
 
     @Test
     public void testListCompanies() {
-        assertEquals(companyDAO.listCompanies().size(), 20);
+        assertEquals(companyDAO.findAll().spliterator().getExactSizeIfKnown(), 20);
     }
 
     @Test
-    public void testPage() throws PageOutOfBoundsException {
-        assertEquals(companyDAO.listCompaniesByPage(1, 10).size(), 10);
+    public void testPage() {
+        assertEquals(companyDAO.findAll(PageRequest.of(0, 10, Sort.by("id"))).getNumberOfElements(), 10);
     }
 
-    @Test(expected = PageOutOfBoundsException.class)
-    public void testPageOutOfBounds() throws PageOutOfBoundsException {
-        companyDAO.listCompaniesByPage(3, 10);
+    @Test
+    public void testPageOutOfBounds() {
+        assertEquals(companyDAO.findAll(PageRequest.of(0, 10, Sort.by("id"))).getTotalPages(), 2);
     }
 
     @Test
     public void testGetCompany() throws NoSuchElementException {
-        Optional<Company> companyOpt = companyDAO.getCompany(2L);
+        Optional<Company> companyOpt = companyDAO.findById(2L);
         assertTrue(companyOpt.isPresent());
         assertEquals(companyOpt.get().getId().get(), new Long(2));
         assertEquals(companyOpt.get().getName().get(), "Company 2");
     }
+    
+    @Test
+    public void testSearchablePage() {
+        assertEquals(companyDAO.findAllByNameContaining(PageRequest.of(0, 10), "Company 3").getNumberOfElements(), 1);
+    }
 
     @Test
+    @Transactional
     public void testDelete() throws NoSuchElementException {
-        computerDAO.deleteComputerFromCompany(2L);
-        companyDAO.deleteCompany(2L);
-        assertFalse(companyDAO.getCompany(2L).isPresent());
-        assertFalse(computerDAO.getComputer(2L).isPresent());
+        computerDAO.deleteByCompany(new Company.Builder(2L).build());
+        companyDAO.deleteById(2L);
+        assertFalse(companyDAO.findById(2L).isPresent());
+        assertFalse(computerDAO.findById(2L).isPresent());
     }
 }

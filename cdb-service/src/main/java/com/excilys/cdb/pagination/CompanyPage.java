@@ -21,7 +21,7 @@ public class CompanyPage extends Page<Company> {
     @Override
     protected int getLastPageNumber() {
         try {
-            return companyService.getCompanyListPageTotalAmount(pageSize);
+            return companyService.getCompanyPage(0, pageSize, "").getTotalPages();
         } catch (ServiceException e) {
             return 1;
         }
@@ -30,7 +30,7 @@ public class CompanyPage extends Page<Company> {
     @Override
     protected void refresh() {
         try {
-            elements = companyService.getCompanyPage(pageNumber, pageSize, search);
+            elements = companyService.getCompanyPage(pageNumber-1, pageSize, search).getContent();
         } catch (ServiceException e) {
             elements = new ArrayList<>();
         }

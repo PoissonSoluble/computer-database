@@ -6,7 +6,7 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import com.excilys.cdb.dao.ICompanyDAO;
+import com.excilys.cdb.dao.CompanyDAO;
 import com.excilys.cdb.model.Company;
 import com.excilys.cdb.model.Computer;
 import com.excilys.cdb.validation.exceptions.InvalidDatesException;
@@ -18,15 +18,8 @@ import com.excilys.cdb.validation.exceptions.ValidationException;
 public class ComputerValidator implements IComputerValidator {
 
     @Autowired
-    private ICompanyDAO companyDAO;
+    private CompanyDAO companyDAO;
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * com.excilys.cdb.validation.IComputerValidator#validateComputer(com.excilys.
-     * cdb.model.Computer)
-     */
     @Override
     public void validateComputer(Computer computer) throws ValidationException {
         validateName(computer.getName());
@@ -37,7 +30,7 @@ public class ComputerValidator implements IComputerValidator {
     private void validateCompany(Optional<Company> companyOpt) throws ValidationException {
         if (companyOpt.isPresent()) {
             Company company = companyOpt.get();
-            if (company.getId().isPresent() && !companyDAO.getCompany(company.getId().get()).isPresent()) {
+            if (company.getId().isPresent() && !companyDAO.findById(company.getId().get()).isPresent()) {
                 throw new NotExistingCompanyException();
             }
         }

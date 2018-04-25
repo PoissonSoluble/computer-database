@@ -2,11 +2,11 @@ package com.excilys.cdb.springmvc.controllers;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 import java.util.Optional;
 import java.util.stream.Stream;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort.Direction;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -92,7 +92,8 @@ public class ComputerController {
 
         ComputerOrdering computerOrder = Stream.of(ComputerOrdering.values()).filter(v -> v.accept(order)).findFirst()
                 .orElse(ComputerOrdering.CU_ID);
-        ComputerPage page = new ComputerPage(pageNumber, pageSize, search, computerOrder, ascending, computerService);
+        Direction direction = ascending ? Direction.ASC : Direction.DESC;
+        ComputerPage page = new ComputerPage(pageNumber, pageSize, search, computerOrder, direction, computerService);
         List<ComputerDTO> computerDTOs = getDTOsFromPage(page);
         ModelAndView modelAndView = new ModelAndView("dashboard");
         setModelAttributes(pageSize, ascending, order, search, page, computerDTOs, modelAndView);
@@ -115,11 +116,11 @@ public class ComputerController {
     public ModelAndView postDelete(@RequestParam(name = "selection", defaultValue = "") String selection,
             @RequestParam(name = "pageNumber", defaultValue = "1") int pageNumber,
             @RequestParam(name = "pageSize", defaultValue = "10") int pageSize) {
-        List<Long> ids = new ArrayList<>();
+        List<Computer> computers = new ArrayList<>();
         for (String idString : selection.split(",")) {
-            ids.add(Long.parseLong(idString));
+            computers.add(new Computer.Builder(Long.parseLong(idString)).build());
         }
-        computerService.deleteComputers(ids);
+        computerService.deleteComputers(computers);
         return getDelete(pageNumber, pageSize);
     }
 

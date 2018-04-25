@@ -3,6 +3,20 @@ package com.excilys.cdb.model;
 import java.time.LocalDate;
 import java.util.Optional;
 
+import javax.persistence.Basic;
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
+
+@Entity
+@Table(name = "computer")
 public class Computer {
     public static class Builder {
         private Long id;
@@ -52,142 +66,144 @@ public class Computer {
         }
     }
 
-    private Optional<Long> id;
-    private Optional<String> name;
-    private Optional<LocalDate> introduced;
-    private Optional<LocalDate> discontinued;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "cu_id", unique = true, nullable = false)
+    private Long id;
 
-    private Optional<Company> company;
+    @Column(name = "cu_name")
+    private String name;
+
+    @Basic(fetch = FetchType.LAZY, optional = true)
+    @Column(name = "cu_introduced")
+    private LocalDate introduced;
+
+    @Basic(fetch = FetchType.LAZY, optional = true)
+    @Column(name = "cu_discontinued")
+    private LocalDate discontinued;
+
+    @ManyToOne(optional = true)
+    @JoinColumn(name = "ca_id")
+    private Company company;
 
     public Computer() {
-        id = Optional.empty();
-        name = Optional.empty();
-        introduced = Optional.empty();
-        discontinued = Optional.empty();
-        company = Optional.empty();
     }
 
     public Computer(Builder builder) {
-        id = Optional.ofNullable(builder.id);
-        name = Optional.ofNullable(builder.name);
-        introduced = Optional.ofNullable(builder.introduced);
-        discontinued = Optional.ofNullable(builder.discontinued);
-        company = Optional.ofNullable(builder.company);
+        id = builder.id;
+        name = builder.name;
+        introduced = builder.introduced;
+        discontinued = builder.discontinued;
+        company = builder.company;
     }
 
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        Computer other = (Computer) obj;
-        if (!company.isPresent()) {
-            if (other.company.isPresent()) {
-                return false;
-            }
-        } else if (!company.equals(other.company)) {
-            return false;
-        }
-        if (!discontinued.isPresent()) {
-            if (other.discontinued.isPresent()) {
-                return false;
-            }
-        } else if (!discontinued.equals(other.discontinued)) {
-            return false;
-        }
-        if (!id.isPresent()) {
-            if (other.id.isPresent()) {
-                return false;
-            }
-        } else if (!id.equals(other.id)) {
-            return false;
-        }
-        if (!introduced.isPresent()) {
-            if (other.introduced.isPresent()) {
-                return false;
-            }
-        } else if (!introduced.equals(other.introduced)) {
-            return false;
-        }
-        if (!name.isPresent()) {
-            if (other.name.isPresent()) {
-                return false;
-            }
-        } else if (!name.equals(other.name)) {
-            return false;
-        }
-        return true;
+    public Computer(String pName, LocalDate pIntroduced, LocalDate pDiscontinued, Company pCompany) {
+        name = pName;
+        introduced = pIntroduced;
+        discontinued = pDiscontinued;
+        company = pCompany;
     }
-
+    
     public Optional<Company> getCompany() {
-        return company;
+        return Optional.ofNullable(company);
     }
 
     public Optional<LocalDate> getDiscontinued() {
-        return discontinued;
+        return Optional.ofNullable(discontinued);
     }
 
     public Optional<Long> getId() {
-        return id;
+        return Optional.ofNullable(id);
     }
 
     public Optional<LocalDate> getIntroduced() {
-        return introduced;
+        return Optional.ofNullable(introduced);
     }
 
     public Optional<String> getName() {
-        return name;
+        return Optional.ofNullable(name);
     }
 
     @Override
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = (prime * result) + ((!company.isPresent()) ? 0 : company.hashCode());
-        result = (prime * result) + ((!discontinued.isPresent()) ? 0 : discontinued.hashCode());
-        result = (prime * result) + ((!id.isPresent()) ? 0 : id.hashCode());
-        result = (prime * result) + ((!introduced.isPresent()) ? 0 : introduced.hashCode());
-        result = (prime * result) + ((!name.isPresent()) ? 0 : name.hashCode());
+        result = prime * result + ((company == null) ? 0 : company.hashCode());
+        result = prime * result + ((discontinued == null) ? 0 : discontinued.hashCode());
+        result = prime * result + ((id == null) ? 0 : id.hashCode());
+        result = prime * result + ((introduced == null) ? 0 : introduced.hashCode());
+        result = prime * result + ((name == null) ? 0 : name.hashCode());
         return result;
     }
 
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        Computer other = (Computer) obj;
+        if (company == null) {
+            if (other.company != null)
+                return false;
+        } else if (!company.equals(other.company))
+            return false;
+        if (discontinued == null) {
+            if (other.discontinued != null)
+                return false;
+        } else if (!discontinued.equals(other.discontinued))
+            return false;
+        if (id == null) {
+            if (other.id != null)
+                return false;
+        } else if (!id.equals(other.id))
+            return false;
+        if (introduced == null) {
+            if (other.introduced != null)
+                return false;
+        } else if (!introduced.equals(other.introduced))
+            return false;
+        if (name == null) {
+            if (other.name != null)
+                return false;
+        } else if (!name.equals(other.name))
+            return false;
+        return true;
+    }
+
     public void setCompany(Company pCompany) {
-        company = Optional.ofNullable(pCompany);
+        company = pCompany;
     }
 
     public void setDiscontinued(LocalDate pDiscontinued) {
-        discontinued = Optional.ofNullable(pDiscontinued);
+        discontinued = pDiscontinued;
     }
 
     public void setId(Long pId) {
-        id = Optional.ofNullable(pId);
+        id = pId;
     }
 
-    public void setIntroduced(LocalDate pintroduced) {
-        introduced = Optional.ofNullable(pintroduced);
+    public void setIntroduced(LocalDate pIntroduced) {
+        introduced = pIntroduced;
     }
 
     public void setName(String pName) {
-        name = Optional.ofNullable(pName);
+        name = pName;
     }
 
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
-        if (id.isPresent()) {
-            sb.append(id.get());
+        if (id != null) {
+            sb.append(id);
         }
-        if (name.isPresent()) {
-            sb.append(" - ").append(name.get());
+        if (name != null) {
+            sb.append(" - ").append(name);
         }
-        if (company.isPresent()) {
-            sb.append(" (").append(company.get()).append(")");
+        if (company != null) {
+            sb.append(" (").append(company).append(")");
         }
         return sb.toString();
     }

@@ -2,6 +2,8 @@ package com.excilys.cdb.service;
 
 import java.util.List;
 
+import org.springframework.data.domain.Page;
+
 import com.excilys.cdb.model.Company;
 
 public interface ICompanyService {
@@ -12,8 +14,6 @@ public interface ICompanyService {
 
     List<Company> getCompanies();
 
-    int getCompanyListPageTotalAmount(int pageSize) throws ServiceException;
-
-    List<Company> getCompanyPage(int page, int pageSize, String search) throws ServiceException;
+    Page<Company> getCompanyPage(int page, int pageSize, String search) throws ServiceException;
 
 }

@@ -1,7 +1,8 @@
 package com.excilys.cdb.pagination;
 
-import java.util.ArrayList;
 import java.util.Optional;
+
+import org.springframework.data.domain.Sort.Direction;
 
 import com.excilys.cdb.dao.ComputerOrdering;
 import com.excilys.cdb.model.Computer;
@@ -12,17 +13,16 @@ public class ComputerPage extends Page<Computer> {
 
     private IComputerService computerService;
     private ComputerOrdering order;
-    private boolean ascending;
+    private Direction direction;
 
-    public ComputerPage(int pPageNumber, int pPageSize, String search, ComputerOrdering pOrder, boolean pAscending,
+    public ComputerPage(int pPageNumber, int pPageSize, String search, ComputerOrdering pOrder, Direction pDirection,
             IComputerService pService) {
         super(pPageNumber, pPageSize, Optional.ofNullable(search));
         order = pOrder;
-        ascending = pAscending;
+        direction = pDirection;
         computerService = pService;
         pageTotal = getLastPageNumber();
         refresh();
-        
     }
 
 
@@ -39,7 +39,7 @@ public class ComputerPage extends Page<Computer> {
     @Override
     protected int getLastPageNumber() {
         try {
-            return computerService.getComputerListPageTotalAmount(pageSize, search);
+            return computerService.getComputerPage(0, pageSize, "").getTotalPages();
         } catch (ServiceException e) {
             return 1;
         }
@@ -47,11 +47,7 @@ public class ComputerPage extends Page<Computer> {
 
     @Override
     protected void refresh() {
-        try {
-            elements = computerService.getComputerPage(pageNumber, pageSize, search, order, ascending);
-        } catch (ServiceException e) {
-            elements = new ArrayList<>();
-        }
+        elements = computerService.getComputerPage(pageNumber-1, pageSize, search, order, direction).getContent();
         pageTotal = getLastPageNumber();
     }
 }

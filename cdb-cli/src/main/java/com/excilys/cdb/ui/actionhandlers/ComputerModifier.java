@@ -1,6 +1,5 @@
 package com.excilys.cdb.ui.actionhandlers;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.excilys.cdb.model.Computer;
@@ -24,24 +23,17 @@ public class ComputerModifier implements CLIActionHandler {
     @Override
     public boolean handle() {
         try {
-            Long id = cliApi.askID("computer");
-            if (!computerService.exists(id)) {
+            Computer computer = new Computer.Builder(cliApi.askID("computer")).build();
+            if (!computerService.exists(computer)) {
                 System.out.println("This computer does not exists.");
                 return true;
             }
-            Computer computer = cliApi.askParametersForComputer();
-            checkNullAndUpdate(id, computer);
+            computer = cliApi.askParametersForComputer(computer);
+            updateComputer(computer);
         } catch (NumberFormatException e) {
             System.out.println("This is not a proper ID format. (an integer)");
         }
         return true;
-    }
-
-    private void checkNullAndUpdate(Long id, Computer computer) {
-        if (computer != null) {
-            computer.setId(id);
-            updateComputer(computer);
-        }
     }
 
     private void updateComputer(Computer computer) {

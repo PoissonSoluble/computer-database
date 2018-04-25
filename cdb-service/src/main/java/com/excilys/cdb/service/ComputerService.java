@@ -1,18 +1,19 @@
 package com.excilys.cdb.service;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.Sort.Direction;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.excilys.cdb.dao.ComputerDAO;
 import com.excilys.cdb.dao.ComputerOrdering;
-import com.excilys.cdb.dao.IComputerDAO;
-import com.excilys.cdb.dao.PageOutOfBoundsException;
 import com.excilys.cdb.model.Computer;
 import com.excilys.cdb.validation.IComputerValidator;
 import com.excilys.cdb.validation.exceptions.ValidationException;
@@ -20,11 +21,11 @@ import com.excilys.cdb.validation.exceptions.ValidationException;
 @Service("computerService")
 public class ComputerService implements IComputerService {
 
-    private IComputerDAO computerDAO;
+    private ComputerDAO computerDAO;
     private IComputerValidator computerValidator;
     private final Logger LOGGER = LoggerFactory.getLogger(ComputerService.class);
 
-    public ComputerService(IComputerDAO pComputerDAO, IComputerValidator pComputerValidator) {
+    public ComputerService(ComputerDAO pComputerDAO, IComputerValidator pComputerValidator) {
         computerDAO = pComputerDAO;
         computerValidator = pComputerValidator;
     }
@@ -32,66 +33,55 @@ public class ComputerService implements IComputerService {
     @Override
     public void createComputer(Computer computer) throws ValidationException {
         computerValidator.validateComputer(computer);
-        computerDAO.createComputer(computer);
+        computerDAO.save(computer);
         LOGGER.info(new StringBuilder("Computer creation : ").append(computer).toString());
     }
 
     @Override
-    public void deleteComputer(Long id) {
-        computerDAO.deleteComputer(id);
-        LOGGER.info(new StringBuilder("Computer removal : ").append(id).toString());
+    public void deleteComputer(Computer computer) {
+        computerDAO.delete(computer);
+        LOGGER.info(new StringBuilder("Computer removal : ").append(computer.getId().orElse(-1L)).toString());
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public void deleteComputers(List<Long> ids) {
-        computerDAO.deleteComputers(ids);
-        LOGGER.info(new StringBuilder("Computers removal : ").append(ids).toString());
+    public void deleteComputers(List<Computer> computers) {
+        computerDAO.deleteAll(computers);
+        LOGGER.info(new StringBuilder("Computers removal : ").append(computers).toString());
     }
 
     @Override
-    public boolean exists(Long id) {
-        return computerDAO.getComputer(id).isPresent();
+    public boolean exists(Computer computer) {
+        return computerDAO.findById(computer.getId().orElse(-1L)).isPresent();
     }
 
     @Override
     public Optional<Computer> getComputer(Long id) {
-        return computerDAO.getComputer(id);
+        return computerDAO.findById(id);
     }
 
     @Override
     public int getComputerAmount(String search) {
-        return computerDAO.getComputerAmount(search);
+        return computerDAO.countByNameContaining(search);
     }
 
     @Override
-    public int getComputerListPageTotalAmount(int pageSize, String search) {
-        return computerDAO.getComputerListPageTotalAmount(pageSize, search);
+    public Page<Computer> getComputerPage(int page, int pageSize, String search) {
+        return computerDAO.findAllByNameContaining(PageRequest.of(page, pageSize, Sort.by(Direction.ASC, "id")),
+                search);
     }
 
     @Override
-    public List<Computer> getComputerPage(int page, int pageSize, String search) {
-        try {
-            return computerDAO.listComputersByPage(page, pageSize, search, ComputerOrdering.CU_ID, true);
-        } catch (PageOutOfBoundsException e) {
-            return new ArrayList<>();
-        }
-    }
-
-    @Override
-    public List<Computer> getComputerPage(int page, int pageSize, String search, ComputerOrdering order,
-            boolean ascending) throws ServiceException {
-        try {
-            return computerDAO.listComputersByPage(page, pageSize, search, order, ascending);
-        } catch (PageOutOfBoundsException e) {
-            return new ArrayList<>();
-        }
+    public Page<Computer> getComputerPage(int page, int pageSize, String search, ComputerOrdering order,
+            Direction ascending) {
+        return computerDAO.findAllByNameContaining(
+                PageRequest.of(page, pageSize, Sort.by(Direction.ASC, order.getValue())), search);
     }
 
     @Override
     public void updateComputer(Computer computer) throws ValidationException {
         computerValidator.validateComputer(computer);
-        computerDAO.updateComputer(computer);
+        computerDAO.save(computer);
         LOGGER.info(new StringBuilder("Computer update : ").append(computer).toString());
     }
 }

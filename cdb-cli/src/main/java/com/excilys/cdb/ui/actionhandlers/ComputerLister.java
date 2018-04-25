@@ -3,7 +3,7 @@ package com.excilys.cdb.ui.actionhandlers;
 import java.util.List;
 import java.util.stream.Stream;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort.Direction;
 import org.springframework.stereotype.Component;
 
 import com.excilys.cdb.dao.ComputerOrdering;
@@ -26,7 +26,7 @@ public class ComputerLister implements CLIActionHandler {
     
     @Override
     public boolean handle() {
-        page = new ComputerPage(1, PAGE_SIZE, "", ComputerOrdering.CU_ID, true, computerService);
+        page = new ComputerPage(1, PAGE_SIZE, "", ComputerOrdering.CU_ID, Direction.ASC, computerService);
         printPages();
         return true;
     }

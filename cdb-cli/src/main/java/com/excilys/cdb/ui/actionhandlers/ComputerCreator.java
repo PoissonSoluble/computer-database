@@ -1,6 +1,5 @@
 package com.excilys.cdb.ui.actionhandlers;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.excilys.cdb.model.Computer;
@@ -23,7 +22,7 @@ public class ComputerCreator implements CLIActionHandler {
     
     @Override
     public boolean handle() {
-        Computer computer = cliApi.askParametersForComputer();
+        Computer computer = cliApi.askParametersForComputer(new Computer());
         if (computer != null) {
             createComputer(computer);
         }
