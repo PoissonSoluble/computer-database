@@ -48,7 +48,7 @@ public class CompanyService implements ICompanyService {
     }
 
     @Override
-    public Page<Company> getCompanyPage(int page, int pageSize, String search) {
+    public Page<Company> getPage(int page, int pageSize, String search) {
         return companyDAO.findAllByNameContaining(PageRequest.of(page, pageSize, Sort.by("id")), search);
     }
 

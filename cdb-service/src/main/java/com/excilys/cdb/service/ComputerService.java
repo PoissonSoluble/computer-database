@@ -66,13 +66,13 @@ public class ComputerService implements IComputerService {
     }
 
     @Override
-    public Page<Computer> getComputerPage(int page, int pageSize, String search) {
+    public Page<Computer> getPage(int page, int pageSize, String search) {
         return computerDAO.findAllByNameContaining(PageRequest.of(page, pageSize, Sort.by(Direction.ASC, "id")),
                 search);
     }
 
     @Override
-    public Page<Computer> getComputerPage(int page, int pageSize, String search, ComputerOrdering order,
+    public Page<Computer> getPage(int page, int pageSize, String search, ComputerOrdering order,
             Direction ascending) {
         return computerDAO.findAllByNameContaining(
                 PageRequest.of(page, pageSize, Sort.by(Direction.ASC, order.getValue())), search);

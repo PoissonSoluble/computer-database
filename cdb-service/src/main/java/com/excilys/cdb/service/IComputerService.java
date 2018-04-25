@@ -10,7 +10,7 @@ import com.excilys.cdb.dao.ComputerOrdering;
 import com.excilys.cdb.model.Computer;
 import com.excilys.cdb.validation.exceptions.ValidationException;
 
-public interface IComputerService {
+public interface IComputerService extends IService<Computer> {
 
     void createComputer(Computer computer) throws ValidationException;
 
@@ -24,9 +24,9 @@ public interface IComputerService {
 
     int getComputerAmount(String search);
 
-    Page<Computer> getComputerPage(int page, int pageSize, String search) throws ServiceException;
+    Page<Computer> getPage(int page, int pageSize, String search);
 
-    Page<Computer> getComputerPage(int page, int pageSize, String search, ComputerOrdering order, Direction ascending);
+    Page<Computer> getPage(int page, int pageSize, String search, ComputerOrdering order, Direction ascending);
 
     void updateComputer(Computer computer) throws ValidationException;
 

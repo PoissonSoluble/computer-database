@@ -1,11 +1,9 @@
 package com.excilys.cdb.pagination;
 
-import java.util.ArrayList;
 import java.util.Optional;
 
 import com.excilys.cdb.model.Company;
 import com.excilys.cdb.service.ICompanyService;
-import com.excilys.cdb.service.ServiceException;
 
 public class CompanyPage extends Page<Company> {
 
@@ -20,20 +18,12 @@ public class CompanyPage extends Page<Company> {
 
     @Override
     protected int getLastPageNumber() {
-        try {
-            return companyService.getCompanyPage(0, pageSize, "").getTotalPages();
-        } catch (ServiceException e) {
-            return 1;
-        }
+        return companyService.getPage(0, pageSize, "").getTotalPages();
     }
 
     @Override
     protected void refresh() {
-        try {
-            elements = companyService.getCompanyPage(pageNumber-1, pageSize, search).getContent();
-        } catch (ServiceException e) {
-            elements = new ArrayList<>();
-        }
+        elements = companyService.getPage(pageNumber - 1, pageSize, search).getContent();
     }
 
 }

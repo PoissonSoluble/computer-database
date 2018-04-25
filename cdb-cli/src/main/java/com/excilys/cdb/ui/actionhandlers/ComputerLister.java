@@ -1,15 +1,13 @@
 package com.excilys.cdb.ui.actionhandlers;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Stream;
 
-import org.springframework.data.domain.Sort.Direction;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Component;
 
-import com.excilys.cdb.dao.ComputerOrdering;
 import com.excilys.cdb.model.Computer;
-import com.excilys.cdb.pagination.ComputerPage;
-import com.excilys.cdb.pagination.Page;
 import com.excilys.cdb.service.IComputerService;
 import com.excilys.cdb.ui.CommandLineInterface;
 
@@ -23,28 +21,30 @@ public class ComputerLister implements CLIActionHandler {
     public ComputerLister(IComputerService pComputerService) {
         computerService = pComputerService;
     }
-    
+
     @Override
     public boolean handle() {
-        page = new ComputerPage(1, PAGE_SIZE, "", ComputerOrdering.CU_ID, Direction.ASC, computerService);
+        page = computerService.getPage(0, PAGE_SIZE, "");
         printPages();
         return true;
     }
 
-    private String getPage(List<Computer> computers) {
+    private String getPageString(List<Computer> computers) {
         StringBuilder sb = new StringBuilder("======== COMPUTERS ========\n");
         sb.append("=== ID - NAME (COMPANY) ===\n");
         computers.forEach(computer -> {
             sb.append(computer).append("\n");
         });
-        sb.append("Page ").append(page.getPageNumber()).append("/").append(page.getPageTotal()).append("\n");
+        sb.append("Page ").append(page.getNumber() + 1).append("/").append(page.getTotalPages()).append("\n");
         return sb.toString();
     }
 
-    private boolean handleChoice() {
+    private Optional<Page<Computer>> handleChoice() {
         String input = CommandLineInterface.getUserInput().toLowerCase();
-        return Stream.of(PageChoice.values()).filter(v -> v.accept(input)).findFirst().orElse(PageChoice.CURRENT_PAGE)
-                .handle(page);
+        @SuppressWarnings("unchecked")
+        Page<Computer> handle = (Page<Computer>)(Stream.of(PageChoice.values()).filter(v -> v.accept(input)).findFirst()
+                .orElse(PageChoice.CURRENT_PAGE).handle(page, computerService));
+        return Optional.ofNullable(handle);
     }
 
     private void printPageMenu() {
@@ -57,9 +57,12 @@ public class ComputerLister implements CLIActionHandler {
 
     private void printPages() {
         while (true) {
-            System.out.println(getPage(page.get()));
+            System.out.println(getPageString(page.getContent()));
             printPageMenu();
-            if (!handleChoice()) {
+            Optional<Page<Computer>> pageOpt = handleChoice();
+            if (pageOpt.isPresent()) {
+                page = pageOpt.get();
+            } else {
                 return;
             }
         }

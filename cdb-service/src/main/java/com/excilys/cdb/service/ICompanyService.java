@@ -6,7 +6,7 @@ import org.springframework.data.domain.Page;
 
 import com.excilys.cdb.model.Company;
 
-public interface ICompanyService {
+public interface ICompanyService extends IService<Company> {
 
     void deleteCompany(Long id);
 
@@ -14,6 +14,6 @@ public interface ICompanyService {
 
     List<Company> getCompanies();
 
-    Page<Company> getCompanyPage(int page, int pageSize, String search) throws ServiceException;
+    Page<Company> getPage(int page, int pageSize, String search);
 
 }

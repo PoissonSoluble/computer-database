@@ -1,13 +1,13 @@
 package com.excilys.cdb.ui.actionhandlers;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Stream;
 
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Component;
 
 import com.excilys.cdb.model.Company;
-import com.excilys.cdb.pagination.CompanyPage;
-import com.excilys.cdb.pagination.Page;
 import com.excilys.cdb.service.ICompanyService;
 import com.excilys.cdb.ui.CommandLineInterface;
 
@@ -24,25 +24,27 @@ public class CompanyLister implements CLIActionHandler {
 
     @Override
     public boolean handle() {
-        page = new CompanyPage(1, PAGE_SIZE, "", companyService);
+        page = companyService.getPage(0, PAGE_SIZE, "");
         printPages();
         return true;
     }
 
-    private String getPage(List<Company> companies) {
+    private String getPageString(List<Company> companies) {
         StringBuilder sb = new StringBuilder("======== COMPANIES ========\n");
         sb.append("======== ID - NAME ========\n");
         companies.forEach(company -> {
             sb.append(company).append("\n");
         });
-        sb.append("Page ").append(page.getPageNumber()).append("/").append(page.getPageTotal()).append("\n");
+        sb.append("Page ").append(page.getNumber()+1).append("/").append(page.getTotalPages()).append("\n");
         return sb.toString();
     }
 
-    private boolean handleChoice() {
+    private Optional<Page<Company>> handleChoice() {
         String input = CommandLineInterface.getUserInput().toLowerCase();
-        return Stream.of(PageChoice.values()).filter(v -> v.accept(input)).findFirst().orElse(PageChoice.CURRENT_PAGE)
-                .handle(page);
+        @SuppressWarnings("unchecked")
+        Page<Company> handle = (Page<Company>)(Stream.of(PageChoice.values()).filter(v -> v.accept(input)).findFirst()
+                .orElse(PageChoice.CURRENT_PAGE).handle(page, companyService));
+        return Optional.ofNullable(handle);
     }
 
     private void printPageMenu() {
@@ -54,9 +56,12 @@ public class CompanyLister implements CLIActionHandler {
 
     private void printPages() {
         while (true) {
-            System.out.println(getPage(page.get()));
+            System.out.println(getPageString(page.getContent()));
             printPageMenu();
-            if (!handleChoice()) {
+            Optional<Page<Company>> pageOpt = handleChoice();
+            if (pageOpt.isPresent()) {
+                page = pageOpt.get();
+            } else {
                 return;
             }
         }

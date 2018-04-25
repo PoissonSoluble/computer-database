@@ -3,47 +3,47 @@ package com.excilys.cdb.ui.actionhandlers;
 import java.util.Arrays;
 import java.util.List;
 
-import com.excilys.cdb.pagination.Page;
+import org.springframework.data.domain.Page;
+
+import com.excilys.cdb.service.IService;
 
 public enum PageChoice {
     FIRST_PAGE("[f]irst page", false, "f", "first page") {
         @Override
-        public boolean handle(Page<?> page) {
-            page.first();
-            return true;
+        public Page<?> handle(Page<?> page, IService<?> service) {
+            return service.getPage(0, page.getSize(), "");
         }
     },
     LAST_PAGE("[l]ast page", false, "l", "last page") {
         @Override
-        public boolean handle(Page<?> page) {
-            page.last();
-            return true;
+        public Page<?> handle(Page<?> page, IService<?> service) {
+            return service.getPage(page.getTotalPages() - 1, page.getSize(), "");
         }
     },
     PREVIOUS_PAGE("[p]revious page", false, "p", "previous page") {
         @Override
-        public boolean handle(Page<?> page) {
-            page.previous();
-            return true;
+        public Page<?> handle(Page<?> page, IService<?> service) {
+            int pageNumber = page.getNumber() == 0 ? 1 : page.getNumber();
+            return service.getPage(pageNumber - 1, page.getSize(), "");
         }
     },
     NEXT_PAGE("[n]ext page", false, "n", "next page") {
         @Override
-        public boolean handle(Page<?> page) {
-            page.next();
-            return true;
+        public Page<?> handle(Page<?> page, IService<?> service) {
+            int pageNumber = page.getNumber() == page.getTotalPages() - 1 ? page.getTotalPages() - 2 : page.getNumber();
+            return service.getPage(pageNumber + 1, page.getSize(), "");
         }
     },
     QUIT("[q]uit", false, "q", "quit") {
         @Override
-        public boolean handle(Page<?> page) {
-            return false;
+        public Page<?> handle(Page<?> page, IService<?> Service) {
+            return null;
         }
     },
     CURRENT_PAGE("current", true) {
         @Override
-        public boolean handle(Page<?> page) {
-            return true;
+        public Page<?> handle(Page<?> page, IService<?> service) {
+            return page;
         }
     };
 
@@ -51,7 +51,7 @@ public enum PageChoice {
     private boolean hidden;
     private List<String> validChoices;
 
-    PageChoice(String pTitle, boolean pHidden,  String... pValidChoices) {
+    PageChoice(String pTitle, boolean pHidden, String... pValidChoices) {
         title = pTitle;
         hidden = pHidden;
         validChoices = Arrays.asList(pValidChoices);
@@ -67,10 +67,10 @@ public enum PageChoice {
     public boolean isHidden() {
         return hidden;
     }
-    
+
     public String getTitle() {
         return title;
     }
 
-    public abstract boolean handle(Page<?> page);
+    public abstract Page<?> handle(Page<?> page, IService<?> service);
 }

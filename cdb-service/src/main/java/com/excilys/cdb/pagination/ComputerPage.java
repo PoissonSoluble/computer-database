@@ -25,7 +25,6 @@ public class ComputerPage extends Page<Computer> {
         refresh();
     }
 
-
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder("======== COMPUTERS ========\n");
@@ -38,16 +37,12 @@ public class ComputerPage extends Page<Computer> {
 
     @Override
     protected int getLastPageNumber() {
-        try {
-            return computerService.getComputerPage(0, pageSize, "").getTotalPages();
-        } catch (ServiceException e) {
-            return 1;
-        }
+        return computerService.getPage(0, pageSize, "").getTotalPages();
     }
 
     @Override
     protected void refresh() {
-        elements = computerService.getComputerPage(pageNumber-1, pageSize, search, order, direction).getContent();
+        elements = computerService.getPage(pageNumber - 1, pageSize, search, order, direction).getContent();
         pageTotal = getLastPageNumber();
     }
 }
