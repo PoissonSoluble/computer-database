@@ -9,7 +9,7 @@ public enum ComputerOrdering {
     CU_INTRODUCED("introduced", "cu_introduced", "introduced", "computer_introduced"),
     CU_DISCONTINUED("discontinued", "cu_discontinued", "discontinued", "computer_discontinued"),
     CA_ID("company", "ca_id", "companyId"),
-    CA_NAME("name", "ca_name", "company_name");
+    CA_NAME("company.name", "ca_name", "company_name");
 
     private List<String> validChoices;
     private String value;

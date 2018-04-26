@@ -36,7 +36,7 @@
 				<div class="pull-left">
 					<form id="searchForm" action="#" method="GET" class="form-inline">
 
-						<input type="hidden" name="pageNumber" value="${pageNumber}" /> <input
+						<input type="hidden" name="pageNumber" value="1" /> <input
 							type="hidden" name="pageSize" value="${pageSize}" /> <input
 							type="search" id="searchbox" name="search" class="form-control"
 							placeholder="<spring:message code="dashboard.search"/>" /> <input type="submit"

@@ -6,6 +6,7 @@ import java.util.Optional;
 import java.util.stream.Stream;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -20,7 +21,6 @@ import com.excilys.cdb.dto.ComputerDTO;
 import com.excilys.cdb.mapper.ICompanyDTOMapper;
 import com.excilys.cdb.mapper.IComputerDTOMapper;
 import com.excilys.cdb.model.Computer;
-import com.excilys.cdb.pagination.ComputerPage;
 import com.excilys.cdb.service.ICompanyService;
 import com.excilys.cdb.service.IComputerService;
 import com.excilys.cdb.validation.exceptions.ValidationException;
@@ -84,7 +84,7 @@ public class ComputerController {
     }
 
     @GetMapping("/dashboard")
-    public ModelAndView handleGet(@RequestParam(value = "pageNumber", defaultValue = DEFAULT_PAGE) int pageNumber,
+    public ModelAndView getDashboard(@RequestParam(value = "pageNumber", defaultValue = DEFAULT_PAGE) int pageNumber,
             @RequestParam(value = "pageSize", defaultValue = DEFAULT_SIZE) int pageSize,
             @RequestParam(value = "ascending", defaultValue = DEFAULT_ASCENDING) boolean ascending,
             @RequestParam(value = "order", defaultValue = DEFAULT_ORDER) String order,
@@ -93,7 +93,7 @@ public class ComputerController {
         ComputerOrdering computerOrder = Stream.of(ComputerOrdering.values()).filter(v -> v.accept(order)).findFirst()
                 .orElse(ComputerOrdering.CU_ID);
         Direction direction = ascending ? Direction.ASC : Direction.DESC;
-        ComputerPage page = new ComputerPage(pageNumber, pageSize, search, computerOrder, direction, computerService);
+        Page<Computer> page = computerService.getPage(pageNumber-1, pageSize, search, computerOrder, direction);
         List<ComputerDTO> computerDTOs = getDTOsFromPage(page);
         ModelAndView modelAndView = new ModelAndView("dashboard");
         setModelAttributes(pageSize, ascending, order, search, page, computerDTOs, modelAndView);
@@ -146,17 +146,17 @@ public class ComputerController {
         return modelAndView;
     }
 
-    private List<ComputerDTO> getDTOsFromPage(ComputerPage page) {
+    private List<ComputerDTO> getDTOsFromPage(Page<Computer> page) {
         List<ComputerDTO> computerDTOs = new ArrayList<>();
-        page.get().forEach(computer -> computerDTOs.add(computerDTOMapper.createComputerDTO(computer)));
+        page.getContent().forEach(computer -> computerDTOs.add(computerDTOMapper.createComputerDTO(computer)));
         return computerDTOs;
     }
 
-    private void setModelAttributes(int pageSize, boolean ascending, String order, String search, ComputerPage page,
+    private void setModelAttributes(int pageSize, boolean ascending, String order, String search, Page<Computer> page,
             List<ComputerDTO> computerDTOs, ModelAndView modelAndView) {
         modelAndView.addObject("computers", computerDTOs);
-        modelAndView.addObject("pageNumber", page.getPageNumber());
-        modelAndView.addObject("totalPage", page.getPageTotal());
+        modelAndView.addObject("pageNumber", page.getNumber()+1);
+        modelAndView.addObject("totalPage", page.getTotalPages());
         modelAndView.addObject("search", search);
         modelAndView.addObject("computerAmount", computerService.getComputerAmount(search));
         modelAndView.addObject("pageSize", pageSize);
