@@ -33,8 +33,8 @@ public class ComputerController {
     private static final String DEFAULT_SIZE = "10";
     private static final String DEFAULT_ORDER = "CU_ID";
     private static final String DEFAULT_ASCENDING = "true";
-
     private static final String DEFAULT_SEARCH = "";
+    
     private IComputerService computerService;
     private ICompanyService companyService;
     private IComputerDTOMapper computerDTOMapper;

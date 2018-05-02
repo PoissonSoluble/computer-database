@@ -6,7 +6,6 @@ import org.springframework.web.servlet.DispatcherServlet;
 import org.springframework.web.servlet.support.AbstractAnnotationConfigDispatcherServletInitializer;
 
 public class WebInitializer extends AbstractAnnotationConfigDispatcherServletInitializer {
-
     @Override
     protected DispatcherServlet createDispatcherServlet(WebApplicationContext context) {
         DispatcherServlet servlet = new DispatcherServlet(context);

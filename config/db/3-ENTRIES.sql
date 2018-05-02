@@ -615,3 +615,6 @@ insert into computer (cu_id,cu_name,cu_introduced,cu_discontinued,ca_id) values 
 insert into computer (cu_id,cu_name,cu_introduced,cu_discontinued,ca_id) values (572,'Dell Vostro',null,null,null);
 insert into computer (cu_id,cu_name,cu_introduced,cu_discontinued,ca_id) values (573,'Gateway LT3103U','2008-01-01',null,null);
 insert into computer (cu_id,cu_name,cu_introduced,cu_discontinued,ca_id) values (574,'iPhone 4S','2011-10-14',null,1);
+
+insert into user_role (ur_id, ur_label) values (1, "ROLE_ADMIN");
+insert into user_role (ur_id, ur_label) values (2, "ROLE_USER");
