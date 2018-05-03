@@ -19,12 +19,15 @@
 	media="screen">
 </head>
 <body>
-    <header class="navbar navbar-inverse navbar-fixed-top">
-        <div class="container">
-            <a class="navbar-brand" href="<tag:links linkTo="dashboard"/>"> Application - Computer Database </a>
+	<header class="navbar navbar-inverse navbar-fixed-top">
+		<div class="container">
+			<a class="navbar-brand" href="<tag:links linkTo="dashboard"/>"> Application - Computer Database </a>
+			<c:url var="logoutUrl" value="/logout" />
+			<form:form action="${logoutUrl}" modelAttribute="user" method="post" class="form-horizontal">
+				<input type="submit" value="Logout" style="float: right; margin-top: 8px;" class="btn btn-primary" />
+			</form:form>
         </div>
-    </header>
-
+	</header>
     <section id="main">
         <div class="container">
             <div class="row">

@@ -6,9 +6,9 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<title>Computer Database</title>
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<!-- Bootstrap -->
+    <title>Computer Database</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Bootstrap -->
 <link href="<c:url value="/static/css/bootstrap.min.css" />"
 	rel="stylesheet" media="screen">
 <link href="<c:url value="/static/css/font-awesome.css" />"
@@ -26,16 +26,15 @@
 			</form:form>
         </div>
 	</header>
-
-	<section id="main">
-		<div class="container">	
-			<div class="alert alert-danger">
-				Error 500: An error has occured!
-				<br/>
-				<!-- stacktrace -->
-			</div>
-		</div>
-	</section>
+    <section id="main">
+        <div class="container">
+            <div class="alert alert-danger">
+                Error 403: Access denied.
+                <br/>
+                <!-- stacktrace -->
+            </div>
+        </div>
+    </section>
 
 	<script src="<c:url value="/static/js/jquery.min.js" />"></script>
 	<script src="<c:url value="/static/js/bootstrap.min.js" />"></script>

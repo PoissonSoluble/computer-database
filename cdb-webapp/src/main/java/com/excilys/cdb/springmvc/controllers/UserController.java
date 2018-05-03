@@ -11,4 +11,10 @@ public class UserController {
     public ModelAndView login() {
         return new ModelAndView("login");
     }
+    
+    @GetMapping("/forbidden")
+    public ModelAndView handle() {
+        ModelAndView model = new ModelAndView("403");
+        return model;
+    }
 }

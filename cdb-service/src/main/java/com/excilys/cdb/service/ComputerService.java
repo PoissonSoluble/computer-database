@@ -75,7 +75,7 @@ public class ComputerService implements IComputerService {
     public Page<Computer> getPage(int page, int pageSize, String search, ComputerOrdering order,
             Direction ascending) {
         return computerDAO.findAllByNameContaining(
-                PageRequest.of(page, pageSize, Sort.by(Direction.ASC, order.getValue())), search);
+                PageRequest.of(page, pageSize, Sort.by(ascending, order.getValue())), search);
     }
 
     @Override
