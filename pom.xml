@@ -15,6 +15,7 @@
     <module>cdb-persistence</module>
     <module>cdb-service</module>
     <module>cdb-webapp</module>
+    <module>cdb-webservice</module>
     <module>cdb-cli</module>
   </modules>
   <properties>
@@ -48,6 +49,7 @@
     <!-- spring -->
     <spring-framework.version>5.0.5.RELEASE</spring-framework.version>
     <spring-security.version>5.0.4.RELEASE</spring-security.version>
+    <jackson.version>2.9.5</jackson.version>
     <!-- hibernate -->
     <hibernate-jpa.version>1.0.2.Final</hibernate-jpa.version>
     <hibernate-entitymanager.version>5.3.0.CR1</hibernate-entitymanager.version>
@@ -55,6 +57,11 @@
   </properties>
   <dependencyManagement>
     <dependencies>
+      <dependency>
+        <groupId>com.fasterxml.jackson.core</groupId>
+        <artifactId>jackson-databind</artifactId>
+        <version>${jackson.version}</version>
+      </dependency>
       <dependency>
         <groupId>org.springframework.security</groupId>
         <artifactId>spring-security-core</artifactId>
@@ -246,7 +253,22 @@
         <configuration>
           <url>${tomcat.url}</url>
           <server>TomcatServer</server>
-          <path>/cdb</path>
+          <webapps>
+            <webapp>
+              <groupId>com.excilys.cdb</groupId>
+              <artifactId>cdb-webapp</artifactId>
+              <version>0.3.1-SNAPSHOT</version>
+              <type>war</type>
+              <asWebapp>true</asWebapp>
+            </webapp>
+            <webapp>
+              <groupId>com.company</groupId>
+              <artifactId>cdb-webservice</artifactId>
+              <version>0.3.1-SNAPSHOT</version>
+              <type>war</type>
+              <asWebapp>true</asWebapp>
+            </webapp>
+          </webapps>
         </configuration>
       </plugin>
       <plugin>

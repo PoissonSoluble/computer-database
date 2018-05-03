@@ -10,6 +10,9 @@ public class CompanyDTOMapper implements ICompanyDTOMapper {
 
     @Override
     public CompanyDTO createCompanyDTO(Company company) {
+        if(company == null) {
+            return null;
+        }
         CompanyDTO dto = new CompanyDTO();
         dto.setId(company.getId().orElse(-1L));
         dto.setName(company.getName().orElse(""));

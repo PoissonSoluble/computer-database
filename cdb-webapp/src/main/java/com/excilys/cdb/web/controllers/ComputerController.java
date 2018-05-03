@@ -1,4 +1,4 @@
-package com.excilys.cdb.springmvc.controllers;
+package com.excilys.cdb.web.controllers;
 
 import java.util.ArrayList;
 import java.util.List;

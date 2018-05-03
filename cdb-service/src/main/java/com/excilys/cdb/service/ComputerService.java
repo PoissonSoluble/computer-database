@@ -1,5 +1,6 @@
 package com.excilys.cdb.service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -59,7 +60,14 @@ public class ComputerService implements IComputerService {
     public Optional<Computer> getComputer(Long id) {
         return computerDAO.findById(id);
     }
-
+    
+    @Override
+    public List<Computer> getComputers(){
+        List<Computer> computers = new ArrayList<>();
+        computerDAO.findAll().forEach(computers::add);
+        return computers;
+    }
+ 
     @Override
     public int getComputerAmount(String search) {
         return computerDAO.countByNameContaining(search);

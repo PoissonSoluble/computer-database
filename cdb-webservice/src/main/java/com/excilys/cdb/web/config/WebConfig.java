@@ -1,7 +1,8 @@
-package com.excilys.cdb.springmvc.config;
+package com.excilys.cdb.web.config;
 
 import java.util.Locale;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
@@ -10,7 +11,6 @@ import org.springframework.context.annotation.Import;
 import org.springframework.context.annotation.Profile;
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 import org.springframework.context.support.ReloadableResourceBundleMessageSource;
-import org.springframework.core.annotation.Order;
 import org.springframework.web.servlet.LocaleResolver;
 import org.springframework.web.servlet.ViewResolver;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
@@ -23,15 +23,18 @@ import org.springframework.web.servlet.view.InternalResourceViewResolver;
 import org.springframework.web.servlet.view.JstlView;
 
 import com.excilys.cdb.config.ServiceConfig;
+import com.excilys.cdb.web.controllers.ComputerRestController;
 
 @Configuration
 @Import(ServiceConfig.class)
 @EnableWebMvc
 @Profile("webmvc")
-@ComponentScan("com.excilys.cdb.springmvc")
-@Order(1)
+@ComponentScan("com.excilys.cdb.web")
 public class WebConfig implements WebMvcConfigurer {
 
+    @Autowired
+    ComputerRestController computerRest;
+    
     @Bean
     public static PropertySourcesPlaceholderConfigurer propertySourcesPlaceholderConfigurer() {
         return new PropertySourcesPlaceholderConfigurer();

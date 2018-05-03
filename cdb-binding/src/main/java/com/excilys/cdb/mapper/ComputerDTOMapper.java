@@ -22,7 +22,7 @@ public class ComputerDTOMapper implements IComputerDTOMapper {
         dto.setName(computer.getName().orElse(""));
         dto.setIntroduced(getFormattedDate(computer.getIntroduced()));
         dto.setDiscontinued(getFormattedDate(computer.getDiscontinued()));
-        dto.setCompany(companyMapper.createCompanyDTO(computer.getCompany().orElse(new Company.Builder("").build())));
+        dto.setCompany(companyMapper.createCompanyDTO(computer.getCompany().orElse(null)));
         return dto;
     }
 

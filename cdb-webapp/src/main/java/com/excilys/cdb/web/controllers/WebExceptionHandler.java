@@ -1,4 +1,4 @@
-package com.excilys.cdb.springmvc.controllers;
+package com.excilys.cdb.web.controllers;
 
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
