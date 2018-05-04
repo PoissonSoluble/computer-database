@@ -4,6 +4,7 @@ import org.springframework.stereotype.Component;
 
 import com.excilys.cdb.model.Computer;
 import com.excilys.cdb.service.IComputerService;
+import com.excilys.cdb.service.ServiceException;
 import com.excilys.cdb.validation.exceptions.InvalidDatesException;
 import com.excilys.cdb.validation.exceptions.NotExistingCompanyException;
 import com.excilys.cdb.validation.exceptions.NullNameException;
@@ -48,6 +49,8 @@ public class ComputerModifier implements CLIActionHandler {
             System.out.println("The company specified does not exist.");
         } catch (ValidationException e) {
             System.out.println("An error occured during the validation. Please check your parameters.");
+        } catch (ServiceException e) {
+            System.out.println(e.getMessage());
         }
     }
 }

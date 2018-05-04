@@ -23,21 +23,21 @@
 	<c:when test="${not empty linkTo}">
 		<c:choose>
 			<c:when test="${ linkTo.equals('dashboard') }">
-				<c:set var="tmpPath" value="${ tmpPath.concat('/cdb/computer/dashboard') }" />
+				<c:set var="tmpPath" value="${ tmpPath.concat('/cdb-webapp/computer/dashboard') }" />
 			</c:when>
 			<c:when test="${ linkTo.equals('addComputer') }">
-				<c:set var="tmpPath" value="${ tmpPath.concat('/cdb/computer/add') }" />
+				<c:set var="tmpPath" value="${ tmpPath.concat('/cdb-webapp/computer/add') }" />
 			</c:when>
 			<c:when test="${ linkTo.equals('deleteComputer') }">
-				<c:set var="tmpPath" value="${ tmpPath.concat('/cdb/computer/delete') }" />
+				<c:set var="tmpPath" value="${ tmpPath.concat('/cdb-webapp/computer/delete') }" />
 			</c:when>
 			<c:when test="${ linkTo.equals('editComputer') }">
-				<c:set var="tmpPath" value="${ tmpPath.concat('/cdb/computer/edit') }" />
+				<c:set var="tmpPath" value="${ tmpPath.concat('/cdb-webapp/computer/edit') }" />
 			</c:when>
 		</c:choose>
 	</c:when>
 	<c:otherwise>
-		<c:out value="${ tmpPath.concat('/cdb/computer/dashboard') }" />
+		<c:out value="${ tmpPath.concat('/cdb-webapp/computer/dashboard') }" />
 	</c:otherwise>
 </c:choose>
 

@@ -33,6 +33,9 @@ public class ComputerService implements IComputerService {
 
     @Override
     public void createComputer(Computer computer) throws ValidationException {
+        if (computer.getId().isPresent()) {
+            computer.setId(null);
+        }
         computerValidator.validateComputer(computer);
         computerDAO.save(computer);
         LOGGER.info(new StringBuilder("Computer creation : ").append(computer).toString());
@@ -40,6 +43,14 @@ public class ComputerService implements IComputerService {
 
     @Override
     public void deleteComputer(Computer computer) {
+        computerDAO.delete(computer);
+        LOGGER.info(new StringBuilder("Computer removal : ").append(computer.getId().orElse(-1L)).toString());
+    }
+    
+
+    @Override
+    public void deleteComputer(Long id) {
+        Computer computer = new Computer.Builder(id).build();
         computerDAO.delete(computer);
         LOGGER.info(new StringBuilder("Computer removal : ").append(computer.getId().orElse(-1L)).toString());
     }
@@ -60,14 +71,14 @@ public class ComputerService implements IComputerService {
     public Optional<Computer> getComputer(Long id) {
         return computerDAO.findById(id);
     }
-    
+
     @Override
-    public List<Computer> getComputers(){
+    public List<Computer> getComputers() {
         List<Computer> computers = new ArrayList<>();
         computerDAO.findAll().forEach(computers::add);
         return computers;
     }
- 
+
     @Override
     public int getComputerAmount(String search) {
         return computerDAO.countByNameContaining(search);
@@ -80,16 +91,19 @@ public class ComputerService implements IComputerService {
     }
 
     @Override
-    public Page<Computer> getPage(int page, int pageSize, String search, ComputerOrdering order,
-            Direction ascending) {
-        return computerDAO.findAllByNameContaining(
-                PageRequest.of(page, pageSize, Sort.by(ascending, order.getValue())), search);
+    public Page<Computer> getPage(int page, int pageSize, String search, ComputerOrdering order, Direction ascending) {
+        return computerDAO.findAllByNameContaining(PageRequest.of(page, pageSize, Sort.by(ascending, order.getValue())),
+                search);
     }
 
     @Override
-    public void updateComputer(Computer computer) throws ValidationException {
+    public void updateComputer(Computer computer) throws ValidationException, ServiceException {
+        if (!computerDAO.findById(computer.getId().orElse(-1L)).isPresent()) {
+            throw new ServiceException("This computer does not exist.");
+        }
         computerValidator.validateComputer(computer);
         computerDAO.save(computer);
         LOGGER.info(new StringBuilder("Computer update : ").append(computer).toString());
+
     }
 }

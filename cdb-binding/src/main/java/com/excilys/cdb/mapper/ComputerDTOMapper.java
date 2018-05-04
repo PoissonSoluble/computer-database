@@ -30,7 +30,7 @@ public class ComputerDTOMapper implements IComputerDTOMapper {
         LocalDate introduced = getDate(dto.getIntroduced());
         LocalDate discontinued = getDate(dto.getDiscontinued());
         Company company = null;
-        if (dto.getCompany().getId() == 0) {
+        if (dto.getCompany() == null || dto.getCompany().getId() == 0) {
             company = null;
         } else {
             company = new Company.Builder(dto.getCompany().getId()).withName(dto.getCompany().getName()).build();

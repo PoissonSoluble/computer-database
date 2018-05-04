@@ -30,6 +30,8 @@ public interface IComputerService extends IService<Computer> {
 
     Page<Computer> getPage(int page, int pageSize, String search, ComputerOrdering order, Direction ascending);
 
-    void updateComputer(Computer computer) throws ValidationException;
+    void updateComputer(Computer computer) throws ValidationException, ServiceException;
+
+    void deleteComputer(Long id);
 
 }

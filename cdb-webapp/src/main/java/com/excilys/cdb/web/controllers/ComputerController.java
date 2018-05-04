@@ -23,6 +23,7 @@ import com.excilys.cdb.mapper.IComputerDTOMapper;
 import com.excilys.cdb.model.Computer;
 import com.excilys.cdb.service.ICompanyService;
 import com.excilys.cdb.service.IComputerService;
+import com.excilys.cdb.service.ServiceException;
 import com.excilys.cdb.validation.exceptions.ValidationException;
 
 @Controller
@@ -130,7 +131,7 @@ public class ComputerController {
         Computer computer = computerDTOMapper.createComputerFromDTO(dto);
         try {
             computerService.updateComputer(computer);
-        } catch (ValidationException e) {
+        } catch (ValidationException | ServiceException e) {
             modelAndView.addObject("error", e.getMessage());
         }
         return getEdit(computer.getId().orElse(0L), modelAndView);
