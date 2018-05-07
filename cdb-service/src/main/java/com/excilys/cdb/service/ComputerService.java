@@ -80,6 +80,27 @@ public class ComputerService implements IComputerService {
     }
 
     @Override
+    public List<Computer> getComputersBySearch(String search) {
+        List<Computer> computers = new ArrayList<>();
+        computerDAO.findAllByNameContaining(search).forEach(computers::add);
+        return computers;
+    }
+    
+    @Override
+    public List<Computer> getComputersWithOrder(ComputerOrdering order, Direction direction) {
+        List<Computer> computers = new ArrayList<>();
+        computerDAO.findAll(Sort.by(direction, order.getValue())).forEach(computers::add);
+        return computers;
+    }
+    
+    @Override
+    public List<Computer> getComputersBySearchWithOrder(String search, ComputerOrdering order, Direction direction) {
+        List<Computer> computers = new ArrayList<>();
+        computerDAO.findAllByNameContaining(search, Sort.by(direction, order.getValue())).forEach(computers::add);
+        return computers;
+    }
+    
+    @Override
     public int getComputerAmount(String search) {
         return computerDAO.countByNameContaining(search);
     }

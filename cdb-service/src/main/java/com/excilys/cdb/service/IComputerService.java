@@ -16,22 +16,28 @@ public interface IComputerService extends IService<Computer> {
 
     void deleteComputer(Computer computer);
 
+    void deleteComputer(Long id);
+
     void deleteComputers(List<Computer> ids);
 
     boolean exists(Computer computer);
 
     Optional<Computer> getComputer(Long id);
-
-    List<Computer> getComputers();
     
     int getComputerAmount(String search);
+    
+    List<Computer> getComputers();
+
+    List<Computer> getComputersBySearchWithOrder(String search, ComputerOrdering order, Direction direction);
+
+    List<Computer> getComputersBySearch(String search);
+
+    List<Computer> getComputersWithOrder(ComputerOrdering order, Direction direction);
 
     Page<Computer> getPage(int page, int pageSize, String search);
 
     Page<Computer> getPage(int page, int pageSize, String search, ComputerOrdering order, Direction ascending);
 
     void updateComputer(Computer computer) throws ValidationException, ServiceException;
-
-    void deleteComputer(Long id);
 
 }
