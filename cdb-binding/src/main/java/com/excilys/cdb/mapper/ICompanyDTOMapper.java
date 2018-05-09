@@ -7,4 +7,6 @@ public interface ICompanyDTOMapper {
 
     CompanyDTO createCompanyDTO(Company company);
 
+    Company createCompanyFromDTO(CompanyDTO dto);
+
 }

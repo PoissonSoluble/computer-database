@@ -3,6 +3,9 @@ package com.excilys.cdb.ui;
 import java.util.Scanner;
 import java.util.stream.Stream;
 
+import javax.ws.rs.client.Client;
+import javax.ws.rs.client.ClientBuilder;
+
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.stereotype.Controller;
@@ -22,6 +25,9 @@ import com.excilys.cdb.ui.actionhandlers.ExitHandler;
 public class CommandLineInterface {
 
     private static Scanner sc;
+
+    public static Client client = ClientBuilder.newClient();
+    public static final String REST_URI = "http://localhost:8080/cdb-webservice/";
 
     public CommandLineInterface(ComputerLister computerLister, CompanyLister companyLister,
             ComputerCreator computerCreator, ComputerItemizer computerItemizer, ComputerModifier computerModifier,

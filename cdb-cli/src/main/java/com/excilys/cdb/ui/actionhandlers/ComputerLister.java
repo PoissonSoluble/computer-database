@@ -4,27 +4,26 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
 
-import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Component;
 
 import com.excilys.cdb.model.Computer;
-import com.excilys.cdb.service.IComputerService;
 import com.excilys.cdb.ui.CommandLineInterface;
+import com.excilys.cdb.ui.container.Page;
+import com.excilys.cdb.ui.webclient.ComputerRESTPageHandler;
 
 @Component("computerLister")
 public class ComputerLister implements CLIActionHandler {
 
-    private IComputerService computerService;
-    private final int PAGE_SIZE = 20;
+    private ComputerRESTPageHandler computerRESTPageHandler;
     private Page<Computer> page;
 
-    public ComputerLister(IComputerService pComputerService) {
-        computerService = pComputerService;
+    public ComputerLister(ComputerRESTPageHandler pComputerRESTPageHandler) {
+        computerRESTPageHandler = pComputerRESTPageHandler;
     }
 
     @Override
     public boolean handle() {
-        page = computerService.getPage(0, PAGE_SIZE, "");
+        page = computerRESTPageHandler.getListFromREST(0, Page.DEFAULT_PAGE_SIZE);
         printPages();
         return true;
     }
@@ -43,7 +42,7 @@ public class ComputerLister implements CLIActionHandler {
         String input = CommandLineInterface.getUserInput().toLowerCase();
         @SuppressWarnings("unchecked")
         Page<Computer> handle = (Page<Computer>)(Stream.of(PageChoice.values()).filter(v -> v.accept(input)).findFirst()
-                .orElse(PageChoice.CURRENT_PAGE).handle(page, computerService));
+                .orElse(PageChoice.CURRENT_PAGE).handle(page, computerRESTPageHandler));
         return Optional.ofNullable(handle);
     }
 

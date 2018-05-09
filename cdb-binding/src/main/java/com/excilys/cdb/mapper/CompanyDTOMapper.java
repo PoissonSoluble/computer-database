@@ -10,12 +10,17 @@ public class CompanyDTOMapper implements ICompanyDTOMapper {
 
     @Override
     public CompanyDTO createCompanyDTO(Company company) {
-        if(company == null) {
+        if (company == null) {
             return null;
         }
         CompanyDTO dto = new CompanyDTO();
         dto.setId(company.getId().orElse(-1L));
         dto.setName(company.getName().orElse(""));
         return dto;
+    }
+
+    @Override
+    public Company createCompanyFromDTO(CompanyDTO dto) {
+        return new Company.Builder(dto.getId()).withName(dto.getName()).build();
     }
 }

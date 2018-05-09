@@ -8,26 +8,26 @@ import org.springframework.stereotype.Component;
 
 import com.excilys.cdb.model.Company;
 import com.excilys.cdb.model.Computer;
-import com.excilys.cdb.service.IComputerService;
 import com.excilys.cdb.ui.CLIException;
 import com.excilys.cdb.ui.CommandLineInterface;
+import com.excilys.cdb.ui.webclient.ComputerRequestHandler;
 
 @Component("computerItemizer")
 public class ComputerItemizer implements CLIActionHandler {
 
-    private IComputerService computerService;
+    private ComputerRequestHandler computerRequestHandler;
     private CLIUserInputsAPI cliApi;
 
-    public ComputerItemizer(IComputerService pComputerService, CLIUserInputsAPI pCliApi) {
-        computerService = pComputerService;
+    public ComputerItemizer(ComputerRequestHandler pComputerRequestHandler, CLIUserInputsAPI pCliApi) {
+        computerRequestHandler = pComputerRequestHandler;
         cliApi = pCliApi;
     }
-    
+
     @Override
     public boolean handle() {
         try {
             Long id = cliApi.askID("computer");
-            printComputer(computerService.getComputer(id));
+            printComputer(computerRequestHandler.getComputer(id));
             CommandLineInterface.getUserInput();
         } catch (NumberFormatException e) {
             System.out.println("This is not a proper ID format. (an integer)");
@@ -57,7 +57,8 @@ public class ComputerItemizer implements CLIActionHandler {
         if (!company.isPresent()) {
             sb.append("Not specified.").append("\n");
         } else {
-            sb.append(company.get().getName()).append(" (#").append(company.get().getId()).append(")").append("\n");
+            sb.append(company.get().getName().orElse("")).append(" (#").append(company.get().getId().orElse(null))
+                    .append(")").append("\n");
         }
         return sb;
     }
