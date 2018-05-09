@@ -38,4 +38,9 @@ public class ComputerRequestHandler {
                 .request(MediaType.APPLICATION_JSON).put(Entity.json(computerDTOMapper.createComputerDTO(computer)))
                 .getStatus();
     }
+
+    public int deleteComputer(Long id) {
+        return CommandLineInterface.client.target(CommandLineInterface.REST_URI).path("computer/" + id)
+                .request(MediaType.APPLICATION_JSON).delete().getStatus();
+    }
 }

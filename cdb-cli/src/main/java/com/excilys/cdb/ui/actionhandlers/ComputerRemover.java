@@ -2,30 +2,30 @@ package com.excilys.cdb.ui.actionhandlers;
 
 import org.springframework.stereotype.Component;
 
-import com.excilys.cdb.model.Computer;
-import com.excilys.cdb.service.IComputerService;
+import com.excilys.cdb.ui.webclient.ComputerRequestHandler;
 
 @Component("computerRemover")
 public class ComputerRemover implements CLIActionHandler {
 
-    private IComputerService computerService;
+    private ComputerRequestHandler computerRequestHandler;
     private CLIUserInputsAPI cliApi;
 
-    public ComputerRemover(IComputerService pComputerService, CLIUserInputsAPI pCliApi) {
-        computerService = pComputerService;
+    public ComputerRemover(ComputerRequestHandler pComputerRequestHandler, CLIUserInputsAPI pCliApi) {
+        computerRequestHandler = pComputerRequestHandler;
         cliApi = pCliApi;
     }
     
     @Override
     public boolean handle() {
         try {
-            Computer computer = new Computer.Builder(cliApi.askID("computer")).build();
-            if (!computerService.exists(computer)) {
-                System.out.println("This computer does not exists.");
-                return true;
+            Long id = cliApi.askID("computer");
+            int status = computerRequestHandler.deleteComputer(id);
+
+            if (status < 300 && status >= 200) {
+                System.out.println("Removal completed. Code : " + status);
+            } else {
+                System.out.println("Removal failed ! Code : " + status);
             }
-            computerService.deleteComputer(computer);
-            System.out.println("The computer was successfuly deleted.\n");
         } catch (NumberFormatException e) {
             System.out.println("This is not a proper ID format. (an integer)");
         }

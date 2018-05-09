@@ -2,16 +2,16 @@ package com.excilys.cdb.ui.actionhandlers;
 
 import org.springframework.stereotype.Component;
 
-import com.excilys.cdb.service.ICompanyService;
+import com.excilys.cdb.ui.webclient.CompanyRequestHandler;
 
 @Component("companyRemover")
 public class CompanyRemover implements CLIActionHandler {
 
-    private ICompanyService companyService;
+    private CompanyRequestHandler companyRequestHandler;
     private CLIUserInputsAPI cliApi;
 
-    public CompanyRemover(ICompanyService pCompanyService, CLIUserInputsAPI pCliApi) {
-        companyService = pCompanyService;
+    public CompanyRemover(CompanyRequestHandler pCompanyRequestHandler, CLIUserInputsAPI pCliApi) {
+        companyRequestHandler = pCompanyRequestHandler;
         cliApi = pCliApi;
     }
     
@@ -19,12 +19,13 @@ public class CompanyRemover implements CLIActionHandler {
     public boolean handle() {
         try {
             Long id = cliApi.askID("company");
-            if (!companyService.exists(id)) {
-                System.out.println("This company does not exists.");
-                return true;
+            int status = companyRequestHandler.deleteCompany(id);
+
+            if (status < 300 && status >= 200) {
+                System.out.println("Removal completed. Code : " + status);
+            } else {
+                System.out.println("Removal failed ! Code : " + status);
             }
-            companyService.deleteCompany(id);
-            System.out.println("The company was successfuly deleted.\n");
         } catch (NumberFormatException e) {
             System.out.println("This is not a proper ID format. (an integer)");
         }
