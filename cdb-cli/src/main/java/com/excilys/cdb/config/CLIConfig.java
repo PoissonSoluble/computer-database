@@ -7,7 +7,7 @@ import org.springframework.context.annotation.Profile;
 
 @Configuration
 @Profile("cli")
-@Import(ServiceConfig.class)
+@Import(BindingConfig.class)
 @ComponentScan("com.excilys.cdb.ui")
 public class CLIConfig {
 

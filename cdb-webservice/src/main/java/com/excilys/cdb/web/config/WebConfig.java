@@ -15,5 +15,4 @@ import com.excilys.cdb.config.ServiceConfig;
 @Profile("webmvc")
 @ComponentScan("com.excilys.cdb.web")
 public class WebConfig implements WebMvcConfigurer {
-
 }

@@ -145,10 +145,10 @@ public class ComputerRestController {
         Computer computer = computerDTOMapper.createComputerFromDTO(computerDTO);
         try {
             computerService.createComputer(computer);
+            return new ResponseEntity<String>("OK.", HttpStatus.CREATED);
         } catch (ValidationException e) {
             return new ResponseEntity<String>("Bad request.", HttpStatus.BAD_REQUEST);
         }
-        return new ResponseEntity<String>("OK.", HttpStatus.OK);
     }
 
     @PutMapping("/computer")
@@ -156,17 +156,15 @@ public class ComputerRestController {
         Computer computer = computerDTOMapper.createComputerFromDTO(computerDTO);
         try {
             computerService.updateComputer(computer);
-        } catch (ValidationException e) {
-            return new ResponseEntity<String>("Bad request.", HttpStatus.BAD_REQUEST);
-        } catch (ServiceException e) {
-            return new ResponseEntity<String>(e.getMessage(), HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<String>("OK.", HttpStatus.OK);
+        } catch (ValidationException | ServiceException e) {
+            return new ResponseEntity<String>("Bad request." + e.getMessage(), HttpStatus.BAD_REQUEST);
         }
-        return new ResponseEntity<String>("OK.", HttpStatus.OK);
     }
 
     @DeleteMapping("/computer/{id}")
     public ResponseEntity<String> deleteComputer(@PathVariable Long id) {
         computerService.deleteComputer(id);
-        return new ResponseEntity<String>("OK.", HttpStatus.OK);
+        return new ResponseEntity<String>("Accepted.", HttpStatus.ACCEPTED);
     }
 }
