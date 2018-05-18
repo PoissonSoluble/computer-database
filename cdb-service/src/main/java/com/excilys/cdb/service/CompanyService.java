@@ -71,7 +71,7 @@ public class CompanyService implements ICompanyService {
     @Override
     public List<Company> getCompaniesBySearchWithOrder(String name, ComputerOrdering order, Direction direction) {
         List<Company> companies = new ArrayList<>();
-        companyDAO.findAllByNameContaining(name, Sort.by(direction, order.name())).forEach(companies::add);
+        companyDAO.findAllByNameContaining(name, Sort.by(direction, order.getValue())).forEach(companies::add);
         return companies;
     }
 

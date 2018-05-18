@@ -7,8 +7,11 @@ import java.util.Optional;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.WebDataBinder;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -23,7 +26,10 @@ import com.excilys.cdb.model.Company;
 import com.excilys.cdb.service.ICompanyService;
 import com.excilys.cdb.service.ServiceException;
 import com.excilys.cdb.validation.exceptions.ValidationException;
+import com.excilys.cdb.web.util.ComputerOrderingCaseConverter;
+import com.excilys.cdb.web.util.DirectionCaseConverter;
 
+@CrossOrigin
 @RestController
 public class CompanyRestController {
 
@@ -34,6 +40,13 @@ public class CompanyRestController {
         companyService = pCompanyService;
         companyDTOMapper = pCompanyDTOMapper;
     }
+    
+    @InitBinder
+    public void initBinder(WebDataBinder binder) {
+        binder.registerCustomEditor(ComputerOrdering.class, new ComputerOrderingCaseConverter());
+        binder.registerCustomEditor(Direction.class, new DirectionCaseConverter());
+    }
+
 
     @GetMapping("/companies")
     public ResponseEntity<List<CompanyDTO>> getCompanies(

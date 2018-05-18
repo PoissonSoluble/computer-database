@@ -30,14 +30,18 @@ public interface IComputerService extends IService<Computer> {
 
     List<Computer> getComputersBySearchWithOrder(String search, ComputerOrdering order, Direction direction);
 
-    List<Computer> getComputersBySearch(String search);
-
-    List<Computer> getComputersWithOrder(ComputerOrdering order, Direction direction);
-
     Page<Computer> getPage(int page, int pageSize, String search);
 
     Page<Computer> getPage(int page, int pageSize, String search, ComputerOrdering order, Direction ascending);
 
     void updateComputer(Computer computer) throws ValidationException, ServiceException;
+
+    List<Computer> getComputersFromCompany(Long id);
+
+    List<Computer> getComputersFromCompanyBySearchWithOrder(Long id, String search, ComputerOrdering order,
+            Direction direction);
+
+    Page<Computer> getPageFromCompany(Long id, int page, int pageSize, String search, ComputerOrdering order,
+            Direction direction);
 
 }

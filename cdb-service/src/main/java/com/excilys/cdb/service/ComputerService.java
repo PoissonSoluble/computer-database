@@ -79,23 +79,30 @@ public class ComputerService implements IComputerService {
     }
 
     @Override
-    public List<Computer> getComputersBySearch(String search) {
+    public List<Computer> getComputersFromCompany(Long id) {
         List<Computer> computers = new ArrayList<>();
-        computerDAO.findAllByNameContaining(search).forEach(computers::add);
+        computerDAO.findAllByCompany_IdAndNameContaining(id, "").forEach(computers::add);
         return computers;
     }
 
     @Override
-    public List<Computer> getComputersWithOrder(ComputerOrdering order, Direction direction) {
-        List<Computer> computers = new ArrayList<>();
-        computerDAO.findAll(Sort.by(direction, order.getValue())).forEach(computers::add);
+    public List<Computer> getComputersFromCompanyBySearchWithOrder(Long id, String search, ComputerOrdering order,
+            Direction direction) {
+        List<Computer> computers = computerDAO.findAllByCompany_IdAndNameContaining(id, search,
+                Sort.by(direction, order.getValue()));
         return computers;
+    }
+
+    @Override
+    public Page<Computer> getPageFromCompany(Long id, int page, int pageSize, String search, ComputerOrdering order,
+            Direction direction) {
+        return computerDAO.findAllByCompany_IdAndNameContaining(
+                PageRequest.of(page, pageSize, Sort.by(Direction.ASC, "id")), id, search);
     }
 
     @Override
     public List<Computer> getComputersBySearchWithOrder(String search, ComputerOrdering order, Direction direction) {
-        List<Computer> computers = new ArrayList<>();
-        computerDAO.findAllByNameContaining(search, Sort.by(direction, order.getValue())).forEach(computers::add);
+        List<Computer> computers = computerDAO.findAllByNameContaining(search, Sort.by(direction, order.getValue()));
         return computers;
     }
 
@@ -106,7 +113,7 @@ public class ComputerService implements IComputerService {
 
     @Override
     public Page<Computer> getPage(int page, int pageSize, String search) {
-        return computerDAO.findAllByNameContaining(PageRequest.of(page, pageSize, Sort.by(Direction.ASC, "id")),
+        return computerDAO.findAllByNameContaining(PageRequest.of(page, pageSize, Sort.by(Direction.ASC, "cu_id")),
                 search);
     }
 

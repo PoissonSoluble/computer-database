@@ -8,6 +8,7 @@ import org.springframework.data.domain.Sort.Direction;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.WebDataBinder;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.InitBinder;
@@ -28,6 +29,7 @@ import com.excilys.cdb.validation.exceptions.ValidationException;
 import com.excilys.cdb.web.util.ComputerOrderingCaseConverter;
 import com.excilys.cdb.web.util.DirectionCaseConverter;
 
+@CrossOrigin
 @RestController
 public class ComputerRestController {
 
@@ -58,6 +60,24 @@ public class ComputerRestController {
                     .forEach(computer -> computerDTOs.add(computerDTOMapper.createComputerDTO(computer)));
         } else {
             computerService.getComputersBySearchWithOrder(search, order, direction)
+                    .forEach(computer -> computerDTOs.add(computerDTOMapper.createComputerDTO(computer)));
+        }
+        return new ResponseEntity<List<ComputerDTO>>(computerDTOs, HttpStatus.OK);
+    }
+
+    @GetMapping("/computers/company/{id}")
+    public ResponseEntity<List<ComputerDTO>> getComputers(@PathVariable Long id,
+            @RequestParam(name = "page-number", required = false) Optional<Integer> pageNumber,
+            @RequestParam(name = "page-size", required = false) Optional<Integer> pageSize,
+            @RequestParam(name = "search", defaultValue = "") String search,
+            @RequestParam(name = "order", defaultValue = "cu_id") ComputerOrdering order,
+            @RequestParam(name = "direction", defaultValue = "asc") Direction direction) {
+        List<ComputerDTO> computerDTOs = new ArrayList<>();
+        if (pageNumber.isPresent() && pageSize.isPresent()) {
+            computerService.getPageFromCompany(id, pageNumber.get(), pageSize.get(), search, order, direction)
+                    .forEach(computer -> computerDTOs.add(computerDTOMapper.createComputerDTO(computer)));
+        } else {
+            computerService.getComputersFromCompanyBySearchWithOrder(id, search, order, direction)
                     .forEach(computer -> computerDTOs.add(computerDTOMapper.createComputerDTO(computer)));
         }
         return new ResponseEntity<List<ComputerDTO>>(computerDTOs, HttpStatus.OK);
