@@ -14,7 +14,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.excilys.cdb.dao.ComputerDAO;
-import com.excilys.cdb.dao.ComputerOrdering;
+import com.excilys.cdb.dto.ComputerOrdering;
 import com.excilys.cdb.model.Computer;
 import com.excilys.cdb.validation.IComputerValidator;
 import com.excilys.cdb.validation.exceptions.ValidationException;

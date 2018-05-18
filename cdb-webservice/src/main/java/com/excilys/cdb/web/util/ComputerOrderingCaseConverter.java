@@ -2,8 +2,7 @@ package com.excilys.cdb.web.util;
 
 import java.beans.PropertyEditorSupport;
 
-
-import com.excilys.cdb.dao.ComputerOrdering;
+import com.excilys.cdb.dto.ComputerOrdering;
 
 public class ComputerOrderingCaseConverter extends PropertyEditorSupport
 {

@@ -1,4 +1,4 @@
-package com.excilys.cdb.dao;
+package com.excilys.cdb.dto;
 
 import java.util.Arrays;
 import java.util.List;
