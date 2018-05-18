@@ -100,7 +100,7 @@ public class ComputerService implements IComputerService {
     }
 
     @Override
-    public int getComputerAmount(String search) {
+    public int getComputerCount(String search) {
         return computerDAO.countByNameContaining(search);
     }
 

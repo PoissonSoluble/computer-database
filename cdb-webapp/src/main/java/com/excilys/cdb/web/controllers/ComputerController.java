@@ -159,7 +159,7 @@ public class ComputerController {
         modelAndView.addObject("pageNumber", page.getNumber()+1);
         modelAndView.addObject("totalPage", page.getTotalPages());
         modelAndView.addObject("search", search);
-        modelAndView.addObject("computerAmount", computerService.getComputerAmount(search));
+        modelAndView.addObject("computerAmount", computerService.getComputerCount(search));
         modelAndView.addObject("pageSize", pageSize);
         modelAndView.addObject("order", order.toString());
         modelAndView.addObject("ascending", ascending);

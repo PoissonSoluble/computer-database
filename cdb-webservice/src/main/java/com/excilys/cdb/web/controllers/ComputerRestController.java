@@ -71,10 +71,17 @@ public class ComputerRestController {
             return new ResponseEntity<Integer>(computerService.getPage(0, pageSize.get(), search).getTotalPages(),
                     HttpStatus.OK);
         } else {
-            return new ResponseEntity<Integer>(computerService.getComputerAmount(search), HttpStatus.OK);
+            return new ResponseEntity<Integer>(computerService.getComputerCount(search), HttpStatus.OK);
         }
     }
-    
+
+    @GetMapping("/computers/page/count")
+    public ResponseEntity<Integer> getPageCount(@RequestParam(name = "page-size", required = true) Integer pageSize,
+            @RequestParam(name = "search", defaultValue = "") String search) {
+        return new ResponseEntity<Integer>(computerService.getPage(0, pageSize, search).getTotalPages(), HttpStatus.OK);
+
+    }
+
     @GetMapping("/computers/{id}")
     public ResponseEntity<ComputerDTO> getComputer(@PathVariable Long id) {
         return new ResponseEntity<ComputerDTO>(

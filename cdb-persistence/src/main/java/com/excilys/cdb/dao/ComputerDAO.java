@@ -22,8 +22,6 @@ public interface ComputerDAO extends CrudRepository<Computer, Long> {
     List<Computer> findAllByNameContaining(String name, Sort sort);
     
     Page<Computer> findAllByNameContaining(Pageable pageable, String name);
-
-    List<Computer> findByNameContaining(String name);
     
     int countByNameContaining(String name);
 }

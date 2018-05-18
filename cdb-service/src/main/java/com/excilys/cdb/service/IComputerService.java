@@ -24,7 +24,7 @@ public interface IComputerService extends IService<Computer> {
 
     Optional<Computer> getComputer(Long id);
     
-    int getComputerAmount(String search);
+    int getComputerCount(String search);
     
     List<Computer> getComputers();
 

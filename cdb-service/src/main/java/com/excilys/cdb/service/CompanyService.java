@@ -8,11 +8,13 @@ import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.Sort.Direction;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.excilys.cdb.dao.CompanyDAO;
 import com.excilys.cdb.dao.ComputerDAO;
+import com.excilys.cdb.dto.ComputerOrdering;
 import com.excilys.cdb.model.Company;
 import com.excilys.cdb.validation.ICompanyValidator;
 import com.excilys.cdb.validation.exceptions.ValidationException;
@@ -58,6 +60,18 @@ public class CompanyService implements ICompanyService {
     public List<Company> getCompanies() {
         List<Company> companies = new ArrayList<>();
         companyDAO.findAll().forEach(companies::add);
+        return companies;
+    }
+
+    @Override
+    public int getCompanyCount(String search) {
+        return companyDAO.countByNameContaining(search);
+    }
+
+    @Override
+    public List<Company> getCompaniesBySearchWithOrder(String name, ComputerOrdering order, Direction direction) {
+        List<Company> companies = new ArrayList<>();
+        companyDAO.findAllByNameContaining(name, Sort.by(direction, order.name())).forEach(companies::add);
         return companies;
     }
 
