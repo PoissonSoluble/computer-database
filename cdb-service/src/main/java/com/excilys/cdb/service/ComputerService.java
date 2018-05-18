@@ -46,7 +46,6 @@ public class ComputerService implements IComputerService {
         computerDAO.delete(computer);
         LOGGER.info(new StringBuilder("Computer removal : ").append(computer.getId().orElse(-1L)).toString());
     }
-    
 
     @Override
     public void deleteComputer(Long id) {
@@ -85,21 +84,21 @@ public class ComputerService implements IComputerService {
         computerDAO.findAllByNameContaining(search).forEach(computers::add);
         return computers;
     }
-    
+
     @Override
     public List<Computer> getComputersWithOrder(ComputerOrdering order, Direction direction) {
         List<Computer> computers = new ArrayList<>();
         computerDAO.findAll(Sort.by(direction, order.getValue())).forEach(computers::add);
         return computers;
     }
-    
+
     @Override
     public List<Computer> getComputersBySearchWithOrder(String search, ComputerOrdering order, Direction direction) {
         List<Computer> computers = new ArrayList<>();
         computerDAO.findAllByNameContaining(search, Sort.by(direction, order.getValue())).forEach(computers::add);
         return computers;
     }
-    
+
     @Override
     public int getComputerAmount(String search) {
         return computerDAO.countByNameContaining(search);
@@ -119,9 +118,7 @@ public class ComputerService implements IComputerService {
 
     @Override
     public void updateComputer(Computer computer) throws ValidationException, ServiceException {
-        if (!computerDAO.findById(computer.getId().orElse(-1L)).isPresent()) {
-            throw new ServiceException("This computer does not exist.");
-        }
+        computerDAO.findById(computer.getId().orElseThrow(() -> new ServiceException("This computer does not exist.")));
         computerValidator.validateComputer(computer);
         computerDAO.save(computer);
         LOGGER.info(new StringBuilder("Computer update : ").append(computer).toString());

@@ -19,4 +19,6 @@ public interface ICompanyService extends IService<Company> {
 
     void createCompany(Company company) throws ValidationException;
 
+    void updateCompany(Company company) throws ValidationException, ServiceException;
+
 }

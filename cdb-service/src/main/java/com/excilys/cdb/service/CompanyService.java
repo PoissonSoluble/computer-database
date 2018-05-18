@@ -66,4 +66,12 @@ public class CompanyService implements ICompanyService {
         return companyDAO.findAllByNameContaining(PageRequest.of(page, pageSize, Sort.by("id")), search);
     }
 
+    @Override
+    public void updateCompany(Company company) throws ValidationException, ServiceException {
+        companyDAO.findById(company.getId().orElseThrow(() -> new ServiceException("This company does not exist.")));
+        companyValidator.validateCompany(company);
+        companyDAO.save(company);
+        LOGGER.info(new StringBuilder("Computer update : ").append(company).toString());
+    }
+
 }
