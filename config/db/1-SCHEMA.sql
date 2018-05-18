@@ -8,6 +8,7 @@ drop schema if exists `computer-database-db`;
   create table company (
     ca_id                        bigint not null auto_increment,
     ca_name                      varchar(255) not null,
+    ca_picture                   varchar(1024) null,
     constraint pk_company primary key (ca_id))
   ;
 

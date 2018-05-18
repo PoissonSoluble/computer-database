@@ -13,9 +13,10 @@ import javax.persistence.Table;
 @Table(name = "company")
 public class Company {
     public static class Builder {
-        
+
         private Long id;
         private String name;
+        private String logo;
 
         public Builder() {
         }
@@ -42,6 +43,11 @@ public class Company {
             return this;
         }
 
+        public Builder withLogo(String pLogo) {
+            logo = pLogo;
+            return this;
+        }
+
     }
 
     @Id
@@ -50,17 +56,20 @@ public class Company {
     private Long id;
     @Column(name = "ca_name")
     private String name;
+    @Column(name = "ca_picture")
+    private String logo;
+
+    public Company() {
+    }
 
     public Company(Builder builder) {
         id = builder.id;
         name = builder.name;
+        logo = builder.logo;
     }
-    
+
     public Company(String pName) {
         name = pName;
-    }
-    
-    public Company(){
     }
 
     @Override
@@ -93,6 +102,10 @@ public class Company {
         return Optional.ofNullable(name);
     }
 
+    public Optional<String> getLogo() {
+        return Optional.ofNullable(logo);
+    }
+
     @Override
     public int hashCode() {
         final int prime = 31;
@@ -108,6 +121,10 @@ public class Company {
 
     public void setName(String pName) {
         name = pName;
+    }
+
+    public void setLogo(String pLogo) {
+        logo = pLogo;
     }
 
     @Override

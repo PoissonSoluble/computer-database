@@ -3,6 +3,7 @@ package com.excilys.cdb.dto;
 public class CompanyDTO {
     private Long id;
     private String name;
+    private String logo;
 
     public Long getId() {
         return id;
@@ -12,12 +13,20 @@ public class CompanyDTO {
         return name;
     }
 
-    public void setId(long pId) {
+    public String getLogo() {
+        return logo;
+    }
+
+    public void setId(Long pId) {
         id = pId;
     }
 
     public void setName(String pName) {
         name = pName;
+    }
+
+    public void setLogo(String pLogo) {
+        logo = pLogo;
     }
 
     @Override
