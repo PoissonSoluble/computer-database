@@ -14,17 +14,31 @@ import org.springframework.transaction.annotation.Transactional;
 import com.excilys.cdb.dao.CompanyDAO;
 import com.excilys.cdb.dao.ComputerDAO;
 import com.excilys.cdb.model.Company;
+import com.excilys.cdb.validation.ICompanyValidator;
+import com.excilys.cdb.validation.exceptions.ValidationException;
 
 @Service("companyService")
 public class CompanyService implements ICompanyService {
 
     private CompanyDAO companyDAO;
     private ComputerDAO computerDAO;
+    private ICompanyValidator companyValidator;
     private final Logger LOGGER = LoggerFactory.getLogger(CompanyService.class);
 
-    public CompanyService(CompanyDAO pCompanyDAO, ComputerDAO pComputerDAO) {
+    public CompanyService(CompanyDAO pCompanyDAO, ComputerDAO pComputerDAO, ICompanyValidator pCompanyValidator) {
         companyDAO = pCompanyDAO;
         computerDAO = pComputerDAO;
+        companyValidator = pCompanyValidator;
+    }
+
+    @Override
+    public void createCompany(Company company) throws ValidationException {
+        if (company.getId().isPresent()) {
+            company.setId(null);
+        }
+        companyValidator.validateCompany(company);
+        companyDAO.save(company);
+        LOGGER.info(new StringBuilder("Company creation : ").append(company).toString());
     }
 
     @Override

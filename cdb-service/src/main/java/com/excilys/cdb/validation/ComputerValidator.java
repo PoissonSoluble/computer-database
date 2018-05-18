@@ -3,7 +3,6 @@ package com.excilys.cdb.validation;
 import java.time.LocalDate;
 import java.util.Optional;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.excilys.cdb.dao.CompanyDAO;
@@ -17,8 +16,11 @@ import com.excilys.cdb.validation.exceptions.ValidationException;
 @Component("computerValidator")
 public class ComputerValidator implements IComputerValidator {
 
-    @Autowired
     private CompanyDAO companyDAO;
+    
+    public ComputerValidator(CompanyDAO pCompanyDAO) {
+        companyDAO = pCompanyDAO;
+    }   
 
     @Override
     public void validateComputer(Computer computer) throws ValidationException {

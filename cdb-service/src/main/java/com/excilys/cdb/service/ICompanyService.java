@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.data.domain.Page;
 
 import com.excilys.cdb.model.Company;
+import com.excilys.cdb.validation.exceptions.ValidationException;
 
 public interface ICompanyService extends IService<Company> {
 
@@ -15,5 +16,7 @@ public interface ICompanyService extends IService<Company> {
     List<Company> getCompanies();
 
     Page<Company> getPage(int page, int pageSize, String search);
+
+    void createCompany(Company company) throws ValidationException;
 
 }
