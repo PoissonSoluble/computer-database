@@ -41,28 +41,17 @@ public class ComputerRestController {
         computerDTOMapper = pComputerDTOMapper;
     }
 
-    @InitBinder
-    public void initBinder(WebDataBinder binder) {
-        binder.registerCustomEditor(ComputerOrdering.class, new ComputerOrderingCaseConverter());
-        binder.registerCustomEditor(Direction.class, new DirectionCaseConverter());
+    @DeleteMapping("/computer/{id}")
+    public ResponseEntity<String> deleteComputer(@PathVariable Long id) {
+        computerService.deleteComputer(id);
+        return new ResponseEntity<String>("Accepted.", HttpStatus.ACCEPTED);
     }
 
-    @GetMapping("/computers")
-    public ResponseEntity<List<ComputerDTO>> getComputers(
-            @RequestParam(name = "page-number", required = false) Optional<Integer> pageNumber,
-            @RequestParam(name = "page-size", required = false) Optional<Integer> pageSize,
-            @RequestParam(name = "search", defaultValue = "") String search,
-            @RequestParam(name = "order", defaultValue = "cu_id") ComputerOrdering order,
-            @RequestParam(name = "direction", defaultValue = "asc") Direction direction) {
-        List<ComputerDTO> computerDTOs = new ArrayList<>();
-        if (pageNumber.isPresent() && pageSize.isPresent()) {
-            computerService.getPage(pageNumber.get(), pageSize.get(), search, order, direction)
-                    .forEach(computer -> computerDTOs.add(computerDTOMapper.createComputerDTO(computer)));
-        } else {
-            computerService.getComputersBySearchWithOrder(search, order, direction)
-                    .forEach(computer -> computerDTOs.add(computerDTOMapper.createComputerDTO(computer)));
-        }
-        return new ResponseEntity<List<ComputerDTO>>(computerDTOs, HttpStatus.OK);
+    @GetMapping("/computers/{id}")
+    public ResponseEntity<ComputerDTO> getComputer(@PathVariable Long id) {
+        return new ResponseEntity<ComputerDTO>(
+                computerDTOMapper.createComputerDTO(computerService.getComputer(id).orElse(new Computer())),
+                HttpStatus.OK);
     }
 
     @GetMapping("/computers/company/{id}")
@@ -78,6 +67,24 @@ public class ComputerRestController {
                     .forEach(computer -> computerDTOs.add(computerDTOMapper.createComputerDTO(computer)));
         } else {
             computerService.getComputersFromCompanyBySearchWithOrder(id, search, order, direction)
+                    .forEach(computer -> computerDTOs.add(computerDTOMapper.createComputerDTO(computer)));
+        }
+        return new ResponseEntity<List<ComputerDTO>>(computerDTOs, HttpStatus.OK);
+    }
+
+    @GetMapping("/computers")
+    public ResponseEntity<List<ComputerDTO>> getComputers(
+            @RequestParam(name = "page-number", required = false) Optional<Integer> pageNumber,
+            @RequestParam(name = "page-size", required = false) Optional<Integer> pageSize,
+            @RequestParam(name = "search", defaultValue = "") String search,
+            @RequestParam(name = "order", defaultValue = "cu_id") ComputerOrdering order,
+            @RequestParam(name = "direction", defaultValue = "asc") Direction direction) {
+        List<ComputerDTO> computerDTOs = new ArrayList<>();
+        if (pageNumber.isPresent() && pageSize.isPresent()) {
+            computerService.getPage(pageNumber.get(), pageSize.get(), search, order, direction)
+                    .forEach(computer -> computerDTOs.add(computerDTOMapper.createComputerDTO(computer)));
+        } else {
+            computerService.getComputersBySearchWithOrder(search, order, direction)
                     .forEach(computer -> computerDTOs.add(computerDTOMapper.createComputerDTO(computer)));
         }
         return new ResponseEntity<List<ComputerDTO>>(computerDTOs, HttpStatus.OK);
@@ -102,11 +109,10 @@ public class ComputerRestController {
 
     }
 
-    @GetMapping("/computers/{id}")
-    public ResponseEntity<ComputerDTO> getComputer(@PathVariable Long id) {
-        return new ResponseEntity<ComputerDTO>(
-                computerDTOMapper.createComputerDTO(computerService.getComputer(id).orElse(new Computer())),
-                HttpStatus.OK);
+    @InitBinder
+    public void initBinder(WebDataBinder binder) {
+        binder.registerCustomEditor(ComputerOrdering.class, new ComputerOrderingCaseConverter());
+        binder.registerCustomEditor(Direction.class, new DirectionCaseConverter());
     }
 
     @PostMapping("/computers")
@@ -129,11 +135,5 @@ public class ComputerRestController {
         } catch (ValidationException | ServiceException e) {
             return new ResponseEntity<String>("Bad request." + e.getMessage(), HttpStatus.BAD_REQUEST);
         }
-    }
-
-    @DeleteMapping("/computer/{id}")
-    public ResponseEntity<String> deleteComputer(@PathVariable Long id) {
-        computerService.deleteComputer(id);
-        return new ResponseEntity<String>("Accepted.", HttpStatus.ACCEPTED);
     }
 }

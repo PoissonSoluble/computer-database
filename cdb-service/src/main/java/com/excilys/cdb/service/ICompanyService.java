@@ -1,6 +1,7 @@
 package com.excilys.cdb.service;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Sort.Direction;
@@ -26,5 +27,7 @@ public interface ICompanyService extends IService<Company> {
     List<Company> getCompaniesBySearchWithOrder(String name, ComputerOrdering order, Direction direction);
 
     int getCompanyCount(String search);
+
+    Optional<Company> getCompany(Long id);
 
 }

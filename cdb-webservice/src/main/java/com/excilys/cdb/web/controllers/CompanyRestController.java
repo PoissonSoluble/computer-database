@@ -66,6 +66,14 @@ public class CompanyRestController {
         }
         return new ResponseEntity<List<CompanyDTO>>(companyDTOs, HttpStatus.OK);
     }
+    
+
+    @GetMapping("/companies/{id}")
+    public ResponseEntity<CompanyDTO> getCompany(@PathVariable Long id) {
+        return new ResponseEntity<CompanyDTO>(
+                companyDTOMapper.createCompanyDTO(companyService.getCompany(id).orElse(new Company())),
+                HttpStatus.OK);
+    }
 
     @GetMapping("/companies/count")
     public ResponseEntity<Integer> getCompanyPageCount(

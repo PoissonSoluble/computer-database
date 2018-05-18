@@ -2,6 +2,7 @@ package com.excilys.cdb.service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -41,6 +42,11 @@ public class CompanyService implements ICompanyService {
         companyValidator.validateCompany(company);
         companyDAO.save(company);
         LOGGER.info(new StringBuilder("Company creation : ").append(company).toString());
+    }
+    
+    @Override
+    public Optional<Company> getCompany(Long id) {
+        return companyDAO.findById(id);
     }
 
     @Override
