@@ -9,6 +9,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -25,6 +26,7 @@ public class User implements UserDetails{
         private String login;
         private String password;
         private UserRole role;
+        private String token;
 
         public Builder() {
         }
@@ -56,6 +58,11 @@ public class User implements UserDetails{
             role = pRole;
             return this;
         }
+
+        public Builder withToken(String pToken) {
+            token = pToken;
+            return this;
+        }
     }
 
     @Id
@@ -71,15 +78,11 @@ public class User implements UserDetails{
     @ManyToOne
     @JoinColumn(name = "ur_id", nullable = false)
     private UserRole role;
+    
+    @Transient
+    private String token;
 
     public User() {
-    }
-
-    public User(Long pId, String pLogin, String pPassword, UserRole pRole) {
-        id = pId;
-        login = pLogin;
-        password = pPassword;
-        role = pRole;
     }
 
     public User(Builder builder) {
@@ -87,6 +90,14 @@ public class User implements UserDetails{
         login = builder.login;
         password = builder.password;
         role = builder.role;
+        token = builder.token;
+    }
+
+    public User(Long pId, String pLogin, String pPassword, UserRole pRole) {
+        id = pId;
+        login = pLogin;
+        password = pPassword;
+        role = pRole;
     }
     
     @Override
@@ -116,6 +127,13 @@ public class User implements UserDetails{
         return true;
     }
     
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        Collection<GrantedAuthority> roles = new ArrayList<>();
+        roles.add(new SimpleGrantedAuthority(role.getLabel()));
+        return roles;
+    }
+
     public Long getId() {
         return id;
     }
@@ -133,6 +151,15 @@ public class User implements UserDetails{
         return role;
     }
 
+    public String getToken() {
+        return token;
+    }
+
+    @Override
+    public String getUsername() {
+        return login;
+    }
+
     @Override
     public int hashCode() {
         final int prime = 31;
@@ -142,40 +169,7 @@ public class User implements UserDetails{
         result = prime * result + ((role == null) ? 0 : role.hashCode());
         return result;
     }
-
-    public void setId(Long pId) {
-        id = pId;
-    }
     
-    public void setLogin(String pLogin) {
-        login = pLogin;
-    }
-
-    public void setPassword(String pPassword) {
-        password = pPassword;
-    }
-
-    public void setRole(UserRole pRole) {
-        role = pRole;
-    }
-    
-    @Override
-    public String toString() {
-        return login;
-    }
-
-    @Override
-    public Collection<? extends GrantedAuthority> getAuthorities() {
-        Collection<GrantedAuthority> roles = new ArrayList<>();
-        roles.add(new SimpleGrantedAuthority(role.getLabel()));
-        return roles;
-    }
-
-    @Override
-    public String getUsername() {
-        return login;
-    }
-
     @Override
     public boolean isAccountNonExpired() {
         return true;
@@ -190,10 +184,35 @@ public class User implements UserDetails{
     public boolean isCredentialsNonExpired() {
         return true;
     }
-
+    
     @Override
     public boolean isEnabled() {
         return true;
+    }
+
+    public void setId(Long pId) {
+        id = pId;
+    }
+
+    public void setLogin(String pLogin) {
+        login = pLogin;
+    }
+
+    public void setPassword(String pPassword) {
+        password = pPassword;
+    }
+
+    public void setRole(UserRole pRole) {
+        role = pRole;
+    }
+
+    public void setToken(String token) {
+        this.token = token;
+    }
+
+    @Override
+    public String toString() {
+        return login;
     }
 
 }

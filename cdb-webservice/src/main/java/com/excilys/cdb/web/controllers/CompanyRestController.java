@@ -40,13 +40,12 @@ public class CompanyRestController {
         companyService = pCompanyService;
         companyDTOMapper = pCompanyDTOMapper;
     }
-    
+
     @InitBinder
     public void initBinder(WebDataBinder binder) {
         binder.registerCustomEditor(ComputerOrdering.class, new ComputerOrderingCaseConverter());
         binder.registerCustomEditor(Direction.class, new DirectionCaseConverter());
     }
-
 
     @GetMapping("/companies")
     public ResponseEntity<List<CompanyDTO>> getCompanies(
@@ -66,13 +65,11 @@ public class CompanyRestController {
         }
         return new ResponseEntity<List<CompanyDTO>>(companyDTOs, HttpStatus.OK);
     }
-    
 
     @GetMapping("/companies/{id}")
     public ResponseEntity<CompanyDTO> getCompany(@PathVariable Long id) {
         return new ResponseEntity<CompanyDTO>(
-                companyDTOMapper.createCompanyDTO(companyService.getCompany(id).orElse(new Company())),
-                HttpStatus.OK);
+                companyDTOMapper.createCompanyDTO(companyService.getCompany(id).orElse(new Company())), HttpStatus.OK);
     }
 
     @GetMapping("/companies/count")
