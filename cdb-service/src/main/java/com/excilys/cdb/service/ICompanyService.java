@@ -6,11 +6,13 @@ import java.util.Optional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Sort.Direction;
 
-import com.excilys.cdb.dto.ComputerOrdering;
+import com.excilys.cdb.dto.CompanyOrdering;
 import com.excilys.cdb.model.Company;
 import com.excilys.cdb.validation.exceptions.ValidationException;
 
 public interface ICompanyService extends IService<Company> {
+
+    void createCompany(Company company) throws ValidationException;
 
     void deleteCompany(Long id);
 
@@ -18,16 +20,14 @@ public interface ICompanyService extends IService<Company> {
 
     List<Company> getCompanies();
 
-    Page<Company> getPage(int page, int pageSize, String search);
+    List<Company> getCompaniesBySearchWithOrder(String name, CompanyOrdering order, Direction direction);
 
-    void createCompany(Company company) throws ValidationException;
-
-    void updateCompany(Company company) throws ValidationException, ServiceException;
-
-    List<Company> getCompaniesBySearchWithOrder(String name, ComputerOrdering order, Direction direction);
+    Optional<Company> getCompany(Long id);
 
     int getCompanyCount(String search);
 
-    Optional<Company> getCompany(Long id);
+    Page<Company> getPage(int page, int pageSize, String search, CompanyOrdering order, Direction direction);
+
+    void updateCompany(Company company) throws ValidationException, ServiceException;
 
 }

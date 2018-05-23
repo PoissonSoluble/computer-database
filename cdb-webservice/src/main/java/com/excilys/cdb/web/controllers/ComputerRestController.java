@@ -44,9 +44,9 @@ public class ComputerRestController {
     @DeleteMapping("/computer/{id}")
     public ResponseEntity<String> deleteComputer(@PathVariable Long id) {
         try {
-        computerService.deleteComputer(id);
-        return new ResponseEntity<String>("Accepted.", HttpStatus.ACCEPTED);
-        }catch(ServiceException e) {
+            computerService.deleteComputer(id);
+            return new ResponseEntity<String>("Accepted.", HttpStatus.ACCEPTED);
+        } catch (ServiceException e) {
             return new ResponseEntity<String>(e.getMessage(), HttpStatus.NOT_FOUND);
         }
     }
@@ -59,7 +59,7 @@ public class ComputerRestController {
     }
 
     @GetMapping("/computers/company/{id}")
-    public ResponseEntity<List<ComputerDTO>> getComputers(@PathVariable Long id,
+    public ResponseEntity<List<ComputerDTO>> getComputersFromCompany(@PathVariable Long id,
             @RequestParam(name = "page-number", required = false) Optional<Integer> pageNumber,
             @RequestParam(name = "page-size", required = false) Optional<Integer> pageSize,
             @RequestParam(name = "search", defaultValue = "") String search,
@@ -74,6 +74,19 @@ public class ComputerRestController {
                     .forEach(computer -> computerDTOs.add(computerDTOMapper.createComputerDTO(computer)));
         }
         return new ResponseEntity<List<ComputerDTO>>(computerDTOs, HttpStatus.OK);
+    }
+
+    @GetMapping("/computers/company/{id}/count")
+    public ResponseEntity<Integer> getCountFromCompany(@PathVariable Long id,
+            @RequestParam(name = "page-size", required = false) Optional<Integer> pageSize,
+            @RequestParam(name = "search", defaultValue = "") String search) {
+        if (pageSize.isPresent()) {
+            return new ResponseEntity<Integer>(computerService
+                    .getPageFromCompany(id, 0, pageSize.get(), search, ComputerOrdering.CU_ID, Direction.ASC)
+                    .getTotalPages(), HttpStatus.OK);
+        } else {
+            return new ResponseEntity<Integer>(computerService.getComputerCountFromCompany(id, search), HttpStatus.OK);
+        }
     }
 
     @GetMapping("/computers")

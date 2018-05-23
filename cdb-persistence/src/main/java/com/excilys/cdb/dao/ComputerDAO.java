@@ -30,4 +30,6 @@ public interface ComputerDAO extends CrudRepository<Computer, Long> {
     Page<Computer> findAllByCompany_IdAndNameContaining(Pageable pageable, Long id, String name);
     
     int countByNameContaining(String name);
+
+    int countByCompany_IdAndNameContaining(Long id, String name);
 }

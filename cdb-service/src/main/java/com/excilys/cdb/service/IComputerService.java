@@ -44,4 +44,6 @@ public interface IComputerService extends IService<Computer> {
     Page<Computer> getPageFromCompany(Long id, int page, int pageSize, String search, ComputerOrdering order,
             Direction direction);
 
+    int getComputerCountFromCompany(Long id, String search);
+
 }

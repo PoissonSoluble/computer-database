@@ -90,6 +90,11 @@ public class ComputerService implements IComputerService {
     }
 
     @Override
+    public int getComputerCountFromCompany(Long id, String search) {
+        return computerDAO.countByCompany_IdAndNameContaining(id, search);
+    }
+
+    @Override
     public List<Computer> getComputersFromCompanyBySearchWithOrder(Long id, String search, ComputerOrdering order,
             Direction direction) {
         List<Computer> computers = computerDAO.findAllByCompany_IdAndNameContaining(id, search,

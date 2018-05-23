@@ -1,6 +1,7 @@
 package com.excilys.cdb.web.controllers;
 
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -15,6 +16,7 @@ import com.excilys.cdb.service.ServiceException;
 import com.excilys.cdb.validation.exceptions.ValidationException;
 
 @RestController
+@CrossOrigin
 @RequestMapping("/users")
 final class PublicUsersController {
     private IUserAuthenticationService authenticationService;
@@ -26,7 +28,7 @@ final class PublicUsersController {
     }
 
     @PostMapping("/login")
-    public String login(@RequestParam("username") final String username,
+    public String login(@RequestParam("login") final String username,
             @RequestParam("password") final String password) {
         try {
             return authenticationService.login(username, password)

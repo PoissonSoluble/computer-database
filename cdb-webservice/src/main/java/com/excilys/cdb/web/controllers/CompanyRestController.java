@@ -20,13 +20,13 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.excilys.cdb.dto.CompanyDTO;
-import com.excilys.cdb.dto.ComputerOrdering;
+import com.excilys.cdb.dto.CompanyOrdering;
 import com.excilys.cdb.mapper.ICompanyDTOMapper;
 import com.excilys.cdb.model.Company;
 import com.excilys.cdb.service.ICompanyService;
 import com.excilys.cdb.service.ServiceException;
 import com.excilys.cdb.validation.exceptions.ValidationException;
-import com.excilys.cdb.web.util.ComputerOrderingCaseConverter;
+import com.excilys.cdb.web.util.CompanyOrderingCaseConverter;
 import com.excilys.cdb.web.util.DirectionCaseConverter;
 
 @CrossOrigin
@@ -43,7 +43,7 @@ public class CompanyRestController {
 
     @InitBinder
     public void initBinder(WebDataBinder binder) {
-        binder.registerCustomEditor(ComputerOrdering.class, new ComputerOrderingCaseConverter());
+        binder.registerCustomEditor(CompanyOrdering.class, new CompanyOrderingCaseConverter());
         binder.registerCustomEditor(Direction.class, new DirectionCaseConverter());
     }
 
@@ -52,11 +52,11 @@ public class CompanyRestController {
             @RequestParam(name = "page-number", required = false) Optional<Integer> pageNumber,
             @RequestParam(name = "page-size", required = false) Optional<Integer> pageSize,
             @RequestParam(name = "search", defaultValue = "") String search,
-            @RequestParam(name = "order", defaultValue = "cu_id") ComputerOrdering order,
+            @RequestParam(name = "order", defaultValue = "cu_id") CompanyOrdering order,
             @RequestParam(name = "direction", defaultValue = "asc") Direction direction) {
         List<CompanyDTO> companyDTOs = new ArrayList<>();
         if (pageNumber.isPresent() && pageSize.isPresent()) {
-            companyService.getPage(pageNumber.get(), pageSize.get(), search)
+            companyService.getPage(pageNumber.get(), pageSize.get(), search, order, direction)
                     .forEach(company -> companyDTOs.add(companyDTOMapper.createCompanyDTO(company)));
         } else {
             companyService.getCompaniesBySearchWithOrder(search, order, direction)

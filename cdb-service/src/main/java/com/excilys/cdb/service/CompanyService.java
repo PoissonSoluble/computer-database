@@ -15,7 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.excilys.cdb.dao.CompanyDAO;
 import com.excilys.cdb.dao.ComputerDAO;
-import com.excilys.cdb.dto.ComputerOrdering;
+import com.excilys.cdb.dto.CompanyOrdering;
 import com.excilys.cdb.model.Company;
 import com.excilys.cdb.validation.ICompanyValidator;
 import com.excilys.cdb.validation.exceptions.ValidationException;
@@ -43,7 +43,7 @@ public class CompanyService implements ICompanyService {
         companyDAO.save(company);
         LOGGER.info(new StringBuilder("Company creation : ").append(company).toString());
     }
-    
+
     @Override
     public Optional<Company> getCompany(Long id) {
         return companyDAO.findById(id);
@@ -75,15 +75,16 @@ public class CompanyService implements ICompanyService {
     }
 
     @Override
-    public List<Company> getCompaniesBySearchWithOrder(String name, ComputerOrdering order, Direction direction) {
+    public List<Company> getCompaniesBySearchWithOrder(String name, CompanyOrdering order, Direction direction) {
         List<Company> companies = new ArrayList<>();
         companyDAO.findAllByNameContaining(name, Sort.by(direction, order.getValue())).forEach(companies::add);
         return companies;
     }
 
     @Override
-    public Page<Company> getPage(int page, int pageSize, String search) {
-        return companyDAO.findAllByNameContaining(PageRequest.of(page, pageSize, Sort.by("id")), search);
+    public Page<Company> getPage(int page, int pageSize, String search, CompanyOrdering order, Direction direction) {
+        return companyDAO.findAllByNameContaining(PageRequest.of(page, pageSize, Sort.by(direction, order.getValue())),
+                search);
     }
 
     @Override
@@ -92,6 +93,12 @@ public class CompanyService implements ICompanyService {
         companyValidator.validateCompany(company);
         companyDAO.save(company);
         LOGGER.info(new StringBuilder("Computer update : ").append(company).toString());
+    }
+
+    @Override
+    public Page<Company> getPage(int page, int pageSize, String search) {
+        return companyDAO.findAllByNameContaining(PageRequest.of(page, pageSize, Sort.by("id")), search);
+
     }
 
 }

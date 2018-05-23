@@ -1,6 +1,7 @@
 package com.excilys.cdb.web.controllers;
 
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -12,6 +13,7 @@ import com.excilys.cdb.model.User;
 import com.excilys.cdb.service.IUserAuthenticationService;
 
 @RestController
+@CrossOrigin
 @RequestMapping("/users")
 final class SecuredUsersController {
 
