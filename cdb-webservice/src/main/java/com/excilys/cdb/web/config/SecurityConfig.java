@@ -33,7 +33,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
             new AntPathRequestMatcher("/companies/**", HttpMethod.GET.toString()),
             new AntPathRequestMatcher("/computers/**", HttpMethod.GET.toString()),
             new AntPathRequestMatcher("/users/login"),
-            new AntPathRequestMatcher("/users/", HttpMethod.POST.toString()));
+            new AntPathRequestMatcher("/users/", HttpMethod.POST.toString()),
+            new AntPathRequestMatcher("/**", HttpMethod.OPTIONS.toString()));
     private static final RequestMatcher PROTECTED_URLS = new NegatedRequestMatcher(PUBLIC_URLS);
 
     private TokenAuthenticationProvider provider;

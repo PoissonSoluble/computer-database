@@ -52,7 +52,7 @@ public class CompanyRestController {
             @RequestParam(name = "page-number", required = false) Optional<Integer> pageNumber,
             @RequestParam(name = "page-size", required = false) Optional<Integer> pageSize,
             @RequestParam(name = "search", defaultValue = "") String search,
-            @RequestParam(name = "order", defaultValue = "cu_id") CompanyOrdering order,
+            @RequestParam(name = "order", defaultValue = "ca_id") CompanyOrdering order,
             @RequestParam(name = "direction", defaultValue = "asc") Direction direction) {
         List<CompanyDTO> companyDTOs = new ArrayList<>();
         if (pageNumber.isPresent() && pageSize.isPresent()) {

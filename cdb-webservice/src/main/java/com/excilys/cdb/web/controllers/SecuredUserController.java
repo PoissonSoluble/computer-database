@@ -12,8 +12,8 @@ import com.excilys.cdb.mapper.IUserDTOMapper;
 import com.excilys.cdb.model.User;
 import com.excilys.cdb.service.IUserAuthenticationService;
 
-@RestController
 @CrossOrigin
+@RestController
 @RequestMapping("/users")
 final class SecuredUsersController {
 

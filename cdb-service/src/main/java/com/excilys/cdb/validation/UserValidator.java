@@ -20,7 +20,7 @@ public class UserValidator implements IUserValidator {
     public void validateUser(User authenticatedUser, User newUser) throws ValidationException {
         validateLogin(ofNullable(newUser.getLogin()));
         validateNotNull(ofNullable(newUser.getPassword()));
-        validateRole(authenticatedUser, newUser.getRole());
+        validateRole(authenticatedUser, newUser);
     }
 
     private void validateLogin(Optional<String> login) throws NullNameException, InvalidLoginException {
@@ -36,12 +36,12 @@ public class UserValidator implements IUserValidator {
         }
     }
 
-    private void validateRole(User authenticatedUser, UserRole role) {
-        if (!ofNullable(role).isPresent() || !ofNullable(role.getId()).isPresent()) {
-            role = UserRole.Role.USER.getRole();
+    private void validateRole(User authenticatedUser, User newUser) {
+        if (!ofNullable(newUser.getRole()).isPresent() || !ofNullable(newUser.getRole().getId()).isPresent()) {
+            newUser.setRole(UserRole.Role.USER.getRole());
         } else if (ofNullable(authenticatedUser).isPresent() && ofNullable(authenticatedUser.getRole()).isPresent()
                 && !authenticatedUser.getRole().equals(UserRole.Role.ADMIN.getRole())) {
-            role = UserRole.Role.USER.getRole();
+            newUser.setRole(UserRole.Role.USER.getRole());
         } 
     }
 }

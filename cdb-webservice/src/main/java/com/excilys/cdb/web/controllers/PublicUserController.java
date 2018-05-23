@@ -15,8 +15,8 @@ import com.excilys.cdb.service.IUserAuthenticationService;
 import com.excilys.cdb.service.ServiceException;
 import com.excilys.cdb.validation.exceptions.ValidationException;
 
-@RestController
 @CrossOrigin
+@RestController
 @RequestMapping("/users")
 final class PublicUsersController {
     private IUserAuthenticationService authenticationService;
