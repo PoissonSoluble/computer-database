@@ -17,10 +17,10 @@ import com.excilys.cdb.validation.exceptions.ValidationException;
 public class ComputerValidator implements IComputerValidator {
 
     private CompanyDAO companyDAO;
-    
+
     public ComputerValidator(CompanyDAO pCompanyDAO) {
         companyDAO = pCompanyDAO;
-    }   
+    }
 
     @Override
     public void validateComputer(Computer computer) throws ValidationException {

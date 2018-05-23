@@ -32,7 +32,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     private static final RequestMatcher PUBLIC_URLS = new OrRequestMatcher(
             new AntPathRequestMatcher("/companies/**", HttpMethod.GET.toString()),
             new AntPathRequestMatcher("/computers/**", HttpMethod.GET.toString()),
-            new AntPathRequestMatcher("/users/login"));
+            new AntPathRequestMatcher("/users/login"),
+            new AntPathRequestMatcher("/users/", HttpMethod.POST.toString()));
     private static final RequestMatcher PROTECTED_URLS = new NegatedRequestMatcher(PUBLIC_URLS);
 
     private TokenAuthenticationProvider provider;
@@ -63,8 +64,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .defaultAuthenticationEntryPointFor(forbiddenEntryPoint(), PROTECTED_URLS).and()
                 .authenticationProvider(provider)
                 .addFilterBefore(restAuthenticationFilter(), AnonymousAuthenticationFilter.class).authorizeRequests()
-                .anyRequest().authenticated().and().csrf().disable().formLogin().disable().httpBasic().disable()
-                .logout().disable();
+                .antMatchers(HttpMethod.PATCH).access("hasRole('ROLE_ADMIN')").antMatchers(HttpMethod.DELETE)
+                .access("hasRole('ROLE_ADMIN')").anyRequest().authenticated().and().csrf().disable().formLogin()
+                .disable().httpBasic().disable().logout().disable();
     }
 
     @Bean

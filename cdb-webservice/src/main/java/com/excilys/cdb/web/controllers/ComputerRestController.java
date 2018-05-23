@@ -43,8 +43,12 @@ public class ComputerRestController {
 
     @DeleteMapping("/computer/{id}")
     public ResponseEntity<String> deleteComputer(@PathVariable Long id) {
+        try {
         computerService.deleteComputer(id);
         return new ResponseEntity<String>("Accepted.", HttpStatus.ACCEPTED);
+        }catch(ServiceException e) {
+            return new ResponseEntity<String>(e.getMessage(), HttpStatus.NOT_FOUND);
+        }
     }
 
     @GetMapping("/computers/{id}")

@@ -48,9 +48,13 @@ public class ComputerService implements IComputerService {
     }
 
     @Override
-    public void deleteComputer(Long id) {
+    public void deleteComputer(Long id) throws ServiceException {
         Computer computer = new Computer.Builder(id).build();
-        computerDAO.delete(computer);
+        try {
+            computerDAO.delete(computer);
+        } catch (IllegalArgumentException e) {
+            throw new ServiceException("This computer does not exist.");
+        }
         LOGGER.info(new StringBuilder("Computer removal : ").append(computer.getId().orElse(-1L)).toString());
     }
 

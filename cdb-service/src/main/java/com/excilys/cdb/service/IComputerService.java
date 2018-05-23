@@ -16,7 +16,7 @@ public interface IComputerService extends IService<Computer> {
 
     void deleteComputer(Computer computer);
 
-    void deleteComputer(Long id);
+    void deleteComputer(Long id) throws ServiceException;
 
     void deleteComputers(List<Computer> ids);
 

@@ -29,7 +29,6 @@ final class TokenAuthenticationProvider extends AbstractUserDetailsAuthenticatio
     protected UserDetails retrieveUser(final String username,
             final UsernamePasswordAuthenticationToken authentication) {
         final Object token = authentication.getCredentials();
-        System.out.println("WHEEEEEEEEEEEEEE " + token);
         return Optional.ofNullable(token).map(String::valueOf).flatMap(auth::findByToken).orElseThrow(
                 () -> new UsernameNotFoundException("Cannot find user with authentication token=" + token));
     }

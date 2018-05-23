@@ -8,16 +8,30 @@ import javax.persistence.Table;
 @Entity
 @Table(name = "user_role")
 public class UserRole {
+
+    public enum Role {
+        USER(new UserRole(2L, "ROLE_USER")), ADMIN(new UserRole(1L, "ROLE_ADMIN"));
+        private UserRole role;
+
+        private Role(UserRole pRole) {
+            role = pRole;
+        }
+
+        public UserRole getRole() {
+            return role;
+        }
+    }
+
     @Id
     @Column(name = "ur_id", unique = true, nullable = false)
     private Long id;
-    
+
     @Column(name = "ur_label", unique = true, nullable = false)
     private String label;
 
     public UserRole() {
     }
-    
+
     public UserRole(Long pId, String pLabel) {
         id = pId;
         label = pLabel;
@@ -72,6 +86,6 @@ public class UserRole {
 
     @Override
     public String toString() {
-        return label;
+        return id + ":" + label;
     }
 }

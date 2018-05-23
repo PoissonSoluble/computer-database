@@ -5,6 +5,8 @@ import java.util.Collection;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
@@ -66,6 +68,7 @@ public class User implements UserDetails{
     }
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "us_id", unique = true, nullable = false)
     private Long id;
     
@@ -75,8 +78,8 @@ public class User implements UserDetails{
     @Column(name = "us_password", nullable = false)
     private String password;
 
-    @ManyToOne
-    @JoinColumn(name = "ur_id", nullable = false)
+    @ManyToOne(optional = true)
+    @JoinColumn(name = "ur_id")
     private UserRole role;
     
     @Transient
@@ -212,7 +215,7 @@ public class User implements UserDetails{
 
     @Override
     public String toString() {
-        return login;
+        return login + ":" + password;
     }
 
 }

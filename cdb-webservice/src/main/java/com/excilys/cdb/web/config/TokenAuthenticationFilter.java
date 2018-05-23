@@ -28,7 +28,6 @@ final class TokenAuthenticationFilter extends AbstractAuthenticationProcessingFi
     public Authentication attemptAuthentication(final HttpServletRequest request, final HttpServletResponse response) {
         final String param = Optional.ofNullable(request.getHeader(AUTHORIZATION)).orElse(request.getParameter("t"));
 
-        System.out.println("PARAAAAAAAAAAAAAM " + param);
         final String token = Optional.ofNullable(param).map(value -> removeStart(value, BEARER)).map(String::trim)
                 .orElseThrow(() -> new BadCredentialsException("Missing Authentication Token"));
 

@@ -3,6 +3,7 @@ package com.excilys.cdb.service;
 import java.util.Optional;
 
 import com.excilys.cdb.model.User;
+import com.excilys.cdb.validation.exceptions.ValidationException;
 
 public interface IUserAuthenticationService {
 
@@ -11,5 +12,7 @@ public interface IUserAuthenticationService {
     Optional<User> findByToken(String token);
 
     void logout(User user);
+
+    void register(User authenticatedUser, User newUser) throws ServiceException, ValidationException;
 
 }
