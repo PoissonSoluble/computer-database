@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -29,8 +30,13 @@ import com.excilys.cdb.validation.exceptions.ValidationException;
 import com.excilys.cdb.web.util.CompanyOrderingCaseConverter;
 import com.excilys.cdb.web.util.DirectionCaseConverter;
 
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+
 @CrossOrigin
 @RestController
+@Api
+@RequestMapping("/companies")
 public class CompanyRestController {
 
     private ICompanyService companyService;
@@ -47,11 +53,12 @@ public class CompanyRestController {
         binder.registerCustomEditor(Direction.class, new DirectionCaseConverter());
     }
 
-    @GetMapping("/companies")
+    @ApiOperation(value = "Return the companies", response = List.class)
+    @GetMapping
     public ResponseEntity<List<CompanyDTO>> getCompanies(
             @RequestParam(name = "page-number", required = false) Optional<Integer> pageNumber,
             @RequestParam(name = "page-size", required = false) Optional<Integer> pageSize,
-            @RequestParam(name = "search", defaultValue = "") String search,
+            @RequestParam(name = "search", defaultValue = "", required = false) String search,
             @RequestParam(name = "order", defaultValue = "ca_id") CompanyOrdering order,
             @RequestParam(name = "direction", defaultValue = "asc") Direction direction) {
         List<CompanyDTO> companyDTOs = new ArrayList<>();
@@ -66,26 +73,30 @@ public class CompanyRestController {
         return new ResponseEntity<List<CompanyDTO>>(companyDTOs, HttpStatus.OK);
     }
 
-    @GetMapping("/companies/{id}")
+    @ApiOperation(value = "Return a company from its id", response = CompanyDTO.class)
+    @GetMapping("/{id}")
     public ResponseEntity<CompanyDTO> getCompany(@PathVariable Long id) {
         return new ResponseEntity<CompanyDTO>(
                 companyDTOMapper.createCompanyDTO(companyService.getCompany(id).orElse(new Company())), HttpStatus.OK);
     }
 
-    @GetMapping("/companies/count")
-    public ResponseEntity<Integer> getCompanyPageCount(
-            @RequestParam(name = "search", defaultValue = "") String search) {
+    @ApiOperation(value = "Return the number of companies", response = Integer.class)
+    @GetMapping("/count")
+    public ResponseEntity<Integer> getCompanyCount(
+            @RequestParam(name = "search", defaultValue = "", required = false) String search) {
         return new ResponseEntity<Integer>(companyService.getCompanyCount(search), HttpStatus.OK);
     }
 
-    @GetMapping("/companies/page/count")
-    public ResponseEntity<Integer> getPageCount(@RequestParam(name = "page-size", required = true) Integer pageSize,
-            @RequestParam(name = "search", defaultValue = "") String search) {
+    @ApiOperation(value = "Return the number of pages", response = Integer.class)
+    @GetMapping("/page/count")
+    public ResponseEntity<Integer> getCompanyPageCount(@RequestParam(name = "page-size", required = true) Integer pageSize,
+            @RequestParam(name = "search", defaultValue = "",required = false) String search) {
         return new ResponseEntity<Integer>(companyService.getPage(0, pageSize, search).getTotalPages(), HttpStatus.OK);
 
     }
 
-    @PostMapping("/companies")
+    @ApiOperation(value = "Create a company (requires auth)", response = String.class)
+    @PostMapping
     public ResponseEntity<String> postCompany(@RequestBody CompanyDTO companyDTO) {
         Company company = companyDTOMapper.createCompanyFromDTO(companyDTO);
         try {
@@ -96,7 +107,8 @@ public class CompanyRestController {
         }
     }
 
-    @PatchMapping("/companies")
+    @ApiOperation(value = "Update a company (requires admin rights)", response = String.class)
+    @PatchMapping
     public ResponseEntity<String> putComputer(@RequestBody CompanyDTO companyDTO) {
         Company company = companyDTOMapper.createCompanyFromDTO(companyDTO);
         try {
@@ -107,7 +119,8 @@ public class CompanyRestController {
         }
     }
 
-    @DeleteMapping("/companies/{id}")
+    @ApiOperation(value = "Delete a company (requires admin rights)", response = String.class)
+    @DeleteMapping("/{id}")
     public ResponseEntity<String> deleteCompany(@PathVariable Long id) {
         companyService.deleteCompany(id);
         return new ResponseEntity<String>("OK.", HttpStatus.OK);

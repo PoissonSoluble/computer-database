@@ -34,7 +34,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
             new AntPathRequestMatcher("/computers/**", HttpMethod.GET.toString()),
             new AntPathRequestMatcher("/users/login"),
             new AntPathRequestMatcher("/users/", HttpMethod.POST.toString()),
-            new AntPathRequestMatcher("/**", HttpMethod.OPTIONS.toString()));
+            new AntPathRequestMatcher("/**", HttpMethod.OPTIONS.toString()),
+            new AntPathRequestMatcher("/v2/api-docs"),
+            new AntPathRequestMatcher("/swagger-ui.html"),
+            new AntPathRequestMatcher("/webjars/**"),
+            new AntPathRequestMatcher("/swagger-resources/**"));
     private static final RequestMatcher PROTECTED_URLS = new NegatedRequestMatcher(PUBLIC_URLS);
 
     private TokenAuthenticationProvider provider;

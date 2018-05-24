@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -29,8 +30,13 @@ import com.excilys.cdb.validation.exceptions.ValidationException;
 import com.excilys.cdb.web.util.ComputerOrderingCaseConverter;
 import com.excilys.cdb.web.util.DirectionCaseConverter;
 
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+
 @CrossOrigin
 @RestController
+@Api
+@RequestMapping("/computers")
 public class ComputerRestController {
 
     private IComputerService computerService;
@@ -41,7 +47,8 @@ public class ComputerRestController {
         computerDTOMapper = pComputerDTOMapper;
     }
 
-    @DeleteMapping("/computer/{id}")
+    @ApiOperation(value = "Delete a computer (requires admin rights)", response = String.class)
+    @DeleteMapping("/{id}")
     public ResponseEntity<String> deleteComputer(@PathVariable Long id) {
         try {
             computerService.deleteComputer(id);
@@ -51,18 +58,20 @@ public class ComputerRestController {
         }
     }
 
-    @GetMapping("/computers/{id}")
+    @ApiOperation(value = "Returns a computer from its id", response = ComputerDTO.class)
+    @GetMapping("/{id}")
     public ResponseEntity<ComputerDTO> getComputer(@PathVariable Long id) {
         return new ResponseEntity<ComputerDTO>(
                 computerDTOMapper.createComputerDTO(computerService.getComputer(id).orElse(new Computer())),
                 HttpStatus.OK);
     }
 
-    @GetMapping("/computers/company/{id}")
+    @ApiOperation(value = "Returns computers from a company", response = List.class)
+    @GetMapping("/company/{id}")
     public ResponseEntity<List<ComputerDTO>> getComputersFromCompany(@PathVariable Long id,
             @RequestParam(name = "page-number", required = false) Optional<Integer> pageNumber,
             @RequestParam(name = "page-size", required = false) Optional<Integer> pageSize,
-            @RequestParam(name = "search", defaultValue = "") String search,
+            @RequestParam(name = "search", defaultValue = "", required = false) String search,
             @RequestParam(name = "order", defaultValue = "cu_id") ComputerOrdering order,
             @RequestParam(name = "direction", defaultValue = "asc") Direction direction) {
         List<ComputerDTO> computerDTOs = new ArrayList<>();
@@ -76,10 +85,11 @@ public class ComputerRestController {
         return new ResponseEntity<List<ComputerDTO>>(computerDTOs, HttpStatus.OK);
     }
 
-    @GetMapping("/computers/company/{id}/count")
+    @ApiOperation(value = "Returns the numbers of computers from a company", response = Integer.class)
+    @GetMapping("/company/{id}/count")
     public ResponseEntity<Integer> getCountFromCompany(@PathVariable Long id,
             @RequestParam(name = "page-size", required = false) Optional<Integer> pageSize,
-            @RequestParam(name = "search", defaultValue = "") String search) {
+            @RequestParam(name = "search", defaultValue = "", required = false) String search) {
         if (pageSize.isPresent()) {
             return new ResponseEntity<Integer>(computerService
                     .getPageFromCompany(id, 0, pageSize.get(), search, ComputerOrdering.CU_ID, Direction.ASC)
@@ -89,11 +99,12 @@ public class ComputerRestController {
         }
     }
 
-    @GetMapping("/computers")
+    @ApiOperation(value = "Returns computers", response = List.class)
+    @GetMapping
     public ResponseEntity<List<ComputerDTO>> getComputers(
             @RequestParam(name = "page-number", required = false) Optional<Integer> pageNumber,
             @RequestParam(name = "page-size", required = false) Optional<Integer> pageSize,
-            @RequestParam(name = "search", defaultValue = "") String search,
+            @RequestParam(name = "search", defaultValue = "", required = false) String search,
             @RequestParam(name = "order", defaultValue = "cu_id") ComputerOrdering order,
             @RequestParam(name = "direction", defaultValue = "asc") Direction direction) {
         List<ComputerDTO> computerDTOs = new ArrayList<>();
@@ -107,10 +118,11 @@ public class ComputerRestController {
         return new ResponseEntity<List<ComputerDTO>>(computerDTOs, HttpStatus.OK);
     }
 
-    @GetMapping("/computers/count")
+    @ApiOperation(value = "Returns the numbers of computers", response = Integer.class)
+    @GetMapping("/count")
     public ResponseEntity<Integer> getCount(
             @RequestParam(name = "page-size", required = false) Optional<Integer> pageSize,
-            @RequestParam(name = "search", defaultValue = "") String search) {
+            @RequestParam(name = "search", defaultValue = "", required = false) String search) {
         if (pageSize.isPresent()) {
             return new ResponseEntity<Integer>(computerService.getPage(0, pageSize.get(), search).getTotalPages(),
                     HttpStatus.OK);
@@ -119,9 +131,10 @@ public class ComputerRestController {
         }
     }
 
-    @GetMapping("/computers/page/count")
+    @ApiOperation(value = "Return the number of pages", response = Integer.class)
+    @GetMapping("/page/count")
     public ResponseEntity<Integer> getPageCount(@RequestParam(name = "page-size", required = true) Integer pageSize,
-            @RequestParam(name = "search", defaultValue = "") String search) {
+            @RequestParam(name = "search", defaultValue = "", required = false) String search) {
         return new ResponseEntity<Integer>(computerService.getPage(0, pageSize, search).getTotalPages(), HttpStatus.OK);
 
     }
@@ -132,7 +145,8 @@ public class ComputerRestController {
         binder.registerCustomEditor(Direction.class, new DirectionCaseConverter());
     }
 
-    @PostMapping("/computers")
+    @ApiOperation(value = "Create a computer (requires auth)", response = String.class)
+    @PostMapping
     public ResponseEntity<String> postComputer(@RequestBody ComputerDTO computerDTO) {
         Computer computer = computerDTOMapper.createComputerFromDTO(computerDTO);
         try {
@@ -143,8 +157,9 @@ public class ComputerRestController {
         }
     }
 
-    @PatchMapping("/computers")
-    public ResponseEntity<String> putComputer(@RequestBody ComputerDTO computerDTO) {
+    @ApiOperation(value = "Update a computer (requires admin rights)", response = String.class)
+    @PatchMapping
+    public ResponseEntity<String> updateComputer(@RequestBody ComputerDTO computerDTO) {
         Computer computer = computerDTOMapper.createComputerFromDTO(computerDTO);
         try {
             computerService.updateComputer(computer);

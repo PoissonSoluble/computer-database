@@ -12,8 +12,12 @@ import com.excilys.cdb.mapper.IUserDTOMapper;
 import com.excilys.cdb.model.User;
 import com.excilys.cdb.service.IUserAuthenticationService;
 
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+
 @CrossOrigin
 @RestController
+@Api
 @RequestMapping("/users")
 final class SecuredUsersController {
 
@@ -25,12 +29,14 @@ final class SecuredUsersController {
         userDtoMapper = pUserDtoMapper;
     }
 
+    @ApiOperation(value = "Detail current user (requires auth)", response = UserDTO.class)
     @GetMapping("/current")
     public UserDTO getCurrent(@AuthenticationPrincipal final User user) {
         user.setPassword("");
         return userDtoMapper.userToDto(user);
     }
 
+    @ApiOperation(value = "Logout user and destroy token (requires auth)", response = Boolean.class)
     @PostMapping("/logout")
     public boolean logout(@AuthenticationPrincipal final User user) {
         authenticationService.logout(user);

@@ -55,9 +55,16 @@
     <hibernate-jpa.version>1.0.2.Final</hibernate-jpa.version>
     <hibernate-entitymanager.version>5.3.0.CR1</hibernate-entitymanager.version>
     <spring-data-jpa.version>2.0.6.RELEASE</spring-data-jpa.version>
+    <!-- doc -->
+    <springfox-swagger2.version>2.7.0</springfox-swagger2.version>
   </properties>
   <dependencyManagement>
     <dependencies>
+      <dependency>
+        <groupId>io.springfox</groupId>
+        <artifactId>springfox-swagger2</artifactId>
+        <version>${springfox-swagger2.version}</version>
+      </dependency>
       <dependency>
         <groupId>com.fasterxml.jackson.core</groupId>
         <artifactId>jackson-databind</artifactId>

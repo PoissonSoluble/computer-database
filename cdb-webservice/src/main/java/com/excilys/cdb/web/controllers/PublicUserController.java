@@ -15,8 +15,12 @@ import com.excilys.cdb.service.IUserAuthenticationService;
 import com.excilys.cdb.service.ServiceException;
 import com.excilys.cdb.validation.exceptions.ValidationException;
 
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+
 @CrossOrigin
 @RestController
+@Api
 @RequestMapping("/users")
 final class PublicUsersController {
     private IUserAuthenticationService authenticationService;
@@ -27,6 +31,7 @@ final class PublicUsersController {
         userDtoMapper = pUserDtoMapper;
     }
 
+    @ApiOperation(value = "Loging user and returns token", response = String.class)
     @PostMapping("/login")
     public String login(@RequestParam("login") final String username,
             @RequestParam("password") final String password) {
@@ -38,8 +43,9 @@ final class PublicUsersController {
         }
     }
 
+    @ApiOperation(value = "Register a new user", response = String.class)
     @PostMapping
-    public String subscribe(@AuthenticationPrincipal User authenticatedUser, @RequestBody UserDTO newUser) {
+    public String register(@AuthenticationPrincipal User authenticatedUser, @RequestBody UserDTO newUser) {
         try {
             authenticationService.register(authenticatedUser, userDtoMapper.dtoToUser(newUser));
             return "OK.";
